@@ -13,10 +13,10 @@ export default class Usuario {
     return new Usuario(rows[0].uid, rows[0].email, rows[0].nombre);
   }
 
-  static async create(uid, email, nombre) {
+  static async crear(nombre, email, rol, genero, uid) {
     const [rows] = await pool.query(
-      'INSERT IGNORE INTO users (uid, email, nombre) VALUES (?, ?, ?)',
-      [uid, email, nombre]
+      'INSERT INTO Usuario (nombre, email, rol, genero, uid_firebase) VALUES (?, ?, ?, ?, ?)',
+      [nombre, email, rol, genero, uid]
     );
     //console.log('Usuario creado:', rows.length);
     if (!rows.affectedRows) return null;
