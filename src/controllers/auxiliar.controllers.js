@@ -26,9 +26,14 @@ export default class AuxiliarController {
       const $ = cheerio.load(html);
       //Verificar que el contenido del div carrera sea el esperado
       const carreraTexto = $('div.carrera').text().trim();
+      const nombreTexto = $('div.nombre').text().trim().toLowerCase().split(' ');
+      const palabrasNombre = nombreTexto.map(word => {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      });
+      const nombreCompleto= palabrasNombre.join(' ');
 
       if (carreraTexto === 'INGENIERÍA EN SISTEMAS COMPUTACIONALES') {
-        return res.status(200).json({ mensaje: 'QR verificado correctamente' });
+        return res.status(200).json({ mensaje: 'QR verificado correctamente', nombre: nombreCompleto });
       } else {
         return res.status(400).json({ mensaje: 'La carrera no coincide con la esperada.' });
       }
