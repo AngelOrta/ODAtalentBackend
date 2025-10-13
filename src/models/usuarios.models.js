@@ -8,7 +8,7 @@ export default class Usuario {
   }
 
   static async obtenerPorUid(uid) {
-    const [rows] = await pool.query('SELECT * FROM users WHERE uid = ?', [uid]);
+    const [rows] = await pool.query('SELECT * FROM Usuario WHERE uid_firebase = ?', [uid]);
     if (!rows.length) return null;
     return new Usuario(rows[0].uid, rows[0].email, rows[0].nombre);
   }

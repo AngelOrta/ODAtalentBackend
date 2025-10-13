@@ -1,0 +1,64 @@
+use oda;
+--Tablas
+CREATE TABLE Usuario (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    correo VARCHAR(320) NOT NULL UNIQUE,
+    rol ENUM('admin', 'alumno', 'reclutador'),
+    genero ENUM('masculino', 'femenino', 'otro'),
+    uid_firebase VARCHAR(128) NOT NULL UNIQUE
+);
+
+CREATE TABLE AlumnoSolicitante (
+    id_alumno INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    completado tinyint(1) DEFAULT 0,    --si el perfil esta completado
+    fecha_nacimiento DATE,
+    ultimo_acceso TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    descripcion VARCHAR(1500),
+    url_cv VARCHAR(400),
+    ciudad VARCHAR(100),
+    telefono VARCHAR(15),
+    visualizaciones INT DEFAULT 0,
+    semestre_actual tinyint,
+
+    FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE
+);
+
+CREATE TABLE Escolaridad (
+    id_escolaridad INT AUTO_INCREMENT PRIMARY KEY,
+    id_alumno INT NOT NULL,
+    nivel ENUM('Bachillerato General','Tecnólogo','Bachillerato Tecnológico','Profesional Técnico','Técnico Superior Universitario', 'Licenciatura') NOT NULL,
+    institucion VARCHAR(200) NOT NULL,
+    carrera VARCHAR(200),
+    plantel VARCHAR(160) NOT NULL,
+    nota ENUM('Pasante', 'Titulado', 'Cursando') NOT NULL,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE NOT NULL,
+
+    FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE
+);
+
+CREATE TABLE URLExterna (
+    id_url INT AUTO_INCREMENT PRIMARY KEY,
+    id_alumno INT NOT NULL,
+    url VARCHAR(400) NOT NULL,
+    tipo ENUM('LinkedIn', 'GitHub', 'Portafolio', 'Otro') NOT NULL,
+
+    FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE
+);
+
+CREATE TABLE Curso (
+    id_curso INT AUTO_INCREMENT PRIMARY KEY,
+    id_alumno INT NOT NULL,
+    nombre VARCHAR(200) NOT NULL,
+    institucion VARCHAR(200) NOT NULL,
+    fecha_inicio DATE,
+    fecha_fin DATE NOT NULL,
+
+    FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE
+);
+
+select * from Usuario;
+
+delete from Usuario where id=1;
