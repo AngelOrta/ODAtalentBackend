@@ -13,13 +13,50 @@ export default class Usuario {
     return new Usuario(rows[0].uid, rows[0].email, rows[0].nombre);
   }
 
-  static async crear(nombre, email, rol, genero, uid) {
-    const [rows] = await pool.query(
-      'INSERT INTO Usuario (nombre, correo, rol, genero, uid_firebase) VALUES (?, ?, ?, ?, ?)',
-      [nombre, email, rol, genero, uid]
-    );
-    //console.log('Usuario creado:', rows.length);
-    if (!rows.affectedRows) return null;
-    return true;
+  static async crear(nombre, email, rol, genero, uid, idEmpresa) {
+    let connection;
+
+    try{
+      connection = await pool.getConnection();
+      await connection.beginTransaction();
+
+      const [respuestaUsuario] = await connection.query('INSERT INTO Usuario (nombre, correo, rol, genero, uid_firebase) VALUES (?, ?, ?, ?, ?)',
+      [nombre, email, rol, genero, uid]);
+
+      if(rol === 'alumno'){
+        if(!respuestaUsuario.affectedRows)
+          throw new Error('Error al registrar en Usuario');
+        const idUser = respuestaUsuario.insertId;
+
+        const [respuestaAlumno] = await connection.query('INSERT INTO AlumnoSolicitante (id_usuario) VALUES (?)',
+        [idUser]);
+
+        if(!respuestaAlumno.affectedRows)
+          throw new Error('Error al registrar en AlumnoSolicitante') ;
+      }
+      if(rol === 'reclutador'){
+        if(!respuestaUsuario.affectedRows)
+          throw new Error('Error al registrar en Usuario');
+        const idUser = respuestaUsuario.insertId;
+
+        const [respuestaReclutador] = await connection.query('INSERT INTO Reclutador (id_empresa, id_usuario) VALUES (?, ?)',
+        [idEmpresa, idUser]);
+
+        if(!respuestaReclutador.affectedRows)
+          throw new Error('Error al registrar en Reclutador') ;
+      }
+      await connection.commit();
+      return true;
+      
+    }catch (error){
+      if (connection)
+        await connection.rollback();
+
+      console.log(error.message);
+      return null;
+    }finally{
+      if (connection)
+        connection.release();
+    }
   }
 }

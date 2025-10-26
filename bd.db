@@ -128,8 +128,10 @@ CREATE TABLE Empresa (
 CREATE TABLE Reclutador (
     id_reclutador INT AUTO_INCREMENT PRIMARY KEY,
     id_empresa INT NOT NULL,
+    id_usuario INT NOT NULL,
 
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id_empresa)
+    FOREIGN KEY (id_empresa) REFERENCES Empresa(id_empresa),
+    FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Vacante (
