@@ -1,5 +1,5 @@
 use oda;
---Tablas
+
 CREATE TABLE Usuario (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE Usuario (
 CREATE TABLE AlumnoSolicitante (
     id_alumno INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT NOT NULL,
-    completado tinyint(1) DEFAULT 0,    --si el perfil esta completado
+    completado tinyint DEFAULT 0,    ##si el perfil esta completado
     fecha_nacimiento DATE,
     ultimo_acceso TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     descripcion VARCHAR(1500),
@@ -62,7 +62,7 @@ CREATE TABLE Curso (
 CREATE TABLE Habilidad (
     id_habilidad INT AUTO_INCREMENT PRIMARY KEY,
     habilidad VARCHAR(100) NOT NULL,
-    categoria ENUM('Comunicación','Interpersonales', 'Pensamiento y Resolución','Autogestión', 'Carácter y Ética') NOT NULL, --Caracter y Etica
+    categoria ENUM('Comunicación','Interpersonales', 'Pensamiento y Resolución','Autogestión', 'Carácter y Ética') NOT NULL, ##Caracter y Etica
     tipo ENUM('Blandas', 'Técnicas', 'Idioma') NOT NULL
 );
 
@@ -70,14 +70,14 @@ CREATE TABLE Certificado(
     id_certificado INT AUTO_INCREMENT PRIMARY KEY,
     id_alumno INT NOT NULL,
     nombre VARCHAR(200) NOT NULL,
-    institucion VARCHAR(200) NOT NULL, --empresa o institucion que lo otorga
+    institucion VARCHAR(200) NOT NULL, ##empresa o institucion que lo otorga
     fecha_expedicion DATE NOT NULL,
     fecha_caducidad DATE,
-    id_credencial VARCHAR(100), --numero de credencial o folio
+    id_credencial VARCHAR(100), ##numero de credencial o folio
     url_certificado VARCHAR(400),
 
     FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE
-)
+);
 
 CREATE TABLE Certificado_Habilidad (
     id_certificado INT NOT NULL,
@@ -118,15 +118,18 @@ CREATE TABLE Alumno_Habilidad (
     FOREIGN KEY (id_habilidad) REFERENCES Habilidad(id_habilidad) ON DELETE CASCADE
 );
 
-CREATE TABLE Postulacion (
-    id_postulacion INT AUTO_INCREMENT PRIMARY KEY,
-    id_alumno INT NOT NULL,
-    id_vacante INT NOT NULL,
-    --fecha_postulacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    estatus ENUM('En revisión', 'Reclutado', 'Rechazado', 'Completado') DEFAULT 'En revisión',
+CREATE TABLE Empresa (
+    id_empresa INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(20) NOT NULL,
+    descripcion VARCHAR(2000) NOT NULL,
+    url_logo VARCHAR(400)
+);
 
-    FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE
-    FOREIGN KEY (id_vacante) REFERENCES Vacante(id_vacante) ON DELETE CASCADE
+CREATE TABLE Reclutador (
+    id_reclutador INT AUTO_INCREMENT PRIMARY KEY,
+    id_empresa INT NOT NULL,
+
+    FOREIGN KEY (id_empresa) REFERENCES Empresa(id_empresa)
 );
 
 CREATE TABLE Vacante (
@@ -142,9 +145,9 @@ CREATE TABLE Vacante (
     modalidad ENUM('Presencial', 'Remoto', 'Híbrido') NOT NULL,
     fecha_limite DATE,
     fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    escolaridad VARCHAR(50) NOT NULL, --semestre minimo, ej. Minimo 6, 7 semestre
-    conocimientos VARCHAR(1000) NOT NULL, --habilidades tecnicas
-    habilidades VARCHAR(1500) NOT NULL, --habilidades blandas
+    escolaridad VARCHAR(50) NOT NULL, ##semestre minimo, ej. Minimo 6, 7 semestre
+    conocimientos VARCHAR(1000) NOT NULL, ##habilidades tecnicas
+    habilidades VARCHAR(1500) NOT NULL, ##habilidades blandas
     observaciones VARCHAR(400),
     numero_vacantes INT NOT NULL,
     estado ENUM('Activa', 'Expirada') DEFAULT 'Activa',
@@ -152,7 +155,22 @@ CREATE TABLE Vacante (
     FOREIGN KEY (id_reclutador) REFERENCES Reclutador(id_reclutador) ON DELETE CASCADE
 );
 
---Vacante- rol
+CREATE TABLE Postulacion (
+    id_postulacion INT AUTO_INCREMENT PRIMARY KEY,
+    id_alumno INT NOT NULL,
+    id_vacante INT NOT NULL,
+    ##fecha_postulacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    estatus ENUM('En revisión', 'Reclutado', 'Rechazado', 'Completado') DEFAULT 'En revisión',
+
+    FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE,
+    FOREIGN KEY (id_vacante) REFERENCES Vacante(id_vacante) ON DELETE CASCADE
+);
+
+CREATE TABLE RolTrabajo (
+    id_roltrabajo INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE
+);
+
 CREATE TABLE Vacante_RolTrabajo (
     id_vacante INT NOT NULL,
     id_roltrabajo INT NOT NULL,
@@ -162,19 +180,14 @@ CREATE TABLE Vacante_RolTrabajo (
     FOREIGN KEY (id_roltrabajo) REFERENCES RolTrabajo(id_roltrabajo) ON DELETE CASCADE
 );
 
-CREATE TABLE RolTrabajo (
-    id_roltrabajo INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL UNIQUE
-);
-
 CREATE TABLE Reporte (
     id_reporte INT AUTO_INCREMENT PRIMARY KEY,
     id_alumno INT,
     id_reclutador INT,
-    id_contenido INT NOT NULL, --publicacion, comentario, vacante, perfil?
+    id_contenido INT NOT NULL, ##publicacion, comentario, vacante, perfil?
     tipo_contenido ENUM( 'Vacante', 'Publicacion', 'Comentario') NOT NULL,
     razon ENUM('Contenido inapropiado', 'Sin vacantes', 'Otro') NOT NULL,
-    descripcion VARCHAR(255), --motivo
+    descripcion VARCHAR(255), ##motivo
     fecha_reporte TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     estado ENUM('En espera', 'Resuelto') DEFAULT 'En espera',
 
@@ -185,15 +198,15 @@ CREATE TABLE Reporte (
 CREATE TABLE Publicacion (
     id_publicacion INT AUTO_INCREMENT PRIMARY KEY,
     id_alumno INT NOT NULL,
-    --id_reclutador INT NOT NULL,
+    ##id_reclutador INT NOT NULL,
     titulo VARCHAR(200) NOT NULL,
     contenido VARCHAR(5000) NOT NULL,
     fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     reacciones INT DEFAULT 0,
     url_multimedia VARCHAR(400),
 
-    FOREIGN KEY (id_alumno) REFERENCES Alumno(id_alumno) ON DELETE CASCADE
-    --FOREIGN KEY (id_reclutador) REFERENCES Reclutador(id_reclutador) ON DELETE CASCADE
+    FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE
+    ##FOREIGN KEY (id_reclutador) REFERENCES Reclutador(id_reclutador) ON DELETE CASCADE
 );
 
 CREATE TABLE Publicacion_RolTrabajo (
@@ -210,15 +223,15 @@ CREATE TABLE Comentario (
     id_publicacion INT NOT NULL,
     id_alumno INT NOT NULL,
     id_comentario_padre INT,
-    --id_reclutador INT NOT NULL,
-    contenido VARCHAR(280) NOT NULL, --como un twit
+    ##id_reclutador INT NOT NULL,
+    contenido VARCHAR(280) NOT NULL, ##como un twit
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     reacciones INT DEFAULT 0,
 
     FOREIGN KEY (id_publicacion) REFERENCES Publicacion(id_publicacion) ON DELETE CASCADE,
-    FOREIGN KEY (id_alumno) REFERENCES Alumno(id_alumno) ON DELETE CASCADE
+    FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE,
     FOREIGN KEY (id_comentario_padre) REFERENCES Comentario(id_comentario) ON DELETE CASCADE
-    --FOREIGN KEY (id_reclutador) REFERENCES Reclutador(id_reclutador) ON DELETE CASCADE
+    ##FOREIGN KEY (id_reclutador) REFERENCES Reclutador(id_reclutador) ON DELETE CASCADE
 );
 
 CREATE TABLE Busqueda (
@@ -227,38 +240,24 @@ CREATE TABLE Busqueda (
     consulta VARCHAR(100) NOT NULL,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (id_alumno) REFERENCES Alumno(id_alumno) ON DELETE CASCADE
+    FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE
 );
 
-CREATE TABLE Articulo ( --tambien usado para FAQS
+CREATE TABLE Articulo ( ##tambien usado para FAQS
     id_articulo INT AUTO_INCREMENT PRIMARY KEY,
     id_admin INT NOT NULL,
     titulo VARCHAR(100) NOT NULL,
     id_roltrabajo INT,
-    contenido VARCHAR(65535) NOT NULL,
+    contenido TEXT(65535) NOT NULL,
 
-    FOREIGN KEY (id_admin) REFERENCES Usuario(id_usuario)
-);
-
-CREATE TABLE Empresa (
-    id_empresa INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(20) NOT NULL,
-    descripcion VARCHAR(2000) NOT NULL,
-    url_logo VARCHAR(400)
-);
-
-CREATE TABLE Reclutador (
-    id_reclutador INT AUTO_INCREMENT PRIMARY KEY,
-    id_empresa INT NOT NULL,
-
-    FOREIGN KEY (id_empresa) REFERENCES Empresa(id_empresa)
+    FOREIGN KEY (id_admin) REFERENCES Usuario(id)
 );
 
 CREATE TABLE Conversacion (
     id_conversacion INT AUTO_INCREMENT PRIMARY KEY,
     id_alumno INT NOT NULL,
     id_reclutador INT NOT NULL,
-    fecha_creacion DATE DEFAULT CURRENT_TIMESTAMP,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE,
     FOREIGN KEY (id_reclutador) REFERENCES Reclutador(id_reclutador) ON DELETE CASCADE
@@ -268,12 +267,12 @@ CREATE TABLE Mensaje (
     id_mensaje INT AUTO_INCREMENT PRIMARY KEY,
     id_conversacion INT NOT NULL,
     id_emisor INT NOT NULL,
-    fecha_enviado DATE DEFAULT CURRENT_TIMESTAMP,
+    fecha_enviado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     contenido VARCHAR(500) NOT NULL,
-    fecha_leido DATE,
+    fecha_leido TIMESTAMP,
 
     FOREIGN KEY (id_conversacion) REFERENCES Conversacion(id_conversacion) ON DELETE CASCADE,
-    FOREIGN KEY (id_emisor) REFERENCES Usuario(id_usuario) ON DELETE CASCADE
+    FOREIGN KEY (id_emisor) REFERENCES Usuario(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Notificacion (
@@ -282,12 +281,12 @@ CREATE TABLE Notificacion (
     titulo VARCHAR(70) NOT NULL,
     cuerpo VARCHAR(255) NOT NULL,
     url_icono VARCHAR(400) NOT NULL,
-    tipo ENUM('Vacante', 'Conversacion', 'Reporte', 'Configuracion') NOT NULL, --para saber a donde redirigir cuando se de tap en la notificacion
+    tipo ENUM('Vacante', 'Conversacion', 'Reporte', 'Configuracion') NOT NULL, ##para saber a donde redirigir cuando se de tap en la notificacion
     id_tipo INT NOT NULL,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    leido tinyint(1) DEFAULT 0,
+    leido TINYINT DEFAULT 0,
 
-    FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario) ON DELETE CASCADE
+    FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE
 );
 
 CREATE TABLE FCMToken (
@@ -296,9 +295,15 @@ CREATE TABLE FCMToken (
     dispositivo ENUM('android', 'ios', 'web') NOT NULL,
     token VARCHAR(255) UNIQUE NOT NULL,
 
-    FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario) ON DELETE CASCADE
+    FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE
 );
 
-select * from Usuario;
-
-delete from Usuario where id=1;
+CREATE TABLE FAQS (
+    id_faq INT AUTO_INCREMENT PRIMARY KEY,
+    id_admin INT NOT NULL,      
+    pregunta VARCHAR(255) NOT NULL,
+    respuesta TEXT NOT NULL,
+    orden INT DEFAULT 0,    
+    
+    FOREIGN KEY (id_admin) REFERENCES Usuario(id)
+);
