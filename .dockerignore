@@ -1,0 +1,7 @@
+./serviceAccountKey.json
+./node_modules
+./.env
+./eslint.config.mjs
+README.md
+./bd.db
+./gitignore
