@@ -8,9 +8,7 @@ RUN npm install --omit=dev
 
 COPY . .
 
-ENV GOOGLE_APPLICATION_CREDENTIALS = "/app/serviceAccountKey.json"
-
-ENV PORT=8080
+ENV PORT 8080
 
 EXPOSE 8080
 
