@@ -1,16 +1,15 @@
 import {pool} from '../db/db.js';
 
 export default class Usuario {
-  constructor(uid, email, nombre) {
+  constructor(id, uid) {
     this.uid = uid;
-    this.email = email;
-    this.nombre = nombre;
+    this.id = id;
   }
 
   static async obtenerPorUid(uid) {
     const [rows] = await pool.query('SELECT * FROM Usuario WHERE uid_firebase = ?', [uid]);
     if (!rows.length) return null;
-    return new Usuario(rows[0].uid, rows[0].email, rows[0].nombre);
+    return new Usuario(rows[0].id, rows[0].uid_firebase);
   }
 
   static async crear(nombre, email, rol, genero, uid, idEmpresa) {
