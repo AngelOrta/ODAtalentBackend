@@ -17,12 +17,14 @@ export default class UsuariosController {
   static async registrar(req, res) {
     const { nombre, email, rol, genero, idEmpresa} = req.body;
     try {
-        const nuevoUsuario = await Usuario.crear(nombre, email, rol, genero, req.uid, idEmpresa);
-        if (!nuevoUsuario) return res.status(400).json({ error: 'Error al registrar Usuario' });
+        await Usuario.crear(nombre, email, rol, genero, req.uid, idEmpresa);
         res.status(201).json({ message: 'Usuario registrado' });
     } catch (err) {
-        console.log(err);
-        res.status(500).json({ error: 'Error al registrar Usuario' });
+      console.log(err);
+      if(err.message.includes('Error al registrar en') || err.code === 'ER_DUP_ENTRY'){
+        return res.status(400).json({ error: 'Error al registrar Usuario' });
+      }
+      res.status(500).json({ error: 'Error interno al registrar Usuario' });
     }
   }
 }

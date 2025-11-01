@@ -20,10 +20,12 @@ CREATE TABLE AlumnoSolicitante (
     ciudad VARCHAR(100),
     telefono VARCHAR(15),
     visualizaciones INT DEFAULT 0,
-    semestre_actual tinyint,
+    semestre_actual ENUM('1','2','3','4','5','6','7','8','9','10','11','12'),
 
     FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE
 );
+
+ALTER TABLE AlumnoSolicitante MODIFY COLUMN semestre_actual ENUM('1','2','3','4','5','6','7','8','9','10','11','12');
 
 CREATE TABLE Escolaridad (
     id_escolaridad INT AUTO_INCREMENT PRIMARY KEY,
@@ -122,8 +124,11 @@ CREATE TABLE Empresa (
     id_empresa INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(20) NOT NULL,
     descripcion VARCHAR(2000) NOT NULL,
-    url_logo VARCHAR(400)
+    url_logo VARCHAR(400),
+    sitio_web VARCHAR(400),
 );
+
+ALTER TABLE Empresa ADD COLUMN sitio_web VARCHAR(400);
 
 CREATE TABLE Reclutador (
     id_reclutador INT AUTO_INCREMENT PRIMARY KEY,
@@ -141,6 +146,8 @@ CREATE TABLE Vacante (
     descripcion VARCHAR(4000) NOT NULL,
     beneficios VARCHAR(1500),
     duracion VARCHAR(12) NOT NULL,
+    fecha_inicio DATE,
+    fecha_fin DATE,
     monto_beca DECIMAL(10,2) NOT NULL,
     horario VARCHAR(100) NOT NULL,
     ubicacion VARCHAR(400) NOT NULL,

@@ -1,16 +1,20 @@
 import {pool} from '../db/db.js';
 
 export default class Usuario {
-  constructor(uid, email, nombre) {
-    this.uid = uid;
-    this.email = email;
-    this.nombre = nombre;
+  constructor(id, rol) {
+    this.id = id;
+    this.rol = rol;
   }
 
   static async obtenerPorUid(uid) {
-    const [rows] = await pool.query('SELECT * FROM Usuario WHERE uid_firebase = ?', [uid]);
-    if (!rows.length) return null;
-    return new Usuario(rows[0].uid, rows[0].email, rows[0].nombre);
+    try{
+      const [rows] = await pool.query('SELECT * FROM Usuario WHERE uid_firebase = ?', [uid]);
+      if (!rows.length) return null;
+      return new Usuario(rows[0].id, rows[0].rol);
+    }catch(error){
+      console.log('Error al obtener Usuario '+ error.message);
+      throw error;
+    }
   }
 
   static async crear(nombre, email, rol, genero, uid, idEmpresa) {
@@ -53,7 +57,7 @@ export default class Usuario {
         await connection.rollback();
 
       console.log(error.message);
-      return null;
+      throw error;
     }finally{
       if (connection)
         connection.release();
