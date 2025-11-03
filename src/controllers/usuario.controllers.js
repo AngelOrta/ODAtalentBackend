@@ -17,7 +17,7 @@ export default class UsuariosController {
   static async registrar(req, res) {
     const { nombre, email, rol, genero, idEmpresa} = req.body;
     try {
-        await Usuario.crear(nombre, email, rol, genero, req.uid, idEmpresa);
+        await Usuario.crearAlumno(nombre, email, rol, genero, req.uid, idEmpresa);
         res.status(201).json({ message: 'Usuario registrado' });
     } catch (err) {
       console.log(err);
