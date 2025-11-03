@@ -4,10 +4,12 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import authMiddleware from './middlewares/auth.js';
 import cors from 'cors';
-import userRoutes from './routes/usuarios.routes.js';
+import userRoutes from './routes/usuario.routes.js';
 import auxiliarRoutes from './routes/auxiliar.routes.js';
+import empresasRoutes from './routes/empresa.routes.js';
 //import { readFileSync } from 'fs';
 //import fs from 'fs';
+//import {enviarCorreoBienvenidaReclutador} from './services/mail.services.js';
 
 dotenv.config();
 
@@ -34,6 +36,7 @@ app.use(
   auxiliarRoutes
 );  //protege todo lo que cuelga de /api
 app.use('/api/usuarios', userRoutes); 
+app.use('/api/empresas', empresasRoutes);
 
 app.listen(process.env.PORT || 4000, () =>
   console.log(`API corriendo en puerto ${process.env.PORT || 4000}`)
