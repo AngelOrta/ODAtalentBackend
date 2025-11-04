@@ -30,7 +30,7 @@ app.use(morgan('dev'));
 app.use(
   '/api',
   excludePaths(
-    ['/verificarqr'], // rutas que no llevan auth
+    ['/verificarqr', '/usuarios/encolar_reclutador', '/empresas/obtener_empresas'], // rutas que no llevan auth
     authMiddleware
   ),
   auxiliarRoutes
