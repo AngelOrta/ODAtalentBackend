@@ -1,9 +1,13 @@
-import pool from '../db/bd.db.js';
+import {pool} from '../db/db.js';
 export default class Reclutador {
-  constructor(id, idEmpresa, idUsuario) {
-    this.id = id;
-    this.idEmpresa = idEmpresa;
-    this.idUsuario = idUsuario;
+  constructor(id_reclutador, nombre, correo, empresa, url_logo_empresa, estado, id_empresa) {
+    this.id = id_reclutador;
+    this.nombre = nombre;
+    this.correo = correo;
+    this.empresa = empresa;
+    this.url_logo_empresa = url_logo_empresa;
+    this.estado = estado;
+    this.id_empresa = id_empresa;
   }
 
   static async obtenerPorIdUsuario(idUsuario) {

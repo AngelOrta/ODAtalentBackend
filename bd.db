@@ -9,6 +9,9 @@ CREATE TABLE Usuario (
     uid_firebase VARCHAR(128) NOT NULL UNIQUE
 );
 
+alter table Usuario modify column uid_firebase VARCHAR(128) UNIQUE;
+drop index uid_firebase_2 on Usuario;
+
 CREATE TABLE AlumnoSolicitante (
     id_alumno INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT NOT NULL,
@@ -129,6 +132,8 @@ CREATE TABLE Empresa (
 );
 
 ALTER TABLE Empresa ADD COLUMN sitio_web VARCHAR(400);
+ALTER TABLE Empresa modify column nombre VARCHAR(20) NOT NULL UNIQUE;
+
 
 CREATE TABLE Reclutador (
     id_reclutador INT AUTO_INCREMENT PRIMARY KEY,
@@ -138,6 +143,8 @@ CREATE TABLE Reclutador (
     FOREIGN KEY (id_empresa) REFERENCES Empresa(id_empresa),
     FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE
 );
+
+ALTER TABLE Reclutador ADD COLUMN estado ENUM('Pendiente', 'Aprobado') DEFAULT 'Pendiente';
 
 CREATE TABLE Vacante (
     id_vacante INT AUTO_INCREMENT PRIMARY KEY,

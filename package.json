@@ -20,8 +20,10 @@
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "firebase-admin": "^13.4.0",
+    "mailtrap": "^4.3.0",
     "morgan": "^1.10.0",
-    "mysql2": "^3.14.2"
+    "mysql2": "^3.14.2",
+    "nodemailer": "^6.10.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
