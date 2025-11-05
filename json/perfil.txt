@@ -1,0 +1,153 @@
+//----------------------PERFIL DE ALUMNO----------------------//
+//PARA VER PERFIL COMPLETO
+//REQ
+{
+    "id_alumno": 1 //guardarlo en variable provider como idRol
+}
+//RES
+//Datos generales
+[
+    {
+        "id_alumno": 1,
+        "id_usuario": 2,
+        "nombre": "Juan Pérez",
+        "correo": "correo@dom.com",
+        "fecha_nacimiento": "2000-01-15",
+        "telefono": "555-1234",
+        "ciudad": "Ciudad de México",
+        "estado": "CDMX",
+        "descripcion": "Estudiante de Ingeniería en Sistemas",
+        "url_cv": "http://ejemplo.com/cv/juanperez.pdf",
+        "semestre_actual": "6",
+        "visualizaciones": 10,
+        //hasta aqui una consulta 
+        "escolaridad":
+            //Escolaridad (otra consulta)
+            [
+                {
+                    "id_escolaridad": 1,
+                    "id_alumno": 1,
+                    "nivel": "Preparatoria",
+                    "institucion": "Universidad Nacional",
+                    "carrera": "Ingeniería en Sistemas",
+                    "plantel": "Plantel Central",
+                    "nota": "Titulado",
+                    "fecha_inicio": "2018-08-01",
+                    "fecha_fin": "2022-06-30"
+                    
+                }
+            ],
+        "experiencia_laboral":
+        //Experiencia laboral (otra consulta)
+            [
+                {
+                    "id_alumno": 1,
+                    "id_experiencia": 1,
+                    "cargo": "Desarrollador Junior",
+                    "empresa": "Tech Solutions",
+                    "fecha_inicio": "2022-07-01",
+                    "fecha_fin": "2023-12-31",
+                    "descripcion": "Desarrollo de aplicaciones web",
+                    "habilidades_desarrolladas": 
+                    //Habilidades relacionadas a una experiencia laboral (otra consulta con join)
+                        [
+                            {
+                                "id_experiencia": 1,
+                                "id_habilidad": 1,
+                                "categoria": "Pensamiento y Resolución",
+                                "tipo": "Tecnica",
+                                "habilidad": "JavaScript"
+                            },
+                            {
+                                "id_experiencia": 1,
+                                "id_habilidad": 2,
+                                "categoria": "Comunicación",
+                                "tipo": "Idioma",
+                                "habilidad": "Inglés"
+                            }
+                        ]
+                }
+            ],
+        "urls_externas":
+        //URLs externas (otra consulta)
+            [
+                {
+                    "id_alumno": 1,
+                    "id_url": 1,
+                    "tipo": "LinkedIn",
+                    "url": "http://linkedin.com/in/juanperez"
+                }
+            ],
+        "cursos":
+        //Cursos (otra consulta)
+            [
+                {
+                    "id_alumno": 1,
+                    "id_curso": 1,
+                    "nombre_curso": "Desarrollo Web",
+                    "institucion": "Coursera",
+                    "fecha_inicio": "2021-05-01",
+                    "fecha_fin": "2021-08-01",
+                }
+            ],
+        "certificados":
+        //Certificados (otra consulta)
+            [
+                {
+                    "id_alumno": 1,
+                    "id_certificado": 1,
+                    "nombre": "Certificación en JavaScript",
+                    "institucion": "W3Schools",
+                    "fecha_expedicion": "2021-09-15",
+                    "fecha_caducidad": "2024-09-15",
+                    "id_credencial": "JS-12345",
+                    "url_certificado": "http://ejemplo.com/certificados/js.pdf",
+                    "habilidades_desarrolladas":
+                    //Habilidades relacionadas a un certificado (otra consulta con join)
+                        [
+                            {
+                                "id_certificado": 1,
+                                "id_habilidad": 3,
+                                "categoria": "Desarrollo Personal",
+                                "tipo": "Tecnica",
+                                "habilidad": "HTML/CSS"
+                            }
+                        ]
+                }
+            ],
+        "habilidades":
+        //Habilidades del alumno (otra consulta con join)
+            [
+                {
+                    "id_alumno": 1,
+                    "id_habilidad": 1,
+                    "categoria": "Pensamiento y Resolución",
+                    "tipo": "Tecnica",
+                    "habilidad": "JavaScript"
+                },
+                {
+                    "id_alumno": 1,
+                    "id_habilidad": 2,
+                    "categoria": "Comunicación",
+                    "tipo": "Idioma",
+                    "habilidad": "Inglés"
+                },
+                {
+                    "id_alumno": 1,
+                    "id_habilidad": 3,
+                    "categoria": "Desarrollo Personal",
+                    "tipo": "Tecnica",
+                    "habilidad": "HTML/CSS"
+                }
+            ]
+    }
+]
+
+
+//PARA EDITAR
+
+
+
+
+
+

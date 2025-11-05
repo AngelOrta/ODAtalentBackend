@@ -21,6 +21,7 @@ CREATE TABLE AlumnoSolicitante (
     descripcion VARCHAR(1500),
     url_cv VARCHAR(400),
     ciudad VARCHAR(100),
+    estado VARCHAR(50), ## ##########
     telefono VARCHAR(15),
     visualizaciones INT DEFAULT 0,
     semestre_actual ENUM('1','2','3','4','5','6','7','8','9','10','11','12'),
@@ -28,6 +29,7 @@ CREATE TABLE AlumnoSolicitante (
     FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE
 );
 
+ALTER TABLE AlumnoSolicitante ADD COLUMN estado VARCHAR(50);
 ALTER TABLE AlumnoSolicitante MODIFY COLUMN semestre_actual ENUM('1','2','3','4','5','6','7','8','9','10','11','12');
 
 CREATE TABLE Escolaridad (
@@ -129,6 +131,8 @@ CREATE TABLE Empresa (
     descripcion VARCHAR(2000) NOT NULL,
     url_logo VARCHAR(400),
     sitio_web VARCHAR(400),
+    ##inicio_direccion (calle, numero, colonia)
+    ##fin_direccion (ciudad, estado, codigo_postal)
 );
 
 ALTER TABLE Empresa ADD COLUMN sitio_web VARCHAR(400);
@@ -149,20 +153,20 @@ ALTER TABLE Reclutador ADD COLUMN estado ENUM('Pendiente', 'Aprobado') DEFAULT '
 CREATE TABLE Vacante (
     id_vacante INT AUTO_INCREMENT PRIMARY KEY,
     id_reclutador INT NOT NULL,
-    titulo VARCHAR(255) NOT NULL,
-    descripcion VARCHAR(4000) NOT NULL,
+    --titulo VARCHAR(255) NOT NULL,
+    --descripcion VARCHAR(4000) NOT NULL,
     beneficios VARCHAR(1500),
     duracion VARCHAR(12) NOT NULL,
     fecha_inicio DATE,
     fecha_fin DATE,
-    monto_beca DECIMAL(10,2) NOT NULL,
+    --monto_beca DECIMAL(10,2) NOT NULL,
     horario VARCHAR(100) NOT NULL,
-    ubicacion VARCHAR(400) NOT NULL,
+    --ubicacion VARCHAR(400) NOT NULL,
     modalidad ENUM('Presencial', 'Remoto', 'Híbrido') NOT NULL,
     fecha_limite DATE,
     fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    escolaridad VARCHAR(50) NOT NULL, ##semestre minimo, ej. Minimo 6, 7 semestre
-    conocimientos VARCHAR(1000) NOT NULL, ##habilidades tecnicas
+    --escolaridad VARCHAR(50) NOT NULL, ##semestre minimo, ej. Minimo 6, 7 semestre
+    --conocimientos VARCHAR(1000) NOT NULL, ##habilidades tecnicas
     habilidades VARCHAR(1500) NOT NULL, ##habilidades blandas
     observaciones VARCHAR(400),
     numero_vacantes INT NOT NULL,
