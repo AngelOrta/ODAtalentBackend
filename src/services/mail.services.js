@@ -13,7 +13,7 @@ const transport = Nodemailer.createTransport(
 
 const sender = {
   address: "noreply@odatalent.com",
-  name: "Eqipo de ODATalent",
+  name: "Equipo de ODATalent",
 };
 
 export async function enviarCorreoBienvenidaReclutador(email, actionLink) {

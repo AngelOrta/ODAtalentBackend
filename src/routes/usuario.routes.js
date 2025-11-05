@@ -15,6 +15,9 @@ router.get('/reclutadores_pendientes', UsuariosController.verReclutadoresPendien
 // POST /api/usuarios/aceptar_reclutador
 router.post('/aceptar_reclutador', UsuariosController.aceptarReclutador);
 
+// POST /api/usuarios/rechazar_reclutador
+router.post('/rechazar_reclutador', UsuariosController.rechazarReclutador);
+
 // GET /api/usuarios/uid/:uid
 router.get('/uid/:uid',  UsuariosController.obtenerUsuarioPorUid);
 
