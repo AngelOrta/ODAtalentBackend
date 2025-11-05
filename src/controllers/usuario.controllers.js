@@ -65,4 +65,17 @@ export default class UsuariosController {
       res.status(500).json({ error: 'Error interno al aceptar reclutador' });
     }
   }
+
+  static async rechazarReclutador(req, res) {
+    try {
+      const { id_usuario } = req.body;
+      await Usuario.rechazarReclutador(id_usuario);
+      res.status(200).json({ message: 'Reclutador rechazado' });
+    } catch (error) {
+      console.log(error);
+      if(error.message.includes('Error'))
+        return res.status(400).json({ error: 'Error al rechazar reclutador' });
+      res.status(500).json({ error: 'Error interno al rechazar reclutador' });
+    }
+  }
 }

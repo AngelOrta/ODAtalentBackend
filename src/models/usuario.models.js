@@ -90,9 +90,9 @@ export default class Usuario {
 
   static async verReclutadoresPendientes() {
     try {
-      const [rows] = await pool.query('SELECT R.id_reclutador, U.nombre, U.correo, E.nombre AS empresa, E.id_empresa FROM Reclutador R JOIN Usuario U ON R.id_usuario = U.id JOIN Empresa E ON R.id_empresa = E.id_empresa WHERE R.estado = ?', ['Pendiente']);
+      const [rows] = await pool.query('SELECT R.id_reclutador, U.nombre, U.correo, E.nombre AS empresa, E.id_empresa, R.id_usuario FROM Reclutador R JOIN Usuario U ON R.id_usuario = U.id JOIN Empresa E ON R.id_empresa = E.id_empresa WHERE R.estado = ?', ['Pendiente']);
       if (!rows.length) return null;
-      return rows.map(row => new Reclutador(row.id_reclutador, row.nombre, row.correo, row.empresa, null, 'Pendiente', row.id_empresa));
+      return rows.map(row => new Reclutador(row.id_reclutador, row.nombre, row.correo, row.empresa, null, 'Pendiente', row.id_empresa, row.id_usuario));
     } catch (error) {
       console.log('Error al obtener reclutadores pendientes: ' + error.message);
       throw error;
@@ -150,5 +150,13 @@ export default class Usuario {
       if (connection)
         connection.release();
     }
+  }
+
+  static async rechazarReclutador(id_usuario) {
+      const [resultRechazar] = await pool.query('DELETE FROM Usuario WHERE id = ?', [id_usuario]);
+      if (!resultRechazar.affectedRows)
+        throw new Error('Error al rechazar reclutador');
+
+      return true;
   }
 }
