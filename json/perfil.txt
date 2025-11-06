@@ -1,9 +1,7 @@
 //----------------------PERFIL DE ALUMNO----------------------//
 //PARA VER PERFIL COMPLETO
-//POST REQ BODY
-{
-    "id_alumno": 1 //guardarlo en variable provider como idRol
-}
+//GET REQ BODY
+/alumno/perfil?id_alumno=1
 //RES
 //Datos generales
 [
@@ -348,4 +346,139 @@
     "institucion": "edX",
     "fecha_inicio": "2022-01-15",
     "fecha_fin": "2022-05-15"
+}
+//RES
+{
+    "message": "Curso actualizado correctamente"
+}
+
+//ELIMINAR CURSO
+//DELETE REQ BODY
+{
+    "id_curso": 1,
+    "id_alumno": 1
+}
+//RES
+{
+    "message": "Curso eliminado correctamente"
+}
+
+//AGREGAR CERTIFICADO
+//POST REQ BODY
+{
+    "id_alumno": 1,
+    "nombre": "Certificación en Python",
+    "institucion": "edX",
+    "fecha_expedicion": "2022-05-20",
+    "fecha_caducidad": "2025-05-20",
+    "id_credencial": "PY-67890",
+    "url_certificado": "http://ejemplo.com/certificados/python.pdf",
+    "habilidades_desarrolladas": //otra consulta
+        [
+            {
+                "id_habilidad": 4
+            }
+        ]
+}
+//RES
+{
+    "message": "Certificado agregado correctamente"
+}
+
+//EDITAR CERTIFICADO
+//PUT REQ BODY  
+{
+    "id_certificado": 1,
+    "id_alumno": 1,
+    "nombre": "Certificación en Python - Actualizado",
+    "institucion": "edX",
+    "fecha_expedicion": "2022-05-20",
+    "fecha_caducidad": "2025-06-20",
+    "id_credencial": "PY-67890",
+    "url_certificado": "http://ejemplo.com/certificados/python-updated.pdf",
+    "habilidades_desarrolladas": //borrar todas y agregar las nuevas
+        [
+            {
+                "id_habilidad": 4
+            },
+            {
+                "id_habilidad": 5
+            }
+        ]
+}
+//RES
+{
+    "message": "Certificado actualizado correctamente"
+}
+
+//ELIMINAR CERTIFICADO
+//DELETE REQ BODY
+{
+    "id_certificado": 1,
+    "id_alumno": 1
+}
+//RES
+{
+    "message": "Certificado eliminado correctamente"
+}
+
+
+
+
+//-------------------------------------------
+
+
+//CUANDO EL RECLUTADOR VE EL PERFIL DEL ALUMNO
+//GET REQ
+/alumno/perfil/vista_reclutador?id_alumno=1
+//se incrementa el contador de visualizaciones en 1
+//RES es la misma que la de perfil completo 
+
+//CUANDO OTRO ALUMNO VE EL PERFIL DEL ALUMNO
+//GET REQ
+/alumno/perfil/publico?id_alumno=1
+//se incrementa el contador de visualizaciones en 1
+//RES es la misma que la de perfil completo
+//pero sin correo, telefono, fecha de nacimiento y visualizaciones
+
+
+//MOSTRAR LAS VACANTES QUE EL RECLUTADOR PUBLICO A LAS CUALES EL ALUMNO HA POSTULADO (considerando el caso en el que un alumno se postulo a varias vacantes de un mismo reclutador)
+//GET REQ
+/alumno/postulaciones_revision?id_alumno=1&id_reclutador=2
+//RES   (en la consulta where estatus = En revision)
+[
+    {
+        "id_postulacion": 1,
+        "id_alumno": 1,
+        "id_vacante": 1,
+        "id_reclutador": 2,
+        "titulo": "Desarrollador Web Junior",
+        "fecha_publicacion": "2023-01-15",
+        "fecha_cierre": "2023-02-15",
+        "estatus": "En revisión"
+    }
+]
+
+
+//SI CUMPLE CON LOS REQUISITOS DE UNA VACANTE
+//PUT REQ BODY
+{
+    "id_postulacion": 1,
+    "estatus": "Reclutado"
+}
+//RES
+{
+    "message": "Estatus de la postulacion actualizado a Reclutado"
+}
+
+
+//SI NO CUMPLE CON LOS REQUISITOS DE UNA VACANTE
+//PUT REQ BODY
+{
+    "id_postulacion": 1,
+    "estatus": "Rechazado"
+}
+//RES
+{
+    "message": "Estatus de la postulacion actualizado a Rechazado"
 }
