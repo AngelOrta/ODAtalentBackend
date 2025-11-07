@@ -33,7 +33,10 @@ info de vacante y lista de alumnos postulados
         "fecha_fin": "2024-09-01T18:00:00Z",
         "monto_beca": 1500.00,
         "horario": "Lunes a Viernes, 9:00 AM - 6:00 PM",
-        "ubicacion": "AV. Siempre Viva 123, Ciudad",
+        "ubicacion": "AV. Siempre Viva 123",
+        "ciudad": "Ciudad", //o municipio
+        "entidad": "Estado",
+        "codigo_postal": 12345,
         "modalidad": "Híbrido",
         "fecha_limite": "2024-02-15T10:00:00Z",
         "fecha_publicacion": "2024-01-15T10:00:00Z",
@@ -42,14 +45,12 @@ info de vacante y lista de alumnos postulados
         "habilidades": //solo blandas, pues son mas genericas
             [
                 {
-                    "id_alumno": 1,
                     "id_habilidad": 2,
                     "categoria": "Comunicación",
                     "tipo": "Idioma",
                     "habilidad": "Inglés"
                 },
                 {
-                    "id_alumno": 1,
                     "id_habilidad": 3,
                     "categoria": "Desarrollo Personal",
                     "tipo": "Blanda",
@@ -64,7 +65,15 @@ info de vacante y lista de alumnos postulados
             "nombre_empresa": "Tech Solutions S.A.",
             "logo_empresa": "https://example.com/logos/tech_solutions.png"
         },
-
+        "roles_relacionados": //(roles de trabajo relacionados a las actividades realizadas en la vacante)
+            [
+                {
+                    "id_roltrabajo": 1
+                },
+                {
+                    "id_roltrabajo": 2
+                }
+            ]
     },
     "postulaciones": 
         [

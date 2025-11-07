@@ -6,7 +6,8 @@ CREATE TABLE Usuario (
     correo VARCHAR(320) NOT NULL UNIQUE,
     rol ENUM('admin', 'alumno', 'reclutador'),
     genero ENUM('masculino', 'femenino', 'otro'),
-    uid_firebase VARCHAR(128) NOT NULL UNIQUE
+    uid_firebase VARCHAR(128) NOT NULL UNIQUE,
+    url_foto_perfil VARCHAR(400),
 );
 
 alter table Usuario modify column uid_firebase VARCHAR(128) UNIQUE;
@@ -163,6 +164,9 @@ CREATE TABLE Vacante (
     --monto_beca DECIMAL(10,2) NOT NULL,
     horario VARCHAR(100) NOT NULL,
     --ubicacion VARCHAR(400) NOT NULL,
+    ciudad VARCHAR(50) NOT NULL,
+    entidad VARCHAR(50) NOT NULL,
+    codigo_postal MEDIUMINT,
     modalidad ENUM('Presencial', 'Remoto', 'Híbrido') NOT NULL,
     fecha_limite DATE,
     fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

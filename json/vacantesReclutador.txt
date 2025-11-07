@@ -1,0 +1,73 @@
+//CREAR VACANTE
+//POST REQ BODY
+{
+    "id_reclutador": 5,
+    "titulo": "Desarrollador Full Stack", 
+    "descripcion": "Buscamos un desarrollador Full Stack con experiencia en React y Node.js.", 
+    "beneficios": "Seguro médico, horario flexible, trabajo remoto parcial.", //opcional
+    "duracion": "6 meses", //en meses
+    "fecha_inicio": "2024-03-01T09:00:00Z", //opcional
+    "fecha_fin": "2024-09-01T18:00:00Z", //opcional
+    "monto_beca": 1500.00, // numerico, mensual
+    "horario": "Lunes a Viernes, 9:00 AM - 6:00 PM", 
+    "ubicacion": "AV. Siempre Viva 123", //(Calle y numero)
+    "ciudad": "Ciudad", //o municipio
+    "entidad": "Estado", 
+    "codigo_postal": 12345,
+    "modalidad": "Híbrido", 
+    "fecha_limite": "2024-02-15T10:00:00Z", //opcional
+    "escolaridad": "Minimo 6 semestre de Ingeniería en Sistemas", 
+    "conocimientos": "Inglés Intermedio. Excel Avanzado Esencial un uso avanzado de Excel y análisis numérico. De preferencia manejo de SAP-CRM y PowerBi", //aqui dejar como texto para que puedan ser mas especificos
+    "habilidades": //solo blandas, pues son mas genericas
+        [
+            {
+                "id_habilidad": 1
+            },
+            {
+                "id_habilidad": 2
+            }
+        ],
+    "observaciones": "Se valorará experiencia previa en proyectos similares.", //opcional
+    "numero_vacantes": 3,
+    "roles_relacionados": //opcional (roles de trabajo relacionados a las actividades realizadas en la vacante)
+        [
+            {
+                "id_roltrabajo": 1
+            },
+            {
+                "id_roltrabajo": 2
+            }
+        ]
+}
+//RES 201
+{
+    "message": "Vacante creada correctamente",
+}
+
+
+//EDITAR VACANTE (VERIFICAR QUE NO ESTEN VACIOS LOS CAMPOS OBLIGATORIOS)
+//PUT REQ BODY igual a cuando se crea la habilidad
+//RES 200
+{
+    "message": "Vacante actualizada correctamente"
+}
+
+
+//VER LISTA DE ROLES DE TRABAJO PARA SELECCIONAR LOS RELACIONADOS A LA VACANTE
+//GET REQ
+/reclutadores/roles_trabajo
+//RES 200
+[
+    {
+        "id_roltrabajo": 1,
+        "nombre": "Desarrollador Web"
+    },
+    {
+        "id_roltrabajo": 2,
+        "nombre": "Analista de Datos"
+    }
+]
+
+
+
+
