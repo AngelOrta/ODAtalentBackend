@@ -11,6 +11,7 @@ CREATE TABLE Usuario (
 
 alter table Usuario modify column uid_firebase VARCHAR(128) UNIQUE;
 drop index uid_firebase_2 on Usuario;
+alter table Usuario add column url_foto_perfil VARCHAR(400);
 
 CREATE TABLE AlumnoSolicitante (
     id_alumno INT AUTO_INCREMENT PRIMARY KEY,
@@ -167,12 +168,21 @@ CREATE TABLE Vacante (
     fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     --escolaridad VARCHAR(50) NOT NULL, ##semestre minimo, ej. Minimo 6, 7 semestre
     --conocimientos VARCHAR(1000) NOT NULL, ##habilidades tecnicas
-    habilidades VARCHAR(1500) NOT NULL, ##habilidades blandas
+    --habilidades VARCHAR(1500) NOT NULL, ##habilidades blandas
     observaciones VARCHAR(400),
     numero_vacantes INT NOT NULL,
     estado ENUM('Activa', 'Expirada') DEFAULT 'Activa',
 
     FOREIGN KEY (id_reclutador) REFERENCES Reclutador(id_reclutador) ON DELETE CASCADE
+);
+
+CREATE TABLE Vacante_Habilidad (
+    id_vacante INT NOT NULL,
+    id_habilidad INT NOT NULL,
+    PRIMARY KEY (id_vacante, id_habilidad),
+
+    FOREIGN KEY (id_vacante) REFERENCES Vacante(id_vacante) ON DELETE CASCADE,
+    FOREIGN KEY (id_habilidad) REFERENCES Habilidad(id_habilidad) ON DELETE CASCADE
 );
 
 CREATE TABLE Postulacion (
