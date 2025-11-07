@@ -1,8 +1,8 @@
 //----------------------PERFIL DE ALUMNO----------------------//
 //PARA VER PERFIL COMPLETO
 //GET REQ BODY
-/alumno/perfil?id_alumno=1
-//RES
+/alumnos/perfil?id_alumno=1
+//RES 200
 //Datos generales
 [
     {
@@ -141,10 +141,22 @@
     }
 ]
 
+//CAMBIAR FOTO DE PERFIL
+//PUT REQ BODY
+/usuarios/perfil/actualizar_foto
+{
+    "id": 1,
+    "url_foto": "https://example.com/fotos/juan_perez_nueva.png"
+}
+//RES 200
+{
+    "message": "Foto de perfil actualizada correctamente"
+}
+
 //Para ver habilidades disponibles para agregar
 //GET REQ
 /habilidades/disponibles
-//RES
+//RES 200
 [
     {
         "id_habilidad": 4,
@@ -168,7 +180,7 @@
         "tipo": "Tecnica"
     }
 ]
-//RES
+//RES 200
 {
     "message": "Habilidades actualizadas correctamente"
 }
@@ -179,7 +191,7 @@
     "id_alumno": 1,
     "descripcion": "Nueva biografía del alumno"
 }
-//RES
+//RES 200
 {
     "message": "Biografía actualizada correctamente"
 }
@@ -190,7 +202,7 @@
     "id_alumno": 1,
     "url_cv": "http://ejemplo.com/cv/nuevo_juanperez.pdf"
 }
-//RES
+//RES 200
 {
     "message": "CV actualizado correctamente"
 }
@@ -201,7 +213,7 @@
     "id_alumno": 1,
     "semestre_actual": "7"
 }
-//RES
+//RES 200
 {
     "message": "Semestre actual actualizado correctamente"
 }
@@ -213,7 +225,7 @@
     "ciudad": "Guadalajara",
     "estado": "Jalisco"
 }
-//RES
+//RES 200
 {
     "message": "Ciudad y estado actualizados correctamente"
 }
@@ -224,7 +236,7 @@
     "id_alumno": 1,
     "telefono": "555-5678"
 }
-//RES
+//RES 200
 {
     "message": "Teléfono actualizado correctamente"
 }
@@ -235,7 +247,7 @@
     "id_alumno": 1,
     "fecha_nacimiento": "1999-12-31"
 }
-//RES
+//RES 200
 {
     "message": "Fecha de nacimiento actualizada correctamente"
 }
@@ -252,7 +264,7 @@
     "fecha_inicio": "2023-08-01",
     "fecha_fin": "2025-06-30"
 }
-//RES
+//RES 200
 {
     "message": "Escolaridad agregada correctamente"
 }
@@ -271,7 +283,7 @@
     "fecha_inicio": "2018-08-01",
     "fecha_fin": "2023-06-30"
 }
-//RES
+//RES 200
 {
     "message": "Escolaridad actualizada correctamente"
 }
@@ -282,7 +294,7 @@
     "id_escolaridad": 1,
     "id_alumno": 1
 }
-//RES
+//RES 200
 {
     "message": "Escolaridad eliminada correctamente"
 }
@@ -294,7 +306,7 @@
     "url_externa": "http://ejemplo.com/perfil/juanperez",
     "tipo": "Blog"
 }
-//RES
+//RES 200
 {
     "message": "URL externa agregada correctamente"
 }
@@ -307,7 +319,7 @@
     "url_externa": "http://ejemplo.com/perfil/juanperez-updated",
     "tipo": "Portfolio"
 }
-//RES
+//RES 200
 {
     "message": "URL externa actualizada correctamente"
 }
@@ -318,7 +330,7 @@
     "id_url": 1,
     "id_alumno": 1
 }
-//RES
+//RES 200
 {
     "message": "URL externa eliminada correctamente"
 }
@@ -332,7 +344,7 @@
     "fecha_inicio": "2022-01-15",
     "fecha_fin": "2022-04-15"
 }
-//RES
+//RES 200
 {
     "message": "Curso agregado correctamente"
 }
@@ -347,7 +359,7 @@
     "fecha_inicio": "2022-01-15",
     "fecha_fin": "2022-05-15"
 }
-//RES
+//RES 200
 {
     "message": "Curso actualizado correctamente"
 }
@@ -358,7 +370,7 @@
     "id_curso": 1,
     "id_alumno": 1
 }
-//RES
+//RES 200
 {
     "message": "Curso eliminado correctamente"
 }
@@ -380,7 +392,7 @@
             }
         ]
 }
-//RES
+//RES 200
 {
     "message": "Certificado agregado correctamente"
 }
@@ -406,7 +418,7 @@
             }
         ]
 }
-//RES
+//RES 200
 {
     "message": "Certificado actualizado correctamente"
 }
@@ -417,11 +429,21 @@
     "id_certificado": 1,
     "id_alumno": 1
 }
-//RES
+//RES 200
 {
     "message": "Certificado eliminado correctamente"
 }
 
+
+//Eliminar cuenta de alumno
+//DELETE REQ BODY (en consulta se anonimizan los datos)
+{
+    "id_alumno": 1
+}
+//RES 200
+{
+    "message": "Cuenta de alumno eliminada correctamente"
+}
 
 
 
@@ -430,13 +452,13 @@
 
 //CUANDO EL RECLUTADOR VE EL PERFIL DEL ALUMNO
 //GET REQ
-/alumno/perfil/vista_reclutador?id_alumno=1
+/alumnos/perfil/vista_reclutador?id_alumno=1
 //se incrementa el contador de visualizaciones en 1
 //RES es la misma que la de perfil completo 
 
 //CUANDO OTRO ALUMNO VE EL PERFIL DEL ALUMNO
 //GET REQ
-/alumno/perfil/publico?id_alumno=1
+/alumnos/perfil/publico?id_alumno=1
 //se incrementa el contador de visualizaciones en 1
 //RES es la misma que la de perfil completo
 //pero sin correo, telefono, fecha de nacimiento y visualizaciones
@@ -444,8 +466,8 @@
 
 //MOSTRAR LAS VACANTES QUE EL RECLUTADOR PUBLICO A LAS CUALES EL ALUMNO HA POSTULADO (considerando el caso en el que un alumno se postulo a varias vacantes de un mismo reclutador)
 //GET REQ
-/alumno/postulaciones_revision?id_alumno=1&id_reclutador=2
-//RES   (en la consulta where estatus = En revision)
+/alumnos/postulaciones_revision?id_alumno=1&id_reclutador=2
+//RES 200 (en la consulta where estatus = En revision)
 [
     {
         "id_postulacion": 1,
@@ -454,7 +476,7 @@
         "id_reclutador": 2,
         "titulo": "Desarrollador Web Junior",
         "fecha_publicacion": "2023-01-15",
-        "fecha_cierre": "2023-02-15",
+        "fecha_limite": "2023-02-15",
         "estatus": "En revisión"
     }
 ]
@@ -466,7 +488,7 @@
     "id_postulacion": 1,
     "estatus": "Reclutado"
 }
-//RES
+//RES 200
 {
     "message": "Estatus de la postulacion actualizado a Reclutado"
 }
@@ -478,7 +500,7 @@
     "id_postulacion": 1,
     "estatus": "Rechazado"
 }
-//RES
+//RES 200
 {
     "message": "Estatus de la postulacion actualizado a Rechazado"
 }

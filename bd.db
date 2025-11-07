@@ -302,7 +302,7 @@ CREATE TABLE Notificacion (
     cuerpo VARCHAR(255) NOT NULL,
     url_icono VARCHAR(400) NOT NULL,
     tipo ENUM('Vacante', 'Conversacion', 'Reporte', 'Configuracion') NOT NULL, ##para saber a donde redirigir cuando se de tap en la notificacion
-    id_tipo INT NOT NULL,
+    id_tipo INT NOT NULL, ##id de la vacante, conversacion, reporte, etc.
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     leido TINYINT DEFAULT 0,
 

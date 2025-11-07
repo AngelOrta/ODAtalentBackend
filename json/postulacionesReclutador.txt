@@ -1,0 +1,48 @@
+//VER LA LISTA DE VACANTES PUBLICADAS
+//GET REQ
+/reclutadores/vacantes_publicadas?id_reclutador=2
+//RES 200
+[
+    {
+        "id_vacante": 1,
+        "id_reclutador": 2,
+        "titulo": "Desarrollador Full Stack",
+        "fecha_publicacion": "2024-01-15T10:00:00Z",
+        "fecha_limite": "2024-02-15T10:00:00Z",
+        "numero_vacantes": 3,
+        "ubicacion": "AV. Siempre Viva 123, Ciudad",
+        "modalidad": "Híbrido",
+        "estatus": "Activa",
+        "postulaciones": 25 //otra consulta con count
+    }
+]
+
+
+//VER LA LISTA DE ALUMNOS POSTULADOS A UNA VACANTE ESPECIFICA
+//GET REQ
+/reclutadores/postulaciones?id_vacante=1
+//RES 200
+info de vacante y lista de alumnos postulados
+{
+    "vacante": {
+        "id_vacante": 1,
+        "titulo": "Desarrollador Full Stack",
+        "fecha_publicacion": "2024-01-15T10:00:00Z",
+        "fecha_limite": "2024-02-15T10:00:00Z",
+        "numero_vacantes": 3,
+        "ubicacion": "AV. Siempre Viva 123, Ciudad",
+        "modalidad": "Híbrido",
+        "estatus": "Activa"
+    },
+    "postulaciones": 
+        [
+            {
+                "id_postulacion": 1,
+                "id_alumno": 10,
+                "nombre": "Ana Gomez",
+                "correo": "ana.gomez@ejemplo.com",
+                "url_foto_perfil": "https://example.com/fotos/ana_gomez.png",
+                "estatus": "En revision"
+            }
+        ]
+}
