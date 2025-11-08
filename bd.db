@@ -252,6 +252,15 @@ CREATE TABLE Publicacion_RolTrabajo (
     FOREIGN KEY (id_roltrabajo) REFERENCES RolTrabajo(id_roltrabajo) ON DELETE CASCADE
 );
 
+CREATE TABLE Publicacion_Reacciones (
+    id_publicacion INT NOT NULL,
+    id_alumno INT NOT NULL,
+    PRIMARY KEY (id_publicacion, id_alumno),
+
+    FOREIGN KEY (id_publicacion) REFERENCES Publicacion(id_publicacion) ON DELETE CASCADE,
+    FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE
+);
+
 CREATE TABLE Comentario (
     id_comentario INT AUTO_INCREMENT PRIMARY KEY,
     id_publicacion INT NOT NULL,
@@ -266,6 +275,15 @@ CREATE TABLE Comentario (
     FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE,
     FOREIGN KEY (id_comentario_padre) REFERENCES Comentario(id_comentario) ON DELETE CASCADE
     ##FOREIGN KEY (id_reclutador) REFERENCES Reclutador(id_reclutador) ON DELETE CASCADE
+);
+
+CREATE TABLE Comentario_Reacciones (
+    id_comentario INT NOT NULL,
+    id_alumno INT NOT NULL,
+    PRIMARY KEY (id_comentario, id_alumno),
+
+    FOREIGN KEY (id_comentario) REFERENCES Comentario(id_comentario) ON DELETE CASCADE,
+    FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE
 );
 
 CREATE TABLE Busqueda (
