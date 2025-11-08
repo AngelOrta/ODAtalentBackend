@@ -9,6 +9,7 @@
         "id_vacante": 10,
         "titulo": "Desarrollador Full Stack",
         "nombre_empresa": "Tech Solutions S.A.",
+        "logo_empresa": "https://example.com/logos/tech_solutions.png",
         "fecha_publicacion": "2024-01-15T10:00:00Z",
         "fecha_limite": "2024-02-15T10:00:00Z",
         "numero_vacantes": 3,
