@@ -171,7 +171,7 @@
         "habilidad": "Pensamiento Creativo"
     }
 ]
-//PARA EDITAR HABILIDADES (enviar todas las de un tipo) 
+//PARA EDITAR HABILIDADES (enviar todas las de un tipo) (yo verifico si el perfil esta completo)
 //PUT REQ BODY (yo elimino todas (las de ese tipo) y agrego las nuevas)
 [
     {
@@ -185,7 +185,7 @@
     "message": "Habilidades actualizadas correctamente"
 }
 
-//EDITAR BIOGRAFIA
+//EDITAR BIOGRAFIA  (yo verifico si el perfil esta completo)
 //PUT REQ BODY
 {
     "id_alumno": 1,
@@ -207,7 +207,7 @@
     "message": "CV actualizado correctamente"
 }
 
-//EDITAR SEMESTRE ACTUAL
+//EDITAR SEMESTRE ACTUAL (yo verifico si el perfil esta completo)
 //PUT REQ BODY
 {
     "id_alumno": 1,
@@ -218,7 +218,7 @@
     "message": "Semestre actual actualizado correctamente"
 }
 
-//Editar ciudad y estado
+//Editar ciudad y estado    (yo verifico si el perfil esta completo)
 //PUT REQ BODY
 {
     "id_alumno": 1,
@@ -230,7 +230,7 @@
     "message": "Ciudad y estado actualizados correctamente"
 }
 
-//Editar telefono
+//Editar telefono (yo verifico si el perfil esta completo)
 //PUT REQ BODY
 {
     "id_alumno": 1,
@@ -466,7 +466,7 @@
 
 //MOSTRAR LAS VACANTES QUE EL RECLUTADOR PUBLICO A LAS CUALES EL ALUMNO HA POSTULADO (considerando el caso en el que un alumno se postulo a varias vacantes de un mismo reclutador)
 //GET REQ
-/alumnos/postulaciones_revision?id_alumno=1&id_reclutador=2
+/reclutadores/postulaciones_revision?id_alumno=1&id_reclutador=2
 //RES 200 (en la consulta where estatus = En revision)
 [
     {
@@ -486,6 +486,7 @@
 //PUT REQ BODY
 {
     "id_postulacion": 1,
+    "id_vacante": 1,    //util para restar el numero de vacantes disponibles en la vacante y asi evitar sobre postulaciones
     "estatus": "Reclutado"
 }
 //RES 200

@@ -23,7 +23,7 @@ CREATE TABLE AlumnoSolicitante (
     descripcion VARCHAR(1500),
     url_cv VARCHAR(400),
     ciudad VARCHAR(100),
-    estado VARCHAR(50), ## ##########
+    entidad VARCHAR(50), ## ##########
     telefono VARCHAR(15),
     visualizaciones INT DEFAULT 0,
     semestre_actual ENUM('1','2','3','4','5','6','7','8','9','10','11','12'),

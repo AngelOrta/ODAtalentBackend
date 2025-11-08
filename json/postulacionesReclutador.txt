@@ -10,7 +10,8 @@
         "fecha_publicacion": "2024-01-15T10:00:00Z",
         "fecha_limite": "2024-02-15T10:00:00Z",
         "numero_vacantes": 3,
-        "ubicacion": "AV. Siempre Viva 123, Ciudad",
+        "ciudad": "Ciudad", //o municipio
+        "entidad": "Estado",
         "modalidad": "Híbrido",
         "estado": "Activa",
         "postulaciones": 25 //otra consulta con count
