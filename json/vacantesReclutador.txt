@@ -6,8 +6,8 @@
     "descripcion": "Buscamos un desarrollador Full Stack con experiencia en React y Node.js.", 
     "beneficios": "Seguro médico, horario flexible, trabajo remoto parcial.", //opcional
     "duracion": "6 meses", //en meses
-    "fecha_inicio": "2024-03-01T09:00:00Z", //opcional
-    "fecha_fin": "2024-09-01T18:00:00Z", //opcional
+    "fecha_inicio": "2024-03-01 09:00:00", //opcional
+    "fecha_fin": "2024-09-01 18:00:00", //opcional
     "monto_beca": 1500.00, // numerico, mensual
     "horario": "Lunes a Viernes, 9:00 AM - 6:00 PM", 
     "ubicacion": "AV. Siempre Viva 123", //(Calle y numero)
@@ -15,7 +15,7 @@
     "entidad": "Estado", 
     "codigo_postal": 12345,
     "modalidad": "Híbrido", 
-    "fecha_limite": "2024-02-15T10:00:00Z", //opcional
+    "fecha_limite": "2024-02-15 10:00:00", //opcional
     "escolaridad": "Minimo 6 semestre de Ingeniería en Sistemas", 
     "conocimientos": "Inglés Intermedio. Excel Avanzado Esencial un uso avanzado de Excel y análisis numérico. De preferencia manejo de SAP-CRM y PowerBi", //aqui dejar como texto para que puedan ser mas especificos
     "habilidades": //solo blandas, pues son mas genericas
@@ -46,7 +46,11 @@
 
 
 //EDITAR VACANTE (VERIFICAR QUE NO ESTEN VACIOS LOS CAMPOS OBLIGATORIOS)
-//PUT REQ BODY igual a cuando se crea la habilidad
+//PUT REQ BODY 
+{
+    "id_vacante": 1,
+    //...otros campos igual que en crear vacante
+}
 //RES 200
 {
     "message": "Vacante actualizada correctamente"
@@ -55,7 +59,7 @@
 
 //VER LISTA DE ROLES DE TRABAJO PARA SELECCIONAR LOS RELACIONADOS A LA VACANTE
 //GET REQ
-/reclutadores/roles_trabajo
+/roles_trabajo/ver
 //RES 200
 [
     {
@@ -69,5 +73,32 @@
 ]
 
 
+//VER LISTA DE HABILIDADES PARA SELECCIONAR LAS RELACIONADAS A LA VACANTE (SOLO HABILIDADES BLANDAS)
+//GET REQ
+/habilidades/disponibles?tipo=Blandas
+//RES 200
+[
+    {
+        "id_habilidad": 1,
+        "categoria": "Comunicacion",
+        "nombre": "Comunicación efectiva"
+    },
+    {
+        "id_habilidad": 2,
+        "categoria": "Interpersonales",
+        "nombre": "Colaboración"
+    }
+]
+
+
+//BORRAR VACANTE
+//DELETE REQ
+{
+    "id_vacante": 1
+}
+//RES 200
+{
+    "message": "Vacante borrada correctamente"
+}
 
 
