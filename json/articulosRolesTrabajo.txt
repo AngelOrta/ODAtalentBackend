@@ -1,0 +1,36 @@
+//VER LISTA DE ROLES DE TRABAJO
+//GET REQ
+/reclutadores/roles_trabajo
+//RES 200
+[
+    {
+        "id_roltrabajo": 1,
+        "nombre": "Desarrollador Web"
+    },
+    {
+        "id_roltrabajo": 2,
+        "nombre": "Analista de Datos"
+    }
+]
+
+
+//VER UN ARTITULO DE ROL DE TRABAJO ESPECIFICO
+//GET REQ
+/articulos/{id_roltrabajo}
+//RES 200
+{
+    "id_articulo": 1,
+    "id_roltrabajo": 1,
+    "nombre": "Desarrollador Web",
+    "titulo": "¿Qué hace un Desarrollador Web?",
+    "contenido": "Un Desarrollador Web es responsable de diseñar, construir y mantener sitios web y aplicaciones web. Utilizan lenguajes de programación como HTML, CSS, JavaScript, y frameworks como React o Angular para crear interfaces de usuario atractivas y funcionales. Además, trabajan en la integración con bases de datos y servidores para asegurar que las aplicaciones funcionen correctamente.",
+}
+
+
+//PUBLICAR UN ARTICULO DE ROL DE TRABAJO (ADMIN) (solo para el back, en realidad se podria meter directo a la bd)
+//POST REQ BODY
+{
+    "id_roltrabajo": 1,
+    "titulo": "¿Qué hace un Desarrollador Web?",
+    "contenido": "Un Desarrollador Web es responsable de diseñar, construir y mantener sitios web y aplicaciones web. Utilizan lenguajes de programación como HTML, CSS, JavaScript, y frameworks como React o Angular para crear interfaces de usuario atractivas y funcionales. Además, trabajan en la integración con bases de datos y servidores para asegurar que las aplicaciones funcionen correctamente."
+}
