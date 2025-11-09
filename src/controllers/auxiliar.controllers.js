@@ -8,8 +8,9 @@ export default class AuxiliarController {
 
     //Verificar que la URL tenga el formato correcto
     const regex = /^https:\/\/www\.dae\.ipn\.mx\/vcred\/?/;
+    const regex2 = /^https:\/\/servicios\.dae\.ipn\.mx\/vcred\/?/;
 
-    if (!regex.test(url)) {
+    if (!regex.test(url) && !regex2.test(url)) {
       return res.status(400).json({ mensaje: 'URL inválida. No coincide con el formato esperado.' });
     }
 
