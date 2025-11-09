@@ -224,6 +224,7 @@ CREATE TABLE Reporte (
     descripcion VARCHAR(255), ##motivo
     fecha_reporte TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     estado ENUM('En espera', 'Resuelto') DEFAULT 'En espera',
+    comentario_admin VARCHAR(100),
 
     FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE,
     FOREIGN KEY (id_reclutador) REFERENCES Reclutador(id_reclutador) ON DELETE CASCADE
@@ -255,6 +256,7 @@ CREATE TABLE Publicacion_RolTrabajo (
 CREATE TABLE Publicacion_Reacciones (
     id_publicacion INT NOT NULL,
     id_alumno INT NOT NULL,
+    tipo_reaccion ENUM('upvote', 'downvote') NOT NULL,
     PRIMARY KEY (id_publicacion, id_alumno),
 
     FOREIGN KEY (id_publicacion) REFERENCES Publicacion(id_publicacion) ON DELETE CASCADE,
@@ -280,6 +282,7 @@ CREATE TABLE Comentario (
 CREATE TABLE Comentario_Reacciones (
     id_comentario INT NOT NULL,
     id_alumno INT NOT NULL,
+    tipo_reaccion ENUM('upvote', 'downvote') NOT NULL,
     PRIMARY KEY (id_comentario, id_alumno),
 
     FOREIGN KEY (id_comentario) REFERENCES Comentario(id_comentario) ON DELETE CASCADE,

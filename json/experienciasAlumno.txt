@@ -156,11 +156,12 @@
 ]
 
 
-//REACCIONAR A COMENTARIO EN PUBLICACION DE EXPERIENCIA
+//REACCIONAR A COMENTARIO EN PUBLICACION DE EXPERIENCIA (yo verifico si ya reacciono para no duplicar)
 //POST REQ BODY
 {
     "id_comentario": 1,
-    "id_alumno": 10 //alumno que reacciona
+    "id_alumno": 10, //alumno que reacciona
+    "tipo_reaccion": "upvote" //o downvote
 }
 //RES 200
 {
@@ -190,4 +191,24 @@
     "tipo_contenido": "Publicacion", //Publicacion, Comentario o Vacante
     "razon": "Contenido inapropiado", //Contenido inapropiado, Sin vacantes, Otro
     "descripcion": "La publicación contiene lenguaje ofensivo." //opcional
+}
+//RES 201
+{
+    "message": "Reporte enviado correctamente"
+}
+
+
+//REPORTAR COMENTARIO EN PUBLICACION DE EXPERIENCIA
+//POST REQ BODY
+{   
+    "id_alumno": 10, //alumno que reporta (si aplica)
+    "id_reclutador": null, //reclutador que reporta (si aplica)
+    "id_contenido": 2,  //id de la publicacion, comentario o vacante
+    "tipo_contenido": "Comentario", //Publicacion, Comentario o Vacante
+    "razon": "Spam", //Spam, Ofensivo, Otro
+    "descripcion": "El comentario es irrelevante para la discusión." //opcional
+}
+//RES 201
+{
+    "message": "Reporte enviado correctamente"
 }
