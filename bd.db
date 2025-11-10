@@ -155,23 +155,23 @@ ALTER TABLE Reclutador ADD COLUMN estado ENUM('Pendiente', 'Aprobado') DEFAULT '
 CREATE TABLE Vacante (
     id_vacante INT AUTO_INCREMENT PRIMARY KEY,
     id_reclutador INT NOT NULL,
-    --titulo VARCHAR(255) NOT NULL,
-    --descripcion VARCHAR(4000) NOT NULL,
+    titulo VARCHAR(255) NOT NULL,
+    descripcion VARCHAR(4000) NOT NULL,
     beneficios VARCHAR(1500),
-    duracion VARCHAR(12) NOT NULL,
     fecha_inicio DATE,
     fecha_fin DATE,
-    --monto_beca DECIMAL(10,2) NOT NULL,
+    duracion VARCHAR(12) NOT NULL,
+    monto_beca DECIMAL(10,2) NOT NULL,
     horario VARCHAR(100) NOT NULL,
-    --ubicacion VARCHAR(400) NOT NULL,
+    ubicacion VARCHAR(400) NOT NULL,
     ciudad VARCHAR(50) NOT NULL,
     entidad VARCHAR(50) NOT NULL,
     codigo_postal MEDIUMINT,
     modalidad ENUM('Presencial', 'Remoto', 'Híbrido') NOT NULL,
     fecha_limite DATE,
     fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    --escolaridad VARCHAR(50) NOT NULL, ##semestre minimo, ej. Minimo 6, 7 semestre
-    --conocimientos VARCHAR(1000) NOT NULL, ##habilidades tecnicas
+    escolaridad VARCHAR(50) NOT NULL, ##semestre minimo, ej. Minimo 6, 7 semestre
+    conocimientos VARCHAR(1000) NOT NULL, ##habilidades tecnicas
     observaciones VARCHAR(400),
     numero_vacantes INT NOT NULL,
     estado ENUM('Activa', 'Expirada') DEFAULT 'Activa',

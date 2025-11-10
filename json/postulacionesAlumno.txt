@@ -28,11 +28,13 @@
 //RES 200
 {
     "id_vacante": 1,
+    "id_reclutador": 3,
     "titulo": "Desarrollador Full Stack",
     "descripcion": "Buscamos un desarrollador Full Stack con experiencia en React y Node.js.",
     "beneficios": "Seguro médico, horario flexible, trabajo remoto parcial.",
     "fecha_inicio": "2024-03-01T09:00:00Z",
     "fecha_fin": "2024-09-01T18:00:00Z",
+    "duracion": "6 meses",
     "monto_beca": 1500.00,
     "horario": "Lunes a Viernes, 9:00 AM - 6:00 PM",
     "ubicacion": "AV. Siempre Viva 123",
@@ -44,6 +46,15 @@
     "fecha_publicacion": "2024-01-15T10:00:00Z",
     "escolaridad": "Minimo 6 semestre de Ingeniería en Sistemas",
     "conocimientos": "Inglés Intermedio. Excel Avanzado Esencial un uso avanzado de Excel y análisis numérico. De preferencia manejo de SAP-CRM y PowerBi", //aqui dejar como texto para que puedan ser mas especificos
+    "observaciones": "Se valorará experiencia previa en proyectos similares.",
+    "numero_vacantes": 3,
+    "estado": "Activa",
+    "empresa": {
+        "id_empresa": 5,
+        "nombre_empresa": "Tech Solutions S.A.",
+        "logo_empresa": "https://example.com/logos/tech_solutions.png",
+        "sitio_web": "https://techsolutions.com"
+    },
     "habilidades": //solo blandas, pues son mas genericas
         [
             {
@@ -59,21 +70,15 @@
                 "habilidad": "HTML/CSS"
             }
         ],
-    "observaciones": "Se valorará experiencia previa en proyectos similares.",
-    "numero_vacantes": 3,
-    "estado": "Activa",
-    "empresa": {
-        "id_empresa": 5,
-        "nombre_empresa": "Tech Solutions S.A.",
-        "logo_empresa": "https://example.com/logos/tech_solutions.png"
-    },
     "roles_relacionados": //(roles de trabajo relacionados a las actividades realizadas en la vacante)
         [
             {
-                "id_roltrabajo": 1
+                "id_roltrabajo": 1,
+                "nombre": "Desarrollador de Software"
             },
             {
-                "id_roltrabajo": 2
+                "id_roltrabajo": 2,
+                "nombre": "Analista de Sistemas"
             }
         ]
 }

@@ -1,4 +1,6 @@
 import {pool} from '../db/db.js';
+import Vacante from './vacante.models.js';
+
 export default class Reclutador {
   constructor(id_reclutador, nombre, correo, empresa, url_logo_empresa, estado, id_empresa, id_usuario) {
     this.id_reclutador = id_reclutador;
@@ -167,6 +169,74 @@ export default class Reclutador {
         connection.release();
     } 
   }  
+
+  static async obtenerVacantesPublicadas(id_reclutador) {
+    const [rows] = await pool.query(
+      `SELECT V.id_vacante, R.id_reclutador, V.titulo, V.fecha_publicacion, V.fecha_limite, V.numero_vacantes, V.ciudad, V.entidad, V.modalidad, V.estado, COUNT(P.id_postulacion) AS postulaciones
+       FROM Vacante V 
+       JOIN Reclutador R ON V.id_reclutador = R.id_reclutador
+       LEFT JOIN Postulacion P ON V.id_vacante = P.id_vacante
+       WHERE R.id_reclutador = ?
+       GROUP BY V.id_vacante`,
+      [id_reclutador]
+    );
+    if (!rows.length) return null;
+    return rows.map(row => {
+      return {
+        id_vacante: row.id_vacante,
+        id_reclutador: row.id_reclutador,
+        titulo: row.titulo,
+        fecha_publicacion: row.fecha_publicacion,
+        fecha_limite: row.fecha_limite,
+        numero_vacantes: row.numero_vacantes,
+        ciudad: row.ciudad,
+        entidad: row.entidad,
+        modalidad: row.modalidad,
+        estado: row.estado,
+        postulaciones: row.postulaciones
+      };
+    });
+  }
+
+  static async obtenerPostulacionesVacante(id_vacante) {
+    try {
+      const vacanteData = await Vacante.obtenerDetallesVacante(id_vacante);
+      if (!vacanteData) {
+        return null;
+      }
+      const [postulacionesRows] = await pool.query(`SELECT P.id_postulacion, A.id_alumno, U.nombre, U.correo, U.url_foto_perfil, P.estatus
+        FROM Postulacion P
+        JOIN AlumnoSolicitante A ON P.id_alumno = A.id_alumno
+        JOIN Usuario U ON A.id_usuario = U.id
+        WHERE P.id_vacante = ?`, [id_vacante]);
+      if (!postulacionesRows.length) {
+        const vacanteConPostulaciones = {vacante:{...vacanteData}, postulaciones: []};
+        return vacanteConPostulaciones;
+      }
+      const postulaciones = postulacionesRows.map(row => ({
+        id_postulacion: row.id_postulacion,
+        id_alumno: row.id_alumno,
+        nombre: row.nombre,
+        correo: row.correo,
+        url_foto_perfil: row.url_foto_perfil,
+        estatus: row.estatus
+      }));
+
+      const vacanteConPostulaciones = {vacante:{...vacanteData}, postulaciones: postulaciones};
+      return vacanteConPostulaciones;
+    }catch(error){
+      console.log(error.message);
+      throw error;
+    }
+  }
+
+  static async cambiarEstadoVacante(id_vacante, estado) {
+    if (!['Activa', 'Expirada'].includes(estado)) {
+      throw new Error('Estado inválido');
+    }
+    const [resultado] = await pool.query('UPDATE Vacante SET estado = ? WHERE id_vacante = ?', [estado, id_vacante]);
+    return resultado.affectedRows;
+  }
 
   static async borrarVacante(id_vacante) {
     const [resultado] = await pool.query('DELETE FROM Vacante WHERE id_vacante = ?', [id_vacante]);
