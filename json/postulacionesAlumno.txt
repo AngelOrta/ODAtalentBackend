@@ -24,7 +24,7 @@
 
 //VER TODAS LAS PORTULACIONES A VACANTES CON ESTADO ACTIVA|EXPIRADA
 //GET REQ
-/vacantes/postulaciones?id_alumno=5&estado=Activa
+/alumnos/postulaciones?id_alumno=5&estado=Activa
 //RES 200
 [
     {

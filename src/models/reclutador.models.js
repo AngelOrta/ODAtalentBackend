@@ -242,4 +242,39 @@ export default class Reclutador {
     const [resultado] = await pool.query('DELETE FROM Vacante WHERE id_vacante = ?', [id_vacante]);
     return resultado.affectedRows;
   }
+
+  static async obtenerPerfilReclutador(id_reclutador) {
+    const [rows] = await pool.query(
+      `SELECT R.id_reclutador, R.id_empresa, R.id_usuario, U.nombre, U.correo, U.url_foto_perfil, E.nombre AS nombre_empresa, E.url_logo AS url_logo_empresa, E.descripcion AS descripcion_empresa
+      FROM Reclutador R
+      JOIN Usuario U ON R.id_usuario = U.id
+      JOIN Empresa E ON R.id_empresa = E.id_empresa
+      WHERE R.id_reclutador = ?`, [id_reclutador]);
+    if (!rows.length) return null;
+    const rowsjson = {
+        id_reclutador: rows[0].id_reclutador,
+        id_empresa: rows[0].id_empresa,
+        id_usuario: rows[0].id_usuario,
+        nombre: rows[0].nombre,
+        correo: rows[0].correo,
+        url_foto_perfil: rows[0].url_foto_perfil};
+    rowsjson.empresa = {
+        id_empresa: rows[0].id_empresa,
+        nombre_empresa: rows[0].nombre_empresa,
+        url_logo_empresa: rows[0].url_logo_empresa,
+        descripcion_empresa: rows[0].descripcion_empresa
+    };
+    return rowsjson;
+  }
+
+  static async actualizarFotoPerfil(id_reclutador, url_foto_perfil) {
+    const [resultado] = await pool.query(
+      `UPDATE Usuario U
+       JOIN Reclutador R ON U.id = R.id_usuario
+       SET U.url_foto_perfil = ?
+       WHERE R.id_reclutador = ?`,
+      [url_foto_perfil, id_reclutador]
+    );
+    return resultado.affectedRows;
+  }
 }

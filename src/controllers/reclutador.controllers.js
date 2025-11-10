@@ -106,4 +106,39 @@ export default class ReclutadorController {
             res.status(500).json({ message: error.message });
         }
     }
+
+    static async obtenerPerfilReclutador(req, res) {
+        const { id_reclutador } = req.query;
+        try {
+            if (!id_reclutador) {
+                return res.status(400).json({ message: 'Falta el id_reclutador' });
+            }
+            const perfil = await Reclutador.obtenerPerfilReclutador(id_reclutador);
+            if (!perfil) {
+                return res.status(404).json({ message: 'Reclutador no encontrado' });
+            }
+            res.status(200).json(perfil);
+        } catch (error) {
+            res.status(500).json({ message: "Error al cargar el perfil: "+error.message });
+        }
+    }
+
+    static async actualizarFotoPerfil(req, res) {
+        const { id_reclutador, url_foto_perfil } = req.body;
+        
+        try {
+            if (!id_reclutador || !url_foto_perfil) {
+                return res.status(400).json({ message: 'Faltan campos obligatorios' });
+            }else if(!url_foto_perfil.match(/^https?:\/\/.+/)){
+                return res.status(400).json({ message: 'URL de foto de perfil inválida' });
+            }
+            const resultado = await Reclutador.actualizarFotoPerfil(id_reclutador, url_foto_perfil);
+            if (!resultado) {
+                return res.status(404).json({ message: 'Reclutador no encontrado' });
+            }
+            res.status(200).json({ message: 'Foto de perfil guardada correctamente' });
+        } catch (error) {
+            res.status(500).json({ message: 'Error al actualizar la foto de perfil: '+error.message });
+        }   
+    }
 }
