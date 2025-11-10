@@ -22,6 +22,30 @@
 ]
 
 
+//VER TODAS LAS PORTULACIONES A VACANTES CON ESTADO ACTIVA|EXPIRADA
+//GET REQ
+/vacantes/postulaciones?id_alumno=5&estado=Activa
+//RES 200
+[
+    {
+        "id_postulacion": 1,
+        "id_alumno": 5,
+        "id_vacante": 10,
+        "titulo": "Desarrollador Full Stack",
+        "nombre_empresa": "Tech Solutions S.A.",
+        "logo_empresa": "https://example.com/logos/tech_solutions.png",
+        "fecha_publicacion": "2024-01-15T10:00:00Z",
+        "fecha_limite": "2024-02-15T10:00:00Z",
+        "numero_vacantes": 3,
+        "ciudad": "Ciudad",
+        "entidad": "Estado",
+        "modalidad": "Híbrido",
+        "estado": "Activa",
+        "estatus": "En revisión"
+    }
+]
+
+
 //VER DETALLES DE UNA VACANTE ESPECIFICA
 //GET REQ
 /vacantes/detalles?id_vacante=10
@@ -93,4 +117,17 @@
 //RES 201
 {
     "message": "Postulación realizada correctamente"
+}
+
+
+//CANCELAR POSTULACION A UNA VACANTE
+/alumnos/cancelar_postulacion
+//DELETE REQ body
+{
+    "id_alumno": 5,
+    "id_vacante": 10
+}
+//RES 204 (PUEDE LLEGAR SIN MESSAGE)
+{
+    "message": "Postulación cancelada correctamente"
 }

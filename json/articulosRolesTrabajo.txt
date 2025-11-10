@@ -1,6 +1,6 @@
 //VER LISTA DE ROLES DE TRABAJO
 //GET REQ
-/reclutadores/roles_trabajo
+/roles_trabajo/ver
 //RES 200
 [
     {
