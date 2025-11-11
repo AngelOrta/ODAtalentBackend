@@ -13,11 +13,13 @@
         "fecha_nacimiento": "2000-01-15",
         "telefono": "555-1234",
         "ciudad": "Ciudad de México",
-        "estado": "CDMX",
+        "entidad": "CDMX",
         "descripcion": "Estudiante de Ingeniería en Sistemas",
         "url_cv": "http://ejemplo.com/cv/juanperez.pdf",
         "semestre_actual": "6",
         "visualizaciones": 10,
+        "url_foto": "http://ejemplo.com/fotos/juanperez.png",
+        "completado": 1, //0 no, 1 si
         //hasta aqui una consulta 
         "escolaridad":
             //Escolaridad (otra consulta)
@@ -177,7 +179,7 @@
     {
         "id_alumno": 1,
         "id_habilidad": 1,
-        "tipo": "Tecnica"
+        "tipo": "Técnicas" //o Blandas o Idioma
     }
 ]
 //RES 200
@@ -223,11 +225,11 @@
 {
     "id_alumno": 1,
     "ciudad": "Guadalajara",
-    "estado": "Jalisco"
+    "entidad": "Jalisco"
 }
 //RES 200
 {
-    "message": "Ciudad y estado actualizados correctamente"
+    "message": "Ciudad y entidad actualizados correctamente"
 }
 
 //Editar telefono (yo verifico si el perfil esta completo)
