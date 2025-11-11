@@ -1,0 +1,133 @@
+//VER TODAS LAS POSTULACIONES DEL ALUMNO
+//GET REQ
+/alumnos/postulaciones?id_alumno=5
+//RES 200
+[
+    {
+        "id_postulacion": 1,
+        "id_alumno": 5,
+        "id_vacante": 10,
+        "titulo": "Desarrollador Full Stack",
+        "nombre_empresa": "Tech Solutions S.A.",
+        "logo_empresa": "https://example.com/logos/tech_solutions.png",
+        "fecha_publicacion": "2024-01-15T10:00:00Z",
+        "fecha_limite": "2024-02-15T10:00:00Z",
+        "numero_vacantes": 3,
+        "ciudad": "Ciudad",
+        "entidad": "Estado",
+        "modalidad": "Híbrido",
+        "estado": "Activa",
+        "estatus": "En revisión"
+    }
+]
+
+
+//VER TODAS LAS PORTULACIONES A VACANTES CON ESTADO ACTIVA|EXPIRADA
+//GET REQ
+/alumnos/postulaciones?id_alumno=5&estado=Activa
+//RES 200
+[
+    {
+        "id_postulacion": 1,
+        "id_alumno": 5,
+        "id_vacante": 10,
+        "titulo": "Desarrollador Full Stack",
+        "nombre_empresa": "Tech Solutions S.A.",
+        "logo_empresa": "https://example.com/logos/tech_solutions.png",
+        "fecha_publicacion": "2024-01-15T10:00:00Z",
+        "fecha_limite": "2024-02-15T10:00:00Z",
+        "numero_vacantes": 3,
+        "ciudad": "Ciudad",
+        "entidad": "Estado",
+        "modalidad": "Híbrido",
+        "estado": "Activa",
+        "estatus": "En revisión"
+    }
+]
+
+
+//VER DETALLES DE UNA VACANTE ESPECIFICA
+//GET REQ
+/vacantes/detalles?id_vacante=10
+//RES 200
+{
+    "id_vacante": 1,
+    "id_reclutador": 3,
+    "titulo": "Desarrollador Full Stack",
+    "descripcion": "Buscamos un desarrollador Full Stack con experiencia en React y Node.js.",
+    "beneficios": "Seguro médico, horario flexible, trabajo remoto parcial.",
+    "fecha_inicio": "2024-03-01T09:00:00Z",
+    "fecha_fin": "2024-09-01T18:00:00Z",
+    "duracion": "6 meses",
+    "monto_beca": 1500.00,
+    "horario": "Lunes a Viernes, 9:00 AM - 6:00 PM",
+    "ubicacion": "AV. Siempre Viva 123",
+    "ciudad": "Ciudad", //o municipio
+    "entidad": "Estado",
+    "codigo_postal": 12345,
+    "modalidad": "Híbrido",
+    "fecha_limite": "2024-02-15T10:00:00Z",
+    "fecha_publicacion": "2024-01-15T10:00:00Z",
+    "escolaridad": "Minimo 6 semestre de Ingeniería en Sistemas",
+    "conocimientos": "Inglés Intermedio. Excel Avanzado Esencial un uso avanzado de Excel y análisis numérico. De preferencia manejo de SAP-CRM y PowerBi", //aqui dejar como texto para que puedan ser mas especificos
+    "observaciones": "Se valorará experiencia previa en proyectos similares.",
+    "numero_vacantes": 3,
+    "estado": "Activa",
+    "empresa": {
+        "id_empresa": 5,
+        "nombre_empresa": "Tech Solutions S.A.",
+        "logo_empresa": "https://example.com/logos/tech_solutions.png",
+        "sitio_web": "https://techsolutions.com"
+    },
+    "habilidades": //solo blandas, pues son mas genericas
+        [
+            {
+                "id_habilidad": 2,
+                "categoria": "Comunicación",
+                "tipo": "Idioma",
+                "habilidad": "Inglés"
+            },
+            {
+                "id_habilidad": 3,
+                "categoria": "Desarrollo Personal",
+                "tipo": "Blanda",
+                "habilidad": "HTML/CSS"
+            }
+        ],
+    "roles_relacionados": //(roles de trabajo relacionados a las actividades realizadas en la vacante)
+        [
+            {
+                "id_roltrabajo": 1,
+                "nombre": "Desarrollador de Software"
+            },
+            {
+                "id_roltrabajo": 2,
+                "nombre": "Analista de Sistemas"
+            }
+        ]
+}
+
+
+//POSTULARSE A UNA VACANTE (yo verifico si ya esta completo su perfil)
+//POST REQ BODY
+{
+    "id_alumno": 5,
+    "id_vacante": 10
+}
+//RES 201
+{
+    "message": "Postulación realizada correctamente"
+}
+
+
+//CANCELAR POSTULACION A UNA VACANTE
+/alumnos/cancelar_postulacion
+//DELETE REQ body
+{
+    "id_alumno": 5,
+    "id_vacante": 10
+}
+//RES 204 (PUEDE LLEGAR SIN MESSAGE)
+{
+    "message": "Postulación cancelada correctamente"
+}

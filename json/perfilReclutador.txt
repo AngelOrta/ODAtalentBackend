@@ -1,0 +1,36 @@
+//----------------------PERFIL DE RECLUTADOR----------------------//
+//PARA VER PERFIL COMPLETO
+//GET REQ BODY
+/reclutadores/perfil?id_reclutador=1
+//RES 200
+{
+    "id_reclutador": 1,
+    "id_empresa": 2,
+    "id_usuario": 5,
+    "nombre": "Juan Perez",
+    "correo": "juan.perez@empresa.com",
+    "url_foto_perfil": "https://example.com/fotos/juan_perez.png",
+    "empresa":
+        {
+            "id_empresa": 2,
+            "nombre_empresa": "Tech Solutions",
+            "url_logo_empresa": "https://example.com/logos/tech_solutions.png",
+            "descripcion_empresa": "Empresa líder en soluciones tecnológicas innovadoras."
+        }
+}
+
+
+//CAMBIAR FOTO DE PERFIL
+//PUT REQ BODY
+/reclutadores/perfil/actualizar_foto
+{
+    "id_reclutador": 1,
+    "url_foto_perfil": "https://example.com/fotos/juan_perez_nueva.png"
+}
+//RES 200
+{
+    "message": "Foto de perfil guardada correctamente"
+}
+
+
+

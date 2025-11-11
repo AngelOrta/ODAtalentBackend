@@ -1,0 +1,214 @@
+//CREAR EXPERIENCIA DEL ALUMNO (Publicacion)
+//POST REQ BODY
+{
+    "id_alumno": 10,
+    "titulo": "Becario en Desarrollo Web",
+    "contenido": "Participé en el desarrollo de una aplicación web utilizando React y Node.js. Colaboré con un equipo de 5 personas y aprendí sobre metodologías ágiles.", //limite de 5000 caracteres
+    "url_multimedia": "https://example.com/experiencias/desarrollo_web.png", //opcional
+    "roles_relacionados": //(roles de trabajo relacionados a las actividades realizadas en la experiencia)
+        [
+            {
+                "id_roltrabajo": 1
+            },
+            {
+                "id_roltrabajo": 3
+            }
+        ]
+}
+//RES 201
+{
+    "message": "Experiencia creada correctamente"
+}
+
+
+//VER EXPERIENCIAS DE ALUMNOS PUBLICADAS
+//GET REQ
+/experiencias_alumnos?page=1&limit=10
+//RES 200
+{
+    "paginacion": //metadatos de paginacion
+        {
+            "total_experiencias": 25,
+            "total_paginas": 3,
+            "pagina_actual": 1, //page
+            "tamano_pagina": 10 //limit
+        },
+    "experiencias": 
+        [
+            {
+                "id_publicacion": 1,
+                "id_alumno": 10,
+                "nombre": "Ana Gomez",
+                "url_foto_perfil": "https://example.com/fotos/ana_gomez.png",
+                "titulo": "Becario en Desarrollo Web",
+                "contenido": "Participé en el desarrollo de una aplicación web utilizando React y Node.js. Colaboré con un equipo de 5 personas y aprendí sobre metodologías ágiles.",
+                "fecha_publicacion": "2024-01-15T10:00:00Z",
+                "reacciones": 15,
+                "url_multimedia": "https://example.com/experiencias/desarrollo_web.png",
+                "roles_relacionados": 
+                    [
+                        {
+                            "id_roltrabajo": 1,
+                            "nombre": "Desarrollador Frontend"
+                        },
+                        {
+                            "id_roltrabajo": 3,
+                            "nombre": "Diseñador UX/UI"
+                        }
+                    ],
+                "comentarios": 4, //consulta con count
+            }
+        ]
+}
+
+
+
+//BORRAR EXPERIENCIA DEL ALUMNO
+//DELETE REQ
+/experiencias_alumnos/borrar/{id_experiencia}
+//RES 200
+{
+    "message": "Experiencia eliminada correctamente"
+}
+
+
+//REACCIONAR A PUBLICACION DE EXPERIENCIA
+//POST REQ BODY
+{
+    "id_publicacion": 1,
+    "id_alumno": 5 //alumno que reacciona
+}
+//RES 200
+{
+    "message": "Reacción agregada correctamente"
+}
+
+
+//QUITAR REACCION A PUBLICACION DE EXPERIENCIA
+//DELETE REQ
+{
+    "id_publicacion": 1,
+    "id_alumno": 5 //alumno que quita la reaccion
+}
+//RES 200
+{
+    "message": "Reacción eliminada correctamente"
+}
+
+
+//COMENTAR EN PUBLICACION DE EXPERIENCIA
+//POST REQ BODY
+{
+    "id_publicacion": 1,
+    "id_alumno": 5, //alumno que comenta
+    "id_comentario_padre": 3, //opcional, si es respuesta a otro comentario
+    "comentario": "¡Excelente experiencia! Me encantaría saber más sobre los desafíos que enfrentaste.", //limite de 280 caracteres
+    "fecha": "2024-02-01T14:30:00Z",
+}
+//RES 201
+{
+    "message": "Comentario agregado correctamente"
+}
+
+
+//BORRAR COMENTARIO EN PUBLICACION DE EXPERIENCIA
+//DELETE REQ
+/experiencias_alumnos/comentarios/borrar/{id_comentario}
+//RES 200
+{
+    "message": "Comentario eliminado correctamente"
+}
+
+
+//VER COMENTARIOS DE PUBLICACION DE EXPERIENCIA
+//GET REQ
+/experiencias_alumnos/comentarios?id_publicacion=1
+//RES 200
+[
+    {
+        "id_comentario": 1,
+        "id_alumno": 5,
+        "nombre": "Carlos Ruiz",
+        "url_foto_perfil": "https://example.com/fotos/carlos_ruiz.png",
+        "comentario": "¡Excelente experiencia! Me encantaría saber más sobre los desafíos que enfrentaste.",
+        "fecha": "2024-02-01T14:30:00Z",
+        "reacciones": 3,
+        "respuestas": true //indica si tiene respuestas para mostrar un boton de ver respuestas
+    }
+]
+
+//VER RESPUESTAS DE UN COMENTARIO EN PUBLICACION DE EXPERIENCIA (el id comentario padre es el del comentario al que se le dieron respuestas)
+//GET REQ
+/experiencias_alumnos/comentarios/respuestas?id_comentario_padre=1
+//RES 200
+[
+    {
+        "id_comentario": 2,
+        "id_alumno": 10,
+        "id_comentario_padre": 1,
+        "nombre": "Ana Gomez",
+        "url_foto_perfil": "https://example.com/fotos/ana_gomez.png",
+        "comentario": "Gracias por tu interés, Carlos. Uno de los mayores desafíos fue coordinar el trabajo en equipo bajo plazos ajustados.",
+        "fecha": "2024-02-01T15:00:00Z",
+        "reacciones": 1,
+        "respuestas": false
+    }
+]
+
+
+//REACCIONAR A COMENTARIO EN PUBLICACION DE EXPERIENCIA (yo verifico si ya reacciono para no duplicar)
+//POST REQ BODY
+{
+    "id_comentario": 1,
+    "id_alumno": 10, //alumno que reacciona
+    "tipo_reaccion": "upvote" //o downvote
+}
+//RES 200
+{
+    "message": "Reacción al comentario agregada correctamente"
+}
+
+
+//QUITAR REACCION A COMENTARIO EN PUBLICACION DE EXPERIENCIA
+//DELETE REQ
+{
+    "id_comentario": 1,
+    "id_alumno": 10, //alumno que quita la reaccion
+}
+//RES 200
+{
+    "message": "Reacción al comentario eliminada correctamente"
+}
+
+
+
+//REPORTAR PUBLICACION DE EXPERIENCIA
+//POST REQ BODY
+{   
+    "id_alumno": 5, //alumno que reporta (si aplica)
+    "id_reclutador": null, //reclutador que reporta (si aplica)
+    "id_contenido": 1,  //id de la publicacion, comentario o vacante
+    "tipo_contenido": "Publicacion", //Publicacion, Comentario o Vacante
+    "razon": "Contenido inapropiado", //Contenido inapropiado, Sin vacantes, Otro
+    "descripcion": "La publicación contiene lenguaje ofensivo." //opcional
+}
+//RES 201
+{
+    "message": "Reporte enviado correctamente"
+}
+
+
+//REPORTAR COMENTARIO EN PUBLICACION DE EXPERIENCIA
+//POST REQ BODY
+{   
+    "id_alumno": 10, //alumno que reporta (si aplica)
+    "id_reclutador": null, //reclutador que reporta (si aplica)
+    "id_contenido": 2,  //id de la publicacion, comentario o vacante
+    "tipo_contenido": "Comentario", //Publicacion, Comentario o Vacante
+    "razon": "Spam", //Spam, Ofensivo, Otro
+    "descripcion": "El comentario es irrelevante para la discusión." //opcional
+}
+//RES 201
+{
+    "message": "Reporte enviado correctamente"
+}

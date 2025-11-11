@@ -1,0 +1,43 @@
+//VER LISTA DE ALUMNOS RECLUTADOS
+//GET REQ
+/reclutadores/alumnos_reclutados?id_reclutador=2
+//RES 200
+[
+    {
+        "id_usuario": 5,
+        "id_alumno": 1,
+        "id_postulacion": 10,
+        "id_vacante": 3,
+        "nombre": "Juan Pérez",
+        "semestre_actual": 6,
+        "habilidades": [
+            {
+                "id_habilidad": 1,
+                "categoria": "Comunicación",
+                "tipo": "Blanda",
+                "habilidad": "Trabajo en equipo"
+            },
+            {
+                "id_habilidad": 2,
+                "categoria": "Otra Categoría",
+                "tipo": "Técnica",
+                "habilidad": "Programación en Python"
+            }
+        ],
+        "url_foto_perfil": "https://example.com/perfiles/juanperez.jpg",
+        "estatus": "Reclutado",
+        "nombre_vacante": "Desarrollador Junior", //en la que esta reclutado
+    }
+]
+
+
+//ACTUALIZAR ESTATUS DE POSTULACION A COMPLETADO CUANDO PASE EL TIEMPO DE DURACION DE LA VACANTE
+//PUT REQ BODY
+{
+    "id_postulacion": 10,
+    "estatus": "Completado"
+}
+//RES 200
+{
+    "message": "Estatus de la postulación actualizado a Completado"
+}

@@ -1,0 +1,509 @@
+//----------------------PERFIL DE ALUMNO----------------------//
+//PARA VER PERFIL COMPLETO
+//GET REQ BODY
+/alumnos/perfil?id_alumno=1
+//RES 200
+//Datos generales
+[
+    {
+        "id_alumno": 1,
+        "id_usuario": 2,
+        "nombre": "Juan Pérez",
+        "correo": "correo@dom.com",
+        "fecha_nacimiento": "2000-01-15",
+        "telefono": "555-1234",
+        "ciudad": "Ciudad de México",
+        "entidad": "CDMX",
+        "descripcion": "Estudiante de Ingeniería en Sistemas",
+        "url_cv": "http://ejemplo.com/cv/juanperez.pdf",
+        "semestre_actual": "6",
+        "visualizaciones": 10,
+        "url_foto": "http://ejemplo.com/fotos/juanperez.png",
+        "completado": 1, //0 no, 1 si
+        //hasta aqui una consulta 
+        "escolaridad":
+            //Escolaridad (otra consulta)
+            [
+                {
+                    "id_escolaridad": 1,
+                    "id_alumno": 1,
+                    "nivel": "Preparatoria",
+                    "institucion": "Universidad Nacional",
+                    "carrera": "Ingeniería en Sistemas",
+                    "plantel": "Plantel Central",
+                    "nota": "Titulado",
+                    "fecha_inicio": "2018-08-01",
+                    "fecha_fin": "2022-06-30"
+                    
+                }
+            ],
+        "experiencia_laboral":
+        //Experiencia laboral (otra consulta)
+            [
+                {
+                    "id_alumno": 1,
+                    "id_experiencia": 1,
+                    "cargo": "Desarrollador Junior",
+                    "empresa": "Tech Solutions",
+                    "fecha_inicio": "2022-07-01",
+                    "fecha_fin": "2023-12-31",
+                    "descripcion": "Desarrollo de aplicaciones web",
+                    "habilidades_desarrolladas": 
+                    //Habilidades relacionadas a una experiencia laboral (otra consulta con join)
+                        [
+                            {
+                                "id_experiencia": 1,
+                                "id_habilidad": 1,
+                                "categoria": "Pensamiento y Resolución",
+                                "tipo": "Tecnica",
+                                "habilidad": "JavaScript"
+                            },
+                            {
+                                "id_experiencia": 1,
+                                "id_habilidad": 2,
+                                "categoria": "Comunicación",
+                                "tipo": "Idioma",
+                                "habilidad": "Inglés"
+                            }
+                        ]
+                }
+            ],
+        "urls_externas":
+        //URLs externas (otra consulta)
+            [
+                {
+                    "id_alumno": 1,
+                    "id_url": 1,
+                    "tipo": "LinkedIn",
+                    "url": "http://linkedin.com/in/juanperez"
+                }
+            ],
+        "cursos":
+        //Cursos (otra consulta)
+            [
+                {
+                    "id_alumno": 1,
+                    "id_curso": 1,
+                    "nombre_curso": "Desarrollo Web",
+                    "institucion": "Coursera",
+                    "fecha_inicio": "2021-05-01",
+                    "fecha_fin": "2021-08-01",
+                }
+            ],
+        "certificados":
+        //Certificados (otra consulta)
+            [
+                {
+                    "id_alumno": 1,
+                    "id_certificado": 1,
+                    "nombre": "Certificación en JavaScript",
+                    "institucion": "W3Schools",
+                    "fecha_expedicion": "2021-09-15",
+                    "fecha_caducidad": "2024-09-15",
+                    "id_credencial": "JS-12345",
+                    "url_certificado": "http://ejemplo.com/certificados/js.pdf",
+                    "habilidades_desarrolladas":
+                    //Habilidades relacionadas a un certificado (otra consulta con join)
+                        [
+                            {
+                                "id_certificado": 1,
+                                "id_habilidad": 3,
+                                "categoria": "Desarrollo Personal",
+                                "tipo": "Tecnica",
+                                "habilidad": "HTML/CSS"
+                            }
+                        ]
+                }
+            ],
+        "habilidades":
+        //Habilidades del alumno (otra consulta con join)
+            [
+                {
+                    "id_alumno": 1,
+                    "id_habilidad": 1,
+                    "categoria": "Pensamiento y Resolución",
+                    "tipo": "Tecnica",
+                    "habilidad": "JavaScript"
+                },
+                {
+                    "id_alumno": 1,
+                    "id_habilidad": 2,
+                    "categoria": "Comunicación",
+                    "tipo": "Idioma",
+                    "habilidad": "Inglés"
+                },
+                {
+                    "id_alumno": 1,
+                    "id_habilidad": 3,
+                    "categoria": "Desarrollo Personal",
+                    "tipo": "Tecnica",
+                    "habilidad": "HTML/CSS"
+                }
+            ]
+    }
+]
+
+//CAMBIAR FOTO DE PERFIL
+//PUT REQ BODY
+/usuarios/perfil/actualizar_foto
+{
+    "id": 1,
+    "url_foto": "https://example.com/fotos/juan_perez_nueva.png"
+}
+//RES 200
+{
+    "message": "Foto de perfil actualizada correctamente"
+}
+
+//Para ver habilidades disponibles para agregar
+//GET REQ
+/habilidades/disponibles
+//RES 200
+[
+    {
+        "id_habilidad": 4,
+        "categoria": "Liderazgo",
+        "tipo": "Blanda",
+        "habilidad": "Gestión de Equipos"
+    },
+    {
+        "id_habilidad": 5,
+        "categoria": "Creatividad",
+        "tipo": "Blanda",
+        "habilidad": "Pensamiento Creativo"
+    }
+]
+//PARA EDITAR HABILIDADES (enviar todas las de un tipo) (yo verifico si el perfil esta completo)
+//PUT REQ BODY (yo elimino todas (las de ese tipo) y agrego las nuevas)
+[
+    {
+        "id_alumno": 1,
+        "id_habilidad": 1,
+        "tipo": "Técnicas" //o Blandas o Idioma
+    }
+]
+//RES 200
+{
+    "message": "Habilidades actualizadas correctamente"
+}
+
+//EDITAR BIOGRAFIA  (yo verifico si el perfil esta completo)
+//PUT REQ BODY
+{
+    "id_alumno": 1,
+    "descripcion": "Nueva biografía del alumno"
+}
+//RES 200
+{
+    "message": "Biografía actualizada correctamente"
+}
+
+//SUBIR CV
+//PUT REQ BODY
+{
+    "id_alumno": 1,
+    "url_cv": "http://ejemplo.com/cv/nuevo_juanperez.pdf"
+}
+//RES 200
+{
+    "message": "CV actualizado correctamente"
+}
+
+//EDITAR SEMESTRE ACTUAL (yo verifico si el perfil esta completo)
+//PUT REQ BODY
+{
+    "id_alumno": 1,
+    "semestre_actual": "7"
+}
+//RES 200
+{
+    "message": "Semestre actual actualizado correctamente"
+}
+
+//Editar ciudad y estado    (yo verifico si el perfil esta completo)
+//PUT REQ BODY
+{
+    "id_alumno": 1,
+    "ciudad": "Guadalajara",
+    "entidad": "Jalisco"
+}
+//RES 200
+{
+    "message": "Ciudad y entidad actualizados correctamente"
+}
+
+//Editar telefono (yo verifico si el perfil esta completo)
+//PUT REQ BODY
+{
+    "id_alumno": 1,
+    "telefono": "555-5678"
+}
+//RES 200
+{
+    "message": "Teléfono actualizado correctamente"
+}
+
+//Editar fecha de nacimiento
+//PUT REQ BODY
+{
+    "id_alumno": 1,
+    "fecha_nacimiento": "1999-12-31"
+}
+//RES 200
+{
+    "message": "Fecha de nacimiento actualizada correctamente"
+}
+
+//AGREGAR ESCOLARIDAD (una por una)
+//POST REQ BODY
+{
+    "id_alumno": 1,
+    "nivel": "Maestría",
+    "institucion": "Instituto Tecnológico de Estudios Superiores de Monterrey",
+    "carrera": "Ciencias de la Computación",
+    "plantel": "Campus Monterrey",
+    "nota": "Cursando",
+    "fecha_inicio": "2023-08-01",
+    "fecha_fin": "2025-06-30"
+}
+//RES 200
+{
+    "message": "Escolaridad agregada correctamente"
+}
+
+//Editar escolaridad (una por una)
+//PUT REQ BODY
+
+{
+    "id_escolaridad": 1,
+    "id_alumno": 1,
+    "nivel": "Licenciatura",
+    "institucion": "Universidad Nacional Autónoma de México",
+    "carrera": "Ingeniería en Sistemas Computacionales",
+    "plantel": "Plantel Norte",
+    "nota": "Cursando",
+    "fecha_inicio": "2018-08-01",
+    "fecha_fin": "2023-06-30"
+}
+//RES 200
+{
+    "message": "Escolaridad actualizada correctamente"
+}
+
+//ELIMINAR ESCOLARIDAD (una por una)
+//DELETE REQ BODY
+{
+    "id_escolaridad": 1,
+    "id_alumno": 1
+}
+//RES 200
+{
+    "message": "Escolaridad eliminada correctamente"
+}
+
+//AGREGAR URL EXTERNA
+//POST REQ BODY
+{
+    "id_alumno": 1,
+    "url_externa": "http://ejemplo.com/perfil/juanperez",
+    "tipo": "Blog"
+}
+//RES 200
+{
+    "message": "URL externa agregada correctamente"
+}
+
+//EDITAR URL EXTERNA
+//PUT REQ BODY
+{
+    "id_url": 1,
+    "id_alumno": 1,
+    "url_externa": "http://ejemplo.com/perfil/juanperez-updated",
+    "tipo": "Portfolio"
+}
+//RES 200
+{
+    "message": "URL externa actualizada correctamente"
+}
+
+//ELIMINAR URL EXTERNA
+//DELETE REQ BODY
+{
+    "id_url": 1,
+    "id_alumno": 1
+}
+//RES 200
+{
+    "message": "URL externa eliminada correctamente"
+}
+
+//AGREGAR CURSO
+//POST REQ BODY
+{
+    "id_alumno": 1,
+    "nombre": "Introducción a Python",
+    "institucion": "edX",
+    "fecha_inicio": "2022-01-15",
+    "fecha_fin": "2022-04-15"
+}
+//RES 200
+{
+    "message": "Curso agregado correctamente"
+}
+
+//EDITAR CURSO
+//PUT REQ BODY
+{
+    "id_curso": 1,
+    "id_alumno": 1,
+    "nombre": "Introducción a Python - Actualizado",
+    "institucion": "edX",
+    "fecha_inicio": "2022-01-15",
+    "fecha_fin": "2022-05-15"
+}
+//RES 200
+{
+    "message": "Curso actualizado correctamente"
+}
+
+//ELIMINAR CURSO
+//DELETE REQ BODY
+{
+    "id_curso": 1,
+    "id_alumno": 1
+}
+//RES 200
+{
+    "message": "Curso eliminado correctamente"
+}
+
+//AGREGAR CERTIFICADO
+//POST REQ BODY
+{
+    "id_alumno": 1,
+    "nombre": "Certificación en Python",
+    "institucion": "edX",
+    "fecha_expedicion": "2022-05-20",
+    "fecha_caducidad": "2025-05-20",
+    "id_credencial": "PY-67890",
+    "url_certificado": "http://ejemplo.com/certificados/python.pdf",
+    "habilidades_desarrolladas": //otra consulta
+        [
+            {
+                "id_habilidad": 4
+            }
+        ]
+}
+//RES 200
+{
+    "message": "Certificado agregado correctamente"
+}
+
+//EDITAR CERTIFICADO
+//PUT REQ BODY  
+{
+    "id_certificado": 1,
+    "id_alumno": 1,
+    "nombre": "Certificación en Python - Actualizado",
+    "institucion": "edX",
+    "fecha_expedicion": "2022-05-20",
+    "fecha_caducidad": "2025-06-20",
+    "id_credencial": "PY-67890",
+    "url_certificado": "http://ejemplo.com/certificados/python-updated.pdf",
+    "habilidades_desarrolladas": //borrar todas y agregar las nuevas
+        [
+            {
+                "id_habilidad": 4
+            },
+            {
+                "id_habilidad": 5
+            }
+        ]
+}
+//RES 200
+{
+    "message": "Certificado actualizado correctamente"
+}
+
+//ELIMINAR CERTIFICADO
+//DELETE REQ BODY
+{
+    "id_certificado": 1,
+    "id_alumno": 1
+}
+//RES 200
+{
+    "message": "Certificado eliminado correctamente"
+}
+
+
+//Eliminar cuenta de alumno
+//DELETE REQ BODY (en consulta se anonimizan los datos)
+{
+    "id_alumno": 1
+}
+//RES 200
+{
+    "message": "Cuenta de alumno eliminada correctamente"
+}
+
+
+
+//-------------------------------------------
+
+
+//CUANDO EL RECLUTADOR VE EL PERFIL DEL ALUMNO
+//GET REQ
+/alumnos/perfil/vista_reclutador?id_alumno=1
+//se incrementa el contador de visualizaciones en 1
+//RES es la misma que la de perfil completo 
+
+//CUANDO OTRO ALUMNO VE EL PERFIL DEL ALUMNO
+//GET REQ
+/alumnos/perfil/publico?id_alumno=1
+//se incrementa el contador de visualizaciones en 1
+//RES es la misma que la de perfil completo
+//pero sin correo, telefono, fecha de nacimiento y visualizaciones
+
+
+//MOSTRAR LAS VACANTES QUE EL RECLUTADOR PUBLICO A LAS CUALES EL ALUMNO HA POSTULADO (considerando el caso en el que un alumno se postulo a varias vacantes de un mismo reclutador)
+//GET REQ
+/reclutadores/postulaciones_revision?id_alumno=1&id_reclutador=2
+//RES 200 (en la consulta where estatus = En revision)
+[
+    {
+        "id_postulacion": 1,
+        "id_alumno": 1,
+        "id_vacante": 1,
+        "id_reclutador": 2,
+        "titulo": "Desarrollador Web Junior",
+        "fecha_publicacion": "2023-01-15",
+        "fecha_limite": "2023-02-15",
+        "estatus": "En revisión"
+    }
+]
+
+
+//SI CUMPLE CON LOS REQUISITOS DE UNA VACANTE
+//PUT REQ BODY
+{
+    "id_postulacion": 1,
+    "id_vacante": 1,    //util para restar el numero de vacantes disponibles en la vacante y asi evitar sobre postulaciones
+    "estatus": "Reclutado"
+}
+//RES 200
+{
+    "message": "Estatus de la postulacion actualizado a Reclutado"
+}
+
+
+//SI NO CUMPLE CON LOS REQUISITOS DE UNA VACANTE
+//PUT REQ BODY
+{
+    "id_postulacion": 1,
+    "estatus": "Rechazado"
+}
+//RES 200
+{
+    "message": "Estatus de la postulacion actualizado a Rechazado"
+}

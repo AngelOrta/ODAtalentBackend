@@ -1,0 +1,124 @@
+//OBTENER REPORTES EN ESPERA (pendiente = En espera para fines practicos)
+//GET REQ
+/reportes/ver_reportes?estado=pendiente&page=1&limit=10
+//RES 200
+{
+    "paginacion": {
+        "total_reportes": 100,
+        "total_paginas": 10,
+        "pagina_actual": 1,
+        "tamano_pagina": 10
+    },
+    "reportes": 
+        [
+            {
+                "id_reporte": 1,
+                "id_contenido": 12,
+                "tipo_contenido": "Publicacion", //desde el front gestionar a donde redireccionar cuando se de clic
+                "razon": "Contenido inapropiado",
+                "descripcion": "La publicacion contiene lenguaje ofensivo.",
+                "fecha_reporte": "2024-02-01T14:30:00Z",
+                "estado": "En espera",
+            }
+        ]
+}
+
+
+//Para ver los reportes resueltos (tambien se puede usar el mismo endpoint y cambiar el estado a 'resuelto')
+
+
+//VER UNA PUBLICACION EN ESPECIFICO
+//GET REQ
+/experiencias_alumnos/ver_experiencia/{id_publicacion}
+//RES 200
+{
+    "id_publicacion": 1,
+    "id_alumno": 10,
+    "nombre": "Ana Gomez",
+    "url_foto_perfil": "https://example.com/fotos/ana_gomez.png",
+    "titulo": "Becario en Desarrollo Web",
+    "contenido": "Participé en el desarrollo de una aplicación web utilizando React y Node.js. Colaboré con un equipo de 5 personas y aprendí sobre metodologías ágiles.",
+    "fecha_publicacion": "2024-01-15T10:00:00Z",
+    "reacciones": 15,
+    "url_multimedia": "https://example.com/experiencias/desarrollo_web.png",
+    "roles_relacionados": 
+        [
+            {
+                "id_roltrabajo": 1,
+                "nombre": "Desarrollador Frontend"
+            },
+            {
+                "id_roltrabajo": 3,
+                "nombre": "Diseñador UX/UI"
+            }
+        ],
+    "comentarios": 4, //consulta con count
+}
+
+
+//VER UN COMENTARIO EN ESPECIFICO
+//GET REQ
+/comentarios/ver_comentario/{id_comentario}
+//RES 200
+{
+    "id_comentario": 1,
+    "id_alumno": 5,
+    "nombre": "Carlos Ruiz",
+    "url_foto_perfil": "https://example.com/fotos/carlos_ruiz.png",
+    "comentario": "¡Excelente experiencia! Me encantaría saber más sobre los desafíos que enfrentaste.",
+    "fecha": "2024-02-01T14:30:00Z",
+    "reacciones": 3,
+    "respuestas": true //indica si tiene respuestas para mostrar un boton de ver respuestas
+}
+
+
+//ELIMINAR UNA PUBLICACION REPORTADA
+//DELETE REQ
+{
+    "id_publicacion": 1,
+    "id_reporte": 1
+}
+//RES 200
+{
+    "message": "Publicación eliminada y reporte resuelto correctamente"
+}
+
+
+//ELIMINAR UN COMENTARIO O RESPUESTA REPORTADO
+//DELETE REQ
+{
+    "id_comentario": 1,
+    "id_reporte": 1
+}
+//RES 200
+{
+    "message": "Comentario eliminado y reporte resuelto correctamente"
+}
+
+
+//ELIMINAR UNA VACANTE REPORTADA (antes se verifica y se trata de solucionar con el reclutador)
+//DELETE REQ
+{
+    "id_vacante": 1,
+    "id_reporte": 1
+}
+//RES 200
+{
+    "message": "Vacante eliminada y reporte resuelto correctamente"
+}
+
+
+
+//RECHAZAR UN REPORTE (se cambia estado a Resuelto)
+//PUT REQ
+//despues de revisar el contenido reportado y decidir no eliminarlo
+{
+    "id_reporte": 1,
+    "comentario_admin": "Después de revisar el contenido, no encontramos violaciones a las políticas."
+}
+//RES 200
+{
+    "message": "Reporte resuelto correctamente"
+}
+
+

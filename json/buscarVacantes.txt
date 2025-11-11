@@ -1,0 +1,38 @@
+//OBTENER VACANTES POR QUERY
+//GET REQ
+/vacantes/buscar?query=queryString&FILTROSOPCIONALES&ordenar_por=campo_asc|desc&page=1&limit=10
+//El queryString se busca en el titulo y descripcion de la vacante
+//Si no se incluye queryString, se devuelven todas las vacantes con los filtros aplicados
+//filtros opcionales:
+//ciudad=ciudad
+//entidad=entidad
+//modalidad=presencial|remoto|hibrido
+//roltrabajo=id_roltrabajo1,id_roltrabajo2
+
+//RES 200
+{
+    "paginacion": //metadatos de paginacion
+        {
+            "total_vacantes": 50,
+            "total_paginas": 5,
+            "pagina_actual": 1, //page
+            "tamano_pagina": 10 //limit
+        },
+    "vacantes": 
+        [
+            {
+                "id_vacante": 10,
+                "titulo": "Desarrollador Full Stack",
+                "nombre_empresa": "Tech Solutions S.A.",
+                "logo_empresa": "https://example.com/logos/tech_solutions.png",
+                "fecha_publicacion": "2024-01-15T10:00:00Z",
+                "fecha_limite": "2024-02-15T10:00:00Z",
+                "numero_vacantes": 3,
+                "ciudad": "Ciudad",
+                "entidad": "Estado",
+                "modalidad": "Híbrido",
+                "estado": "Activa",
+                "estatus": "En revisión"
+            }
+        ]
+}
