@@ -407,10 +407,10 @@
     "nombre": "Certificación en Python - Actualizado",
     "institucion": "edX",
     "fecha_expedicion": "2022-05-20",
-    "fecha_caducidad": "2025-06-20",
-    "id_credencial": "PY-67890",
-    "url_certificado": "http://ejemplo.com/certificados/python-updated.pdf",
-    "habilidades_desarrolladas": //borrar todas y agregar las nuevas
+    "fecha_caducidad": "2025-06-20", //opcional
+    "id_credencial": "PY-67890", //opcional
+    "url_certificado": "http://ejemplo.com/certificados/python-updated.pdf", //opcional
+    "habilidades_desarrolladas": //borrar todas y agregar las nuevas //opcional
         [
             {
                 "id_habilidad": 4
@@ -444,7 +444,7 @@
     "empresa": "DataCorp",
     "fecha_inicio": "2023-01-01",
     "fecha_fin": "2023-12-31", //opcional
-    "descripcion": "Análisis de grandes volúmenes de datos",
+    "descripcion": "Análisis de grandes volúmenes de datos", //opcional
     "habilidades_desarrolladas": //Opcional
         [
             {
@@ -467,7 +467,7 @@
     "empresa": "DataCorp",
     "fecha_inicio": "2023-01-01",
     "fecha_fin": "2024-12-31", //opcional
-    "descripcion": "Análisis avanzado de grandes volúmenes de datos",
+    "descripcion": "Análisis avanzado de grandes volúmenes de datos", //opcinal
     "habilidades_desarrolladas": //borrar todas y agregar las nuevas //opcional
         [
             {
