@@ -97,6 +97,21 @@ export default class Alumno {
         }
     }
 
+    //cada que se agrega un certificado o curso, se pueden agregar nuevas habilidades al alumno
+    //asi se puede saber si hay nuevas habilidades del alumno
+    static async actualizarHabilidadesPerfilAlumnoSinTipo(connection,habilidades_desarrolladas, id_alumno) { 
+            //seleccionar las habilidades que ya tiene el alumno
+            const [idsAlumnoHabilidadRows] = await connection.query(`SELECT id_habilidad FROM Alumno_Habilidad WHERE id_alumno = ?`, [id_alumno]);
+            const idsAlumnoHabilidad = new Set(idsAlumnoHabilidadRows.map(row => row.id_habilidad));
+            const nuevasAlumnoHabilidad = habilidades_desarrolladas.filter(row => !idsAlumnoHabilidad.has(row.id_habilidad));
+            if(nuevasAlumnoHabilidad.length > 0){
+                const resultadoNuevoAlumnoHabilidad = await connection.query(`INSERT INTO Alumno_Habilidad (id_alumno, id_habilidad) VALUES ?`, [nuevasAlumnoHabilidad.map(row => [id_alumno, row.id_habilidad])]);
+                return resultadoNuevoAlumnoHabilidad[0].affectedRows > 0;
+            }
+            return false;
+    }
+
+
     static async actualizarDescripcionPerfilAlumno(id_alumno, descripcion) {
         const [result] = await pool.query(`UPDATE AlumnoSolicitante SET descripcion = ? WHERE id_alumno = ?`, [descripcion, id_alumno]);
         if(result.info.includes('Rows matched: 0'))
@@ -142,6 +157,367 @@ export default class Alumno {
         return result.affectedRows > 0;
     }
 
+    static async agregarEscolaridadAlumno(id_alumno, nivel, institucion, carrera, plantel, nota, fecha_inicio, fecha_fin) {
+        try{
+            if(!carrera){
+                const [duplicados]=await pool.query(`SELECT * FROM Escolaridad WHERE id_alumno = ? AND nivel = ? AND institucion = ? AND plantel = ?`, [id_alumno, nivel, institucion, plantel]);
+                if(duplicados.length > 0)
+                    return 'duplicado';
+            }
+            const [insertResult] = await pool.query(`INSERT INTO Escolaridad (id_alumno, nivel, institucion, carrera, plantel, nota, fecha_inicio, fecha_fin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, [id_alumno, nivel, institucion, carrera, plantel, nota, fecha_inicio, fecha_fin]);
+            return insertResult.insertId;
+        }catch(error){
+            console.error('Error al agregar la escolaridad del alumno:', error.sqlMessage);
+            if(error.code === 'ER_NO_REFERENCED_ROW_2' || error.sqlMessage.includes('escolaridad_ibfk_1')){
+                return null;
+            }
+            if(error.code === 'ER_DUP_ENTRY'){
+                return 'duplicado';
+            }
+            throw new Error('Error al agregar la escolaridad del alumno');
+        }
+    }
+
+    static async actualizarEscolaridadAlumno(id_escolaridad,id_alumno, nivel, institucion, carrera, plantel, nota, fecha_inicio, fecha_fin) {
+        try{
+            const [result] = await pool.query(`UPDATE Escolaridad SET nivel = ?, institucion = ?, carrera = ?, plantel = ?, nota = ?, fecha_inicio = ?, fecha_fin = ? WHERE id_escolaridad = ? AND id_alumno = ?`, [nivel, institucion, carrera, plantel, nota, fecha_inicio, fecha_fin, id_escolaridad, id_alumno]);
+            if(result.info.includes('Rows matched: 0'))
+                return null;
+            return result.affectedRows > 0;
+        }   catch(error){
+            console.error('Error al actualizar la escolaridad del alumno:', error.sqlMessage);
+            if(error.code === 'ER_NO_REFERENCED_ROW_2' || error.sqlMessage.includes('escolaridad_ibfk_1')){
+                return null;
+            }
+            if(error.code === 'ER_DUP_ENTRY')
+                return 'duplicado';
+            throw new Error('Error al actualizar la escolaridad del alumno');
+        }
+    }
+
+    static async eliminarEscolaridadAlumno(id_escolaridad, id_alumno) {
+        try{
+            const [result] = await pool.query(`DELETE FROM Escolaridad WHERE id_escolaridad = ? AND id_alumno = ?`, [id_escolaridad, id_alumno]);
+            if(result.info.includes('Rows matched: 0'))
+                return null;
+            return result.affectedRows > 0;
+        }   catch(error){
+            console.error('Error al eliminar la escolaridad del alumno:', error.sqlMessage);
+            throw new Error('Error al eliminar la escolaridad del alumno');
+        }
+    }
+
+    static async agregarUrlExternaAlumno(id_alumno, url, descripcion) {
+        try{
+            const [insertResult] = await pool.query(`INSERT INTO URLExterna (id_alumno, url, tipo) VALUES (?, ?, ?)`, [id_alumno, url, descripcion]);
+            return insertResult.insertId;
+        }catch(error){
+            console.error('Error al agregar la URL externa del alumno:', error.sqlMessage);
+            if(error.code === 'ER_NO_REFERENCED_ROW_2' || error.sqlMessage.includes('urlexterna_ibfk_1')){
+                return null;
+            }
+            if(error.code === 'ER_DUP_ENTRY')
+                return 'duplicado';
+            throw new Error('Error al agregar la URL externa del alumno');
+        }
+    }
+
+    static async actualizarUrlExternaAlumno(id_url_externa, id_alumno, url, descripcion) {
+        try{
+            const [result] = await pool.query(`UPDATE URLExterna SET url = ?, tipo = ? WHERE id_url = ? AND id_alumno = ?`, [url, descripcion, id_url_externa, id_alumno]);
+            if(result.info.includes('Rows matched: 0'))
+                return null;
+            return result.affectedRows > 0;
+        }   catch(error){
+            console.error('Error al actualizar la URL externa del alumno:', error.sqlMessage);
+            if(error.code === 'ER_DUP_ENTRY')
+                return 'duplicado';
+            throw new Error('Error al actualizar la URL externa del alumno');
+        }
+    }
+
+    static async eliminarUrlExternaAlumno(id_url_externa, id_alumno) {
+        try{
+            const [result] = await pool.query(`DELETE FROM URLExterna WHERE id_url = ? AND id_alumno = ?`, [id_url_externa, id_alumno]);
+            if(result.info.includes('Rows matched: 0'))
+                return null;
+            return result.affectedRows > 0;
+        }   catch(error){
+            console.error('Error al eliminar la URL externa del alumno:', error.sqlMessage);
+            throw new Error('Error al eliminar la URL externa del alumno');
+        }
+    }
+
+    static async agregarCursoAlumno(id_alumno, nombre, institucion, fecha_inicio, fecha_fin) {
+        try{
+            const [insertResult] = await pool.query(`INSERT INTO Curso (id_alumno, nombre, institucion, fecha_inicio, fecha_fin) VALUES (?, ?, ?, ?, ?)`, [id_alumno, nombre, institucion, fecha_inicio, fecha_fin]);
+            return insertResult.insertId;
+        }catch(error){
+            console.error('Error al agregar el curso del alumno:', error.sqlMessage);
+            if(error.code === 'ER_NO_REFERENCED_ROW_2' || error.sqlMessage.includes('curso_ibfk_1')){
+                return null;
+            }
+            if(error.code === 'ER_DUP_ENTRY'){
+                return 'duplicado';
+            }
+            throw new Error('Error al agregar el curso del alumno');
+        }
+    }
+
+    static async actualizarCursoAlumno(id_curso, id_alumno, nombre, institucion, fecha_inicio, fecha_fin) {
+        try{
+            const [result] = await pool.query(`UPDATE Curso SET nombre = ?, institucion = ?, fecha_inicio = ?, fecha_fin = ? WHERE id_curso = ? AND id_alumno = ?`, [nombre, institucion, fecha_inicio, fecha_fin, id_curso, id_alumno]);
+            if(result.info.includes('Rows matched: 0'))
+                return null;
+            return result.affectedRows > 0;
+        }   catch(error){
+            console.error('Error al actualizar el curso del alumno:', error.sqlMessage);
+            if(error.code === 'ER_DUP_ENTRY'){
+                return 'duplicado';
+            }
+            throw new Error('Error al actualizar el curso del alumno');
+        }
+    }
+
+    static async eliminarCursoAlumno(id_curso, id_alumno) {
+        try{
+            const [result] = await pool.query(`DELETE FROM Curso WHERE id_curso = ? AND id_alumno = ?`, [id_curso, id_alumno]);
+            if(result.info.includes('Rows matched: 0'))
+                return null;
+            return result.affectedRows > 0;
+        }   catch(error){
+            console.error('Error al eliminar el curso del alumno:', error.sqlMessage);
+            throw new Error('Error al eliminar el curso del alumno');
+        }
+    }
+
+    static async agregarCertificadoAlumno(certificadoData) {
+        let connection;
+        try{
+            connection = await pool.getConnection();
+            await connection.beginTransaction();
+
+            const resultadoInsertCertificado = await connection.query(`INSERT INTO Certificado (id_alumno, nombre, institucion, fecha_expedicion, fecha_caducidad, id_credencial, url_certificado) VALUES (?, ?, ?, ?,?,?,?)`, [certificadoData.id_alumno, certificadoData.nombre, certificadoData.institucion, certificadoData.fecha_expedicion, certificadoData.fecha_caducidad, certificadoData.id_credencial, certificadoData.url_certificado]);
+            const id_certificado = resultadoInsertCertificado[0].insertId;
+
+            if(certificadoData.habilidades_desarrolladas && certificadoData.habilidades_desarrolladas.length > 0){
+                const resultadoCursoHabilidades = await connection.query(`INSERT INTO Certificado_Habilidad (id_certificado, id_habilidad) VALUES ?`, [certificadoData.habilidades_desarrolladas.map(habilidad => [id_certificado, habilidad.id_habilidad])]);
+                if(!resultadoCursoHabilidades[0].affectedRows)
+                    throw new Error('Error al asociar las habilidades desarrolladas al certificado');
+                //agregar las nuevas habilidades al perfil del alumno
+                await this.actualizarHabilidadesPerfilAlumnoSinTipo(connection, certificadoData.habilidades_desarrolladas, certificadoData.id_alumno);
+                //console.log('Nuevas habilidades del alumno agregadas al perfil desde certificado:', nh);
+            }
+
+            await connection.commit();
+            return id_certificado;
+        }catch(error){
+            if(connection)
+                await connection.rollback();
+            console.error('Error al agregar el certificado del alumno:', error.sqlMessage);
+            if(error.code === 'ER_NO_REFERENCED_ROW_2' || error.sqlMessage.includes('certificado_habilidad_ibfk_2')){
+                return null;
+            }
+            if(error.code === 'ER_DUP_ENTRY'){
+                return 'duplicado';
+            }
+            throw error;
+        }finally{
+            if(connection)
+                connection.release();
+        }
+    }
+
+    static async actualizarCertificadoAlumno(certificadoData) {
+        let connection;
+        try{
+            connection = await pool.getConnection();
+            await connection.beginTransaction();
+
+            const [result] = await connection.query(`UPDATE Certificado SET nombre = ?, institucion = ?, fecha_expedicion = ?, fecha_caducidad = ?, id_credencial = ?, url_certificado = ? WHERE id_certificado = ? AND id_alumno = ?`, [certificadoData.nombre, certificadoData.institucion, certificadoData.fecha_expedicion, certificadoData.fecha_caducidad, certificadoData.id_credencial, certificadoData.url_certificado, certificadoData.id_certificado, certificadoData.id_alumno]);   
+            if(result.info.includes('Rows matched: 0'))
+                return null;
+
+            await connection.query(`DELETE FROM Certificado_Habilidad WHERE id_certificado = ?`, [certificadoData.id_certificado]);
+            if(certificadoData.habilidades_desarrolladas.length > 0){
+                const resultadoCertiHabilidades = await connection.query(`INSERT INTO Certificado_Habilidad (id_certificado, id_habilidad) VALUES ?`, [certificadoData.habilidades_desarrolladas.map(habilidad => [certificadoData.id_certificado, habilidad.id_habilidad])]);
+                if(!resultadoCertiHabilidades[0].affectedRows)
+                    throw new Error('Error al asociar las habilidades desarrolladas al certificado');
+
+                await this.actualizarHabilidadesPerfilAlumnoSinTipo(connection, certificadoData.habilidades_desarrolladas, certificadoData.id_alumno);
+            }
+
+            await connection.commit();
+            return true;
+        }catch(error){
+            if(connection)
+                await connection.rollback();
+            console.error('Error al actualizar el certificado del alumno:', error.sqlMessage);
+            if(error.code === 'ER_NO_REFERENCED_ROW_2' || error.sqlMessage.includes('certificado_habilidad_ibfk_2')){
+                return null;
+            }
+            throw error;
+        }finally{
+            if(connection)
+                connection.release();
+        }
+    }
+
+    static async eliminarCertificadoAlumno(id_certificado, id_alumno) {
+        try{
+            const [result] = await pool.query(`DELETE FROM Certificado WHERE id_certificado = ? AND id_alumno = ?`, [id_certificado, id_alumno]);
+            if(result.info.includes('Rows matched: 0'))
+                return null;
+            return result.affectedRows > 0;
+        }   catch(error){
+            console.error('Error al eliminar el certificado del alumno:', error.sqlMessage);
+            throw new Error('Error al eliminar el certificado del alumno');
+        }
+    }
+
+    static async agregarExperienciaLaboralAlumno(experienciaData) {
+        let connection;
+        try{
+            connection = await pool.getConnection();
+            await connection.beginTransaction();
+
+            const resultadoInsertExperiencia = await connection.query(`INSERT INTO Experiencia (id_alumno, cargo, empresa, fecha_inicio, fecha_fin, descripcion) VALUES (?, ?, ?, ?,?,?)`, [experienciaData.id_alumno, experienciaData.cargo, experienciaData.empresa, experienciaData.fecha_inicio, experienciaData.fecha_fin, experienciaData.descripcion]);
+            const id_experiencia = resultadoInsertExperiencia[0].insertId;
+
+            if(experienciaData.habilidades_desarrolladas && experienciaData.habilidades_desarrolladas.length > 0){
+                const resultadoExpHabilidades = await connection.query(`INSERT INTO Experiencia_Habilidad (id_experiencia, id_habilidad) VALUES ?`, [experienciaData.habilidades_desarrolladas.map(habilidad => [id_experiencia, habilidad.id_habilidad])]);
+                if(!resultadoExpHabilidades[0].affectedRows)
+                    throw new Error('Error al asociar las habilidades desarrolladas a la experiencia laboral');
+                //agregar las nuevas habilidades al perfil del alumno
+                await this.actualizarHabilidadesPerfilAlumnoSinTipo(connection, experienciaData.habilidades_desarrolladas, experienciaData.id_alumno);
+            }
+
+            await connection.commit();
+            return id_experiencia;
+        }catch(error){
+            if(connection)
+                await connection.rollback();
+            console.error('Error al agregar la experiencia del alumno:', error.sqlMessage);
+            if(error.code === 'ER_NO_REFERENCED_ROW_2'){
+                if(error.sqlMessage.includes('experiencia_ibfk_1'))
+                    return null;
+                if(error.sqlMessage.includes('experiencia_habilidad_ibfk_2'))
+                    return 'noHabilidad';
+            }
+            if(error.code === 'ER_DUP_ENTRY'){
+                if(error.sqlMessage.includes('unique_experiencia_alumno'))
+                    return 'duplicado';
+                if(error.sqlMessage.includes('experiencia_habilidad'))
+                    return 'duplicadoHabilidad';
+            }
+            throw error;
+        }finally{
+            if(connection)
+                connection.release();
+        }
+    }
+
+    static async actualizarExperienciaLaboralAlumno(experienciaData) {
+        let connection;
+        try{
+            connection = await pool.getConnection();
+            await connection.beginTransaction();
+
+            const [result] = await connection.query(`UPDATE Experiencia SET cargo = ?, empresa = ?, fecha_inicio = ?, fecha_fin = ?, descripcion = ? WHERE id_experiencia = ? AND id_alumno = ?`, [experienciaData.cargo, experienciaData.empresa, experienciaData.fecha_inicio, experienciaData.fecha_fin, experienciaData.descripcion, experienciaData.id_experiencia, experienciaData.id_alumno]);   
+            if(result.info.includes('Rows matched: 0'))
+                return null;    
+            await connection.query(`DELETE FROM Experiencia_Habilidad WHERE id_experiencia = ?`, [experienciaData.id_experiencia]);
+            if(experienciaData.habilidades_desarrolladas.length > 0){
+                const resultadoExpHabilidades = await connection.query(`INSERT INTO Experiencia_Habilidad (id_experiencia, id_habilidad) VALUES ?`, [experienciaData.habilidades_desarrolladas.map(habilidad => [experienciaData.id_experiencia, habilidad.id_habilidad])]);
+                if(!resultadoExpHabilidades[0].affectedRows)
+                    throw new Error('Error al asociar las habilidades desarrolladas a la experiencia laboral');
+                await this.actualizarHabilidadesPerfilAlumnoSinTipo(connection, experienciaData.habilidades_desarrolladas, experienciaData.id_alumno);
+            }
+
+            await connection.commit();
+            return true;
+        }catch(error){
+            if(connection)
+                await connection.rollback();
+            console.error('Error al actualizar la experiencia del alumno:', error.sqlMessage);
+            if(error.code === 'ER_NO_REFERENCED_ROW_2'){
+                if(error.sqlMessage.includes('experiencia_habilidad_ibfk_2'))
+                    return 'noHabilidad';
+            }
+            if(error.code === 'ER_DUP_ENTRY'){
+                if(error.sqlMessage.includes('unique_experiencia_alumno'))
+                    return 'duplicado';
+                if(error.sqlMessage.includes('experiencia_habilidad'))
+                    return 'duplicadoHabilidad';
+            }
+            throw error;
+        }finally{
+            if(connection)
+                connection.release();
+        }
+    }
+
+    static async eliminarExperienciaLaboralAlumno(id_experiencia, id_alumno) {
+        try{
+            const [result] = await pool.query(`DELETE FROM Experiencia WHERE id_experiencia = ? AND id_alumno = ?`, [id_experiencia, id_alumno]);
+            if(result.info.includes('Rows matched: 0'))
+                return null;
+            return result.affectedRows > 0;
+        }   catch(error){
+            console.error('Error al eliminar la experiencia del alumno:', error.sqlMessage);
+            throw new Error('Error al eliminar la experiencia del alumno');
+        }
+    }
+    
+    //TODO: eliminarCuentaAlumno
+    static async eliminarCuentaAlumno(id, id_alumno) {
+        console.log(id, id_alumno);
+        let connection;
+        try{
+            connection = await pool.getConnection();
+            await connection.beginTransaction();
+
+            await connection.query(`DELETE FROM URLExterna WHERE id_alumno = ?`, [id_alumno]);
+            const [resAnonUser] = await connection.query(`UPDATE Usuario SET nombre = 'Usuario Anónimo', correo = CONCAT('anon_', id, '@deleted.com'), uid_firebase = NULL, url_foto_perfil = NULL WHERE id = ?`, [id]);
+            if(resAnonUser.info.includes('Rows matched: 0')){
+                return null;
+            }
+            const [resAnonAlumn] =await connection.query(`UPDATE AlumnoSolicitante SET fecha_nacimiento = NULL, descripcion = NULL, url_cv = NULL, telefono = NULL WHERE id_alumno = ?`, [id_alumno]);
+            if(resAnonAlumn.info.includes('Rows matched: 0')){
+                return null;    
+            }
+            await connection.query(`UPDATE Certificado SET id_credencial = NULL, url_certificado = NULL WHERE id_alumno = ?`, [id_alumno]);
+            await connection.query(`DELETE FROM Postulacion WHERE id_alumno = ?`, [id_alumno]);
+            await connection.query(`DELETE FROM Notificacion WHERE id_alumno = ?`, [id_alumno]);
+
+            await connection.commit();
+            return true;
+        }catch(error){
+            console.log(error);
+            if(connection)
+                await connection.rollback();
+            console.error('Error al eliminar la cuenta del alumno:', error.sqlMessage);
+            throw new Error('Error al eliminar la cuenta del alumno');
+        }finally{
+            if(connection)
+                connection.release();   
+        }
+    }
+    
+    static async obtenerPerfilPublicoAlumno(id_alumno, publico) {
+        const [resultVisualizaciones]=await pool.query(`UPDATE AlumnoSolicitante SET visualizaciones = visualizaciones + 1 WHERE id_alumno = ?`, [id_alumno]);
+        if(resultVisualizaciones.info.includes('Rows matched: 0'))
+            return null;
+        const perfil = await this.obtenerPerfilAlumno(id_alumno);
+        if(publico){
+            delete perfil.correo;
+            delete perfil.telefono;
+            delete perfil.fecha_nacimiento;
+        }  
+        delete perfil.visualizaciones;
+        return perfil;
+    }
+
     static async obtenerPostulaciones(id_alumno, estado) {
         if(estado === undefined)
             estado = null;
@@ -179,6 +555,9 @@ export default class Alumno {
         }
         if (postulacionExistenteRows.length) {
             return 'YaPostulado';
+        }
+        if (vacanteRows[0].estado !== 'Activa') {
+            return 'VacanteExpirada';
         }
         const resultadoPerfilCompleto = await this.verificarPerfilCompleto(id_alumno);
         if (!resultadoPerfilCompleto) {

@@ -15,6 +15,9 @@ export default class ReclutadorController {
                 return res.status(400).json({ message: 'Faltan campos obligatorios' });
             }
             const idNuevaVacante = await Reclutador.crearVacante(vacanteData);
+            if (idNuevaVacante === 'duplicada') {
+                return res.status(409).json({ message: 'Ya existe una vacante con los mismos datos, intenta cambiar el nombre' });
+            }
             res.status(201).json({message: 'Vacante creada exitosamente', id_vacante: idNuevaVacante});
         } catch (error) {
             res.status(500).json({ message: error.message });
@@ -73,6 +76,95 @@ export default class ReclutadorController {
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
+    }
+
+    static async obtenerPostulacionesEnRevisionPorIdAlumno(req, res) {
+        const { id_alumno, id_reclutador } = req.query;
+        try {
+            if (!id_alumno || !id_reclutador) {
+                return res.status(400).json({ message: 'Faltan campos obligatorios' });
+            }
+            const postulaciones = await Reclutador.obtenerPostulacionesEnRevisionPorIdAlumno(id_alumno, id_reclutador);
+            if (!postulaciones || postulaciones.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron postulaciones en revisión para el alumno y reclutador proporcionados' });
+            }
+            res.status(200).json(postulaciones);
+        } catch (error) {
+            console.error('Error al obtener postulaciones en revisión:', error.message);
+            res.status(500).json({ message: error.message });
+        }
+    }
+
+    static async reclutarAlumno(req, res) {
+        const { id_postulacion, id_vacante, estatus} = req.body;
+        try {
+            if (!id_postulacion || !id_vacante || !estatus) {
+                return res.status(400).json({ message: 'Faltan campos obligatorios' });
+            }
+            const resultado = await Reclutador.reclutarAlumno(id_postulacion, id_vacante, estatus);
+            if (!resultado) {
+                return res.status(404).json({ message: 'Postulación o vacante no encontrada' });
+            }
+            if (resultado === 'noVacantes') {
+                return res.status(400).json({ message: 'No hay vacantes disponibles para esta vacante' });
+            }
+            res.status(200).json({ message: 'Estatus de la postulacion actualizado a Reclutado' });
+        } catch (error) {
+            console.error('Error al reclutar alumno:', error.message);
+            res.status(500).json({ message: error.message });
+        }
+    }
+
+    static async rechazarPostulacionAlumno(req, res) {
+        const { id_postulacion, estatus} = req.body;
+        try {
+            if (!id_postulacion || !estatus) {
+                return res.status(400).json({ message: 'Faltan campos obligatorios' });
+            }
+            if (estatus !== 'Rechazado') {
+                return res.status(400).json({ message: 'Estatus inválido. Debe ser "Rechazado".' });
+            }
+            const resultado = await Reclutador.rechazarPostulacionAlumno(id_postulacion);
+            if (!resultado) {
+                return res.status(404).json({ message: 'Postulación no encontrada' });
+            }
+            res.status(200).json({ message: 'Estatus de la postulacion actualizado a Rechazado' });
+        } catch (error) {
+            console.error('Error al rechazar postulacion del alumno:', error.message);
+            res.status(500).json({ message: error.message });
+        }
+    }
+
+    static async obtenerAlumnosReclutados(req, res) {
+        const { id_reclutador } = req.query;
+        try {
+            if (!id_reclutador) {
+                return res.status(400).json({ message: 'Falta el id_reclutador' });
+            }
+            const alumnos = await Reclutador.obtenerAlumnosReclutados(id_reclutador);
+            if (!alumnos || alumnos.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron alumnos reclutados' });
+            }
+            res.status(200).json(alumnos);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    }
+
+    static async marcarPostulacionComoCompletada(req, res) {
+        const { id_postulacion, estatus } = req.body;
+        try {
+            if (!id_postulacion || !estatus) {
+                return res.status(400).json({ message: 'Falta el id_postulacion' });
+            }
+            const resultado = await Reclutador.marcarPostulacionComoCompletada(id_postulacion);
+            if (!resultado) {
+                return res.status(404).json({ message: 'Postulación no encontrada' });
+            }
+            res.status(200).json({ message: 'Estatus de la postulación actualizado a Completado' });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }   
     }
 
     static async cambiarEstadoVacante(req, res) {

@@ -258,11 +258,11 @@
 //POST REQ BODY
 {
     "id_alumno": 1,
-    "nivel": "Maestría",
-    "institucion": "Instituto Tecnológico de Estudios Superiores de Monterrey",
-    "carrera": "Ciencias de la Computación",
+    "nivel": "Licenciatura", //'Bachillerato General','Tecnólogo','Bachillerato Tecnológico','Profesional Técnico','Técnico Superior Universitario', 'Licenciatura'
+    "institucion": "Instituto Tecnológico de Estudios Superiores de Monterrey", 
+    "carrera": "Ciencias de la Computación", //opcional
     "plantel": "Campus Monterrey",
-    "nota": "Cursando",
+    "nota": "Cursando", //'Cursando','Titulado', 'Pasante','Egresado','Trunca'
     "fecha_inicio": "2023-08-01",
     "fecha_fin": "2025-06-30"
 }
@@ -296,7 +296,7 @@
     "id_escolaridad": 1,
     "id_alumno": 1
 }
-//RES 200
+//RES 204
 {
     "message": "Escolaridad eliminada correctamente"
 }
@@ -332,7 +332,7 @@
     "id_url": 1,
     "id_alumno": 1
 }
-//RES 200
+//RES 204
 {
     "message": "URL externa eliminada correctamente"
 }
@@ -372,7 +372,7 @@
     "id_curso": 1,
     "id_alumno": 1
 }
-//RES 200
+//RES 204
 {
     "message": "Curso eliminado correctamente"
 }
@@ -384,10 +384,10 @@
     "nombre": "Certificación en Python",
     "institucion": "edX",
     "fecha_expedicion": "2022-05-20",
-    "fecha_caducidad": "2025-05-20",
-    "id_credencial": "PY-67890",
-    "url_certificado": "http://ejemplo.com/certificados/python.pdf",
-    "habilidades_desarrolladas": //otra consulta
+    "fecha_caducidad": "2025-05-20",//opcional
+    "id_credencial": "PY-67890",//opcional
+    "url_certificado": "http://ejemplo.com/certificados/python.pdf", //opcional
+    "habilidades_desarrolladas": //Opcional
         [
             {
                 "id_habilidad": 4
@@ -407,10 +407,10 @@
     "nombre": "Certificación en Python - Actualizado",
     "institucion": "edX",
     "fecha_expedicion": "2022-05-20",
-    "fecha_caducidad": "2025-06-20",
-    "id_credencial": "PY-67890",
-    "url_certificado": "http://ejemplo.com/certificados/python-updated.pdf",
-    "habilidades_desarrolladas": //borrar todas y agregar las nuevas
+    "fecha_caducidad": "2025-06-20", //opcional
+    "id_credencial": "PY-67890", //opcional
+    "url_certificado": "http://ejemplo.com/certificados/python-updated.pdf", //opcional
+    "habilidades_desarrolladas": //borrar todas y agregar las nuevas //opcional
         [
             {
                 "id_habilidad": 4
@@ -431,18 +431,77 @@
     "id_certificado": 1,
     "id_alumno": 1
 }
-//RES 200
+//RES 204
 {
     "message": "Certificado eliminado correctamente"
 }
 
+//AGREGAR EXPERIENCIA LABORAL
+//POST REQ BODY
+{
+    "id_alumno": 1,
+    "cargo": "Analista de Datos",
+    "empresa": "DataCorp",
+    "fecha_inicio": "2023-01-01",
+    "fecha_fin": "2023-12-31", //opcional
+    "descripcion": "Análisis de grandes volúmenes de datos", //opcional
+    "habilidades_desarrolladas": //Opcional
+        [
+            {
+                "id_habilidad": 5
+            }
+        ]
+}
+//RES 200
+{
+    "message": "Experiencia laboral agregada correctamente"
+}
+
+
+//EDITAR EXPERIENCIA LABORAL
+//PUT REQ BODY
+{
+    "id_experiencia": 1,
+    "id_alumno": 1,
+    "cargo": "Analista de Datos Senior",
+    "empresa": "DataCorp",
+    "fecha_inicio": "2023-01-01",
+    "fecha_fin": "2024-12-31", //opcional
+    "descripcion": "Análisis avanzado de grandes volúmenes de datos", //opcinal
+    "habilidades_desarrolladas": //borrar todas y agregar las nuevas //opcional
+        [
+            {
+                "id_habilidad": 4
+            },
+            {
+                "id_habilidad": 5
+            }
+        ]
+}
+//RES 200
+{
+    "message": "Experiencia laboral actualizada correctamente"
+}
+
+
+//ELIMINAR EXPERIENCIA LABORAL
+//DELETE REQ BODY
+{
+    "id_experiencia": 1,
+    "id_alumno": 1
+}
+//RES 204
+{
+    "message": "Experiencia laboral eliminada correctamente"
+}
 
 //Eliminar cuenta de alumno
 //DELETE REQ BODY (en consulta se anonimizan los datos)
 {
+    "id_usuario": 2,
     "id_alumno": 1
 }
-//RES 200
+//RES 204
 {
     "message": "Cuenta de alumno eliminada correctamente"
 }
@@ -457,6 +516,7 @@
 /alumnos/perfil/vista_reclutador?id_alumno=1
 //se incrementa el contador de visualizaciones en 1
 //RES es la misma que la de perfil completo 
+//pero sin visualizaciones
 
 //CUANDO OTRO ALUMNO VE EL PERFIL DEL ALUMNO
 //GET REQ

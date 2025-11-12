@@ -31,7 +31,7 @@ CREATE TABLE AlumnoSolicitante (
     FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE
 );
 
-ALTER TABLE AlumnoSolicitante ADD COLUMN estado VARCHAR(50);
+ALTER TABLE AlumnoSolicitante ADD COLUMN entidad VARCHAR(50);
 ALTER TABLE AlumnoSolicitante MODIFY COLUMN semestre_actual ENUM('1','2','3','4','5','6','7','8','9','10','11','12');
 
 CREATE TABLE Escolaridad (
@@ -41,12 +41,16 @@ CREATE TABLE Escolaridad (
     institucion VARCHAR(200) NOT NULL,
     carrera VARCHAR(200),
     plantel VARCHAR(160) NOT NULL,
-    nota ENUM('Pasante', 'Titulado', 'Cursando') NOT NULL,
+    nota ENUM('Pasante', 'Titulado', 'Egresado', 'Cursando', 'Trunca') NOT NULL,
     fecha_inicio DATE NOT NULL,
     fecha_fin DATE NOT NULL,
 
     FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE
 );
+
+ALTER TABLE escolaridad
+ADD CONSTRAINT unique_escolaridad_alumno
+UNIQUE (id_alumno, nivel, institucion, carrera ,plantel);
 
 CREATE TABLE URLExterna (
     id_url INT AUTO_INCREMENT PRIMARY KEY,
@@ -56,6 +60,11 @@ CREATE TABLE URLExterna (
 
     FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE
 );
+
+ALTER TABLE URLExterna
+ADD CONSTRAINT unique_url_alumno
+UNIQUE (id_alumno, url, tipo);
+
 
 CREATE TABLE Curso (
     id_curso INT AUTO_INCREMENT PRIMARY KEY,
@@ -67,6 +76,10 @@ CREATE TABLE Curso (
 
     FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE
 );
+
+ALTER TABLE Curso
+ADD CONSTRAINT unique_curso_alumno
+UNIQUE (id_alumno, nombre, institucion, fecha_inicio, fecha_fin);
 
 CREATE TABLE Habilidad (
     id_habilidad INT AUTO_INCREMENT PRIMARY KEY,
@@ -88,6 +101,10 @@ CREATE TABLE Certificado(
     FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE
 );
 
+ALTER TABLE Certificado
+ADD CONSTRAINT unique_certificado_alumno
+UNIQUE (id_alumno, nombre, institucion, fecha_expedicion);
+
 CREATE TABLE Certificado_Habilidad (
     id_certificado INT NOT NULL,
     id_habilidad INT NOT NULL,
@@ -108,6 +125,10 @@ CREATE TABLE Experiencia(
 
     FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE
 );
+
+ALTER TABLE experiencia
+ADD CONSTRAINT unique_experiencia_alumno
+UNIQUE (id_alumno, cargo, empresa, fecha_inicio);
 
 CREATE TABLE Experiencia_Habilidad (
     id_experiencia INT NOT NULL,
