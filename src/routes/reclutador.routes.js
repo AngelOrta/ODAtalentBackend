@@ -21,6 +21,12 @@ router.put('/reclutar', ReclutadorController.reclutarAlumno);
 // PUT /api/reclutadores/rechazar_postulacion
 router.put('/rechazar_postulacion', ReclutadorController.rechazarPostulacionAlumno);
 
+// GET /api/reclutadores/alumnos_reclutados?id_reclutador=
+router.get('/alumnos_reclutados', ReclutadorController.obtenerAlumnosReclutados);
+
+// PUT /api/reclutadores/marcar_completada_postulacion //para cuando pase el tiempo de duración de la vacante
+router.put('/marcar_completada_postulacion', ReclutadorController.marcarPostulacionComoCompletada);
+
 // GET /api/reclutadores/perfil?id_reclutador=
 router.get('/perfil', ReclutadorController.obtenerPerfilReclutador);
 

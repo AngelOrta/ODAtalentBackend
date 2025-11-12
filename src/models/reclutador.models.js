@@ -325,6 +325,56 @@ export default class Reclutador {
     return resultado.affectedRows;
   }
 
+  static async obtenerAlumnosReclutados(id_reclutador) {
+    const [rowsReclutado] = await pool.query(
+      `SELECT U.id, A.id_alumno, P.id_postulacion, V.id_vacante, U.nombre, A.semestre_actual, U.url_foto_perfil, P.estatus, V.titulo AS nombre_vacante
+       FROM Postulacion P
+        JOIN AlumnoSolicitante A ON P.id_alumno = A.id_alumno
+        JOIN Usuario U ON A.id_usuario = U.id
+        JOIN Vacante V ON P.id_vacante = V.id_vacante
+        JOIN Reclutador R ON V.id_reclutador = R.id_reclutador
+        WHERE R.id_reclutador = ? AND P.estatus = 'Reclutado'`,[id_reclutador]);
+    if (!rowsReclutado.length) return null;
+    const alumnosIDs = rowsReclutado.map(r => r.id_alumno);
+    const [habilidadesAlumnosRows] = await pool.query(
+      `SELECT AH.id_alumno, AH.id_habilidad, H.categoria, H.tipo, H.habilidad
+       FROM Habilidad H
+        JOIN Alumno_Habilidad AH ON H.id_habilidad = AH.id_habilidad
+        WHERE AH.id_alumno IN (?)`, [alumnosIDs]);
+    const habilidadesPorAlumno = {};
+    for (const id of alumnosIDs) {
+      habilidadesPorAlumno[id] = [];
+    }
+    for (const skill of habilidadesAlumnosRows) {
+      // separar el id_alumno del resto de los datos de la habilidad
+      const { id_alumno, ...skillData } = skill;
+      habilidadesPorAlumno[id_alumno].push(skillData);
+    }
+    const alumnosReclutados = rowsReclutado.map(row => ({
+      id_usuario: row.id,
+      id_alumno: row.id_alumno,
+      id_postulacion: row.id_postulacion,
+      id_vacante: row.id_vacante,
+      nombre: row.nombre,
+      semestre_actual: row.semestre_actual,
+      habilidades: habilidadesPorAlumno[row.id_alumno],
+      url_foto_perfil: row.url_foto_perfil,
+      estatus: row.estatus,
+      nombre_vacante: row.nombre_vacante
+    }));
+    return alumnosReclutados;
+  }
+
+  static async marcarPostulacionComoCompletada(id_postulacion) {
+    const [resultado] = await pool.query(
+      `UPDATE Postulacion SET estatus = 'Completado' WHERE id_postulacion = ?`,
+      [id_postulacion]
+    );
+    if(resultado.info.includes('Rows matched: 0'))
+      return null;
+    return resultado.affectedRows;
+  }
+
   static async cambiarEstadoVacante(id_vacante, estado) {
     if (!['Activa', 'Expirada'].includes(estado)) {
       throw new Error('Estado inválido');
