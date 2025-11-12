@@ -12,6 +12,15 @@ router.get('/vacantes_publicadas', ReclutadorController.obtenerVacantesPublicada
 //GET /api/reclutadores/postulaciones?id_vacante=
 router.get('/postulaciones', ReclutadorController.obtenerPostulacionesVacante);
 
+// GET /api/reclutadores/postulaciones_revision?id_alumno=1&id_reclutador=2
+router.get('/postulaciones_revision', ReclutadorController.obtenerPostulacionesEnRevisionPorIdAlumno);
+
+// PUT /api/reclutadores/reclutar
+router.put('/reclutar', ReclutadorController.reclutarAlumno);
+
+// PUT /api/reclutadores/rechazar_postulacion
+router.put('/rechazar_postulacion', ReclutadorController.rechazarPostulacionAlumno);
+
 // GET /api/reclutadores/perfil?id_reclutador=
 router.get('/perfil', ReclutadorController.obtenerPerfilReclutador);
 
