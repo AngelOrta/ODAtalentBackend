@@ -68,4 +68,6 @@ export default class Vacante {
         delete finalJSON.sitio_web;
         return finalJSON;
     }
+
+    
 }
