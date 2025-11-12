@@ -12,6 +12,7 @@ import rolesTrabajoRoutes from './routes/rolTrabajo.routes.js';
 import habilidadesRoutes from './routes/habilidades.routes.js';
 import vacantesRoutes from './routes/vacante.routes.js';
 import alumnosRoutes from './routes/alumno.routes.js';
+import publicacionesRoutes from './routes/experiencia.routes.js';
 //import { readFileSync } from 'fs';
 //import fs from 'fs';
 //import {enviarCorreoBienvenidaReclutador} from './services/mail.services.js';
@@ -46,7 +47,8 @@ app.use('/api/reclutadores', reclutadoresRoutes);
 app.use('/api/roles_trabajo', rolesTrabajoRoutes);
 app.use('/api/habilidades', habilidadesRoutes);
 app.use('/api/vacantes', vacantesRoutes);
-app.use('/api/alumnos', alumnosRoutes)
+app.use('/api/alumnos', alumnosRoutes);
+app.use('/api/experiencias_alumnos', publicacionesRoutes);
 
 app.listen(process.env.PORT || 4000, () =>
   console.log(`API corriendo en puerto ${process.env.PORT || 4000}`)
