@@ -5,16 +5,25 @@ import Reclutador from './reclutador.models.js';
 
 
 export default class Usuario {
-  constructor(id, rol) {
+  constructor(id, rol, id_rol) {
     this.id = id;
     this.rol = rol;
+    this.id_rol= id_rol; //el id en su tabla correspondiente (AlumnoSolicitante, Reclutador)
   }
 
   static async obtenerPorUid(uid) {
     try{
       const [rows] = await pool.query('SELECT * FROM Usuario WHERE uid_firebase = ?', [uid]);
       if (!rows.length) return null;
-      return new Usuario(rows[0].id, rows[0].rol);
+      if(rows[0].rol === 'alumno'){
+        const [rowsAlumno] = await pool.query('SELECT id_alumno FROM AlumnoSolicitante WHERE id_usuario = ?', [rows[0].id]);
+        return new Usuario(rows[0].id, rows[0].rol, rowsAlumno[0].id_alumno);
+      }
+      if(rows[0].rol === 'reclutador'){
+        const [rowsReclutador] = await pool.query('SELECT id_reclutador FROM Reclutador WHERE id_usuario = ?', [rows[0].id]);
+        return new Usuario(rows[0].id, rows[0].rol, rowsReclutador[0].id_reclutador);
+      }
+      return new Usuario(rows[0].id, rows[0].rol, null);
     }catch(error){
       console.log('Error al obtener Usuario '+ error.message);
       throw error;

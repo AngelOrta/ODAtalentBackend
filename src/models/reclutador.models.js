@@ -26,8 +26,8 @@ export default class Reclutador {
       await connection.beginTransaction();
 
       const existeVacante = await connection.query(
-        'SELECT id_vacante FROM Vacante WHERE titulo = ? AND id_reclutador = ? AND monto_beca = ? AND ubicacion = ? AND ciudad = ? AND entidad = ? AND escolaridad = ? AND horario = ? AND modalidad = ?',
-        [vacanteData.titulo, vacanteData.id_reclutador, vacanteData.monto_beca, vacanteData.ubicacion, vacanteData.ciudad, vacanteData.entidad, vacanteData.escolaridad, vacanteData.horario, vacanteData.modalidad]
+        'SELECT id_vacante FROM Vacante WHERE titulo = ? AND id_reclutador = ? AND monto_beca = ? AND ubicacion = ? AND ciudad = ? AND entidad = ? AND escolaridad = ? AND horario = ? AND modalidad = ? AND estado = ?',
+        [vacanteData.titulo, vacanteData.id_reclutador, vacanteData.monto_beca, vacanteData.ubicacion, vacanteData.ciudad, vacanteData.entidad, vacanteData.escolaridad, vacanteData.horario, vacanteData.modalidad, 'Activa']
       );
       if (existeVacante[0].length) {
         return 'duplicada';

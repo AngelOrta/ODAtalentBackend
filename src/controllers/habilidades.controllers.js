@@ -3,9 +3,9 @@ import Habilidad from '../models/habilidades.models.js';
 export default class HabilidadesController {
 
     static async obtenerHabilidades(req, res) {
-        const { tipo } = req.query;
-        const habilidades = await Habilidad.obtenerHabilidades(tipo);
         try{
+            const { tipo } = req.query;
+            const habilidades = await Habilidad.obtenerHabilidades(tipo);
             if (!habilidades) {
                 return res.status(404).json({ message: 'No se encontraron habilidades' });
             }

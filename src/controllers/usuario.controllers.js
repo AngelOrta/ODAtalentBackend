@@ -15,8 +15,8 @@ export default class UsuariosController {
   }
 
   static async registrar(req, res) {
-    const { nombre, email, rol, genero, idEmpresa} = req.body;
     try {
+        const { nombre, email, rol, genero, idEmpresa} = req.body;
         await Usuario.crearAlumno(nombre, email, rol, genero, req.uid, idEmpresa);
         res.status(201).json({ message: 'Usuario registrado' });
     } catch (err) {
@@ -29,8 +29,8 @@ export default class UsuariosController {
   }
 
   static async encolarReclutador(req, res) {
-    const { nombre, email, genero, id_empresa} = req.body;
     try {
+      const { nombre, email, genero, id_empresa} = req.body;
       await Usuario.encolarReclutador(nombre, email, genero, id_empresa);
       res.status(201).json({ message: 'Reclutador encolado' });
     } catch (error) {

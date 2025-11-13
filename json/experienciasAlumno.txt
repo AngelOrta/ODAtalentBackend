@@ -23,7 +23,7 @@
 
 //VER EXPERIENCIAS DE ALUMNOS PUBLICADAS
 //GET REQ
-/experiencias_alumnos?page=1&limit=10
+/experiencias_alumnos?id_alumno=1page=1&limit=10
 //RES 200
 {
     "paginacion": //metadatos de paginacion
@@ -57,6 +57,7 @@
                         }
                     ],
                 "comentarios": 4, //consulta con count
+                "mi_reaccion": "upvote" //o "downvote" o null si no ha reaccionado
             }
         ]
 }
@@ -76,23 +77,13 @@
 //POST REQ BODY
 {
     "id_publicacion": 1,
-    "id_alumno": 5 //alumno que reacciona
+    "id_alumno": 5, //alumno que reacciona
+    "tipo_reaccion": "upvote", //like o dislike
+    "accion": "agregar" //agregar o quitar depende de si ya reacciono o no (fijarse en mi_reaccion de hace 2 jsons)
 }
 //RES 200
 {
     "message": "Reacción agregada correctamente"
-}
-
-
-//QUITAR REACCION A PUBLICACION DE EXPERIENCIA
-//DELETE REQ
-{
-    "id_publicacion": 1,
-    "id_alumno": 5 //alumno que quita la reaccion
-}
-//RES 200
-{
-    "message": "Reacción eliminada correctamente"
 }
 
 
@@ -103,7 +94,6 @@
     "id_alumno": 5, //alumno que comenta
     "id_comentario_padre": 3, //opcional, si es respuesta a otro comentario
     "comentario": "¡Excelente experiencia! Me encantaría saber más sobre los desafíos que enfrentaste.", //limite de 280 caracteres
-    "fecha": "2024-02-01T14:30:00Z",
 }
 //RES 201
 {
@@ -122,7 +112,7 @@
 
 //VER COMENTARIOS DE PUBLICACION DE EXPERIENCIA
 //GET REQ
-/experiencias_alumnos/comentarios?id_publicacion=1
+/experiencias_alumnos/comentarios?id_alumno=1&id_publicacion=1
 //RES 200
 [
     {
@@ -133,13 +123,14 @@
         "comentario": "¡Excelente experiencia! Me encantaría saber más sobre los desafíos que enfrentaste.",
         "fecha": "2024-02-01T14:30:00Z",
         "reacciones": 3,
-        "respuestas": true //indica si tiene respuestas para mostrar un boton de ver respuestas
+        "respuestas": true, //indica si tiene respuestas para mostrar un boton de ver respuestas
+        "mi_reaccion": "upvote" //o "downvote" o null si no ha reaccionado
     }
 ]
 
 //VER RESPUESTAS DE UN COMENTARIO EN PUBLICACION DE EXPERIENCIA (el id comentario padre es el del comentario al que se le dieron respuestas)
 //GET REQ
-/experiencias_alumnos/comentarios/respuestas?id_comentario_padre=1
+/experiencias_alumnos/comentarios/respuestas?id_alumno=1&id_comentario_padre=1
 //RES 200
 [
     {
@@ -151,7 +142,8 @@
         "comentario": "Gracias por tu interés, Carlos. Uno de los mayores desafíos fue coordinar el trabajo en equipo bajo plazos ajustados.",
         "fecha": "2024-02-01T15:00:00Z",
         "reacciones": 1,
-        "respuestas": false
+        "respuestas": false,
+        "mi_reaccion": null //o "upvote" o "downvote" si ya reacciono
     }
 ]
 
@@ -161,23 +153,12 @@
 {
     "id_comentario": 1,
     "id_alumno": 10, //alumno que reacciona
-    "tipo_reaccion": "upvote" //o downvote
+    "tipo_reaccion": "upvote", //o downvote
+    "accion": "agregar" //agregar o quitar depende de si ya reacciono o no (fijarse en mi_reaccion de hace 2 jsons)
 }
 //RES 200
 {
     "message": "Reacción al comentario agregada correctamente"
-}
-
-
-//QUITAR REACCION A COMENTARIO EN PUBLICACION DE EXPERIENCIA
-//DELETE REQ
-{
-    "id_comentario": 1,
-    "id_alumno": 10, //alumno que quita la reaccion
-}
-//RES 200
-{
-    "message": "Reacción al comentario eliminada correctamente"
 }
 
 
