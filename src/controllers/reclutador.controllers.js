@@ -3,14 +3,14 @@ import normalizarObjetosUndefinedANull from '../helpers/normalizarObjetos.helper
 
 export default class ReclutadorController {
     static async crearVacante(req, res) {
-        const { id_reclutador, titulo, descripcion, beneficios, duracion, fecha_inicio, fecha_fin, monto_beca, horario, ubicacion, ciudad, entidad, codigo_postal, modalidad, fecha_limite, escolaridad, conocimientos, habilidades, observaciones, numero_vacantes, roles_relacionados } = req.body;
-        const vacanteData = normalizarObjetosUndefinedANull({
-            id_reclutador, titulo, descripcion, beneficios, duracion, fecha_inicio,
-            fecha_fin, monto_beca, horario, ubicacion, ciudad, entidad,
-            codigo_postal, modalidad, fecha_limite, escolaridad, conocimientos,
-            habilidades, observaciones, numero_vacantes, roles_relacionados
-        });
         try {
+            const { id_reclutador, titulo, descripcion, beneficios, duracion, fecha_inicio, fecha_fin, monto_beca, horario, ubicacion, ciudad, entidad, codigo_postal, modalidad, fecha_limite, escolaridad, conocimientos, habilidades, observaciones, numero_vacantes, roles_relacionados } = req.body;
+            const vacanteData = normalizarObjetosUndefinedANull({
+                id_reclutador, titulo, descripcion, beneficios, duracion, fecha_inicio,
+                fecha_fin, monto_beca, horario, ubicacion, ciudad, entidad,
+                codigo_postal, modalidad, fecha_limite, escolaridad, conocimientos,
+                habilidades, observaciones, numero_vacantes, roles_relacionados
+            });
             if (!id_reclutador || !titulo || !descripcion || !duracion || !monto_beca || !horario || !ubicacion || !ciudad || !entidad || !codigo_postal || !modalidad || !escolaridad || !conocimientos || !habilidades || !numero_vacantes) {
                 return res.status(400).json({ message: 'Faltan campos obligatorios' });
             }
@@ -25,14 +25,14 @@ export default class ReclutadorController {
     }
 
     static async editarVacante(req, res) {
-        const { id_vacante,id_reclutador, titulo, descripcion, beneficios, duracion, fecha_inicio, fecha_fin, monto_beca, horario, ubicacion, ciudad, entidad, codigo_postal, modalidad, fecha_limite, escolaridad, conocimientos, habilidades, observaciones, numero_vacantes, roles_relacionados } = req.body;
-        const vacanteData = normalizarObjetosUndefinedANull({
-            id_vacante,id_reclutador, titulo, descripcion, beneficios, duracion, fecha_inicio,
-            fecha_fin, monto_beca, horario, ubicacion, ciudad, entidad,
-            codigo_postal, modalidad, fecha_limite, escolaridad, conocimientos,
-            habilidades, observaciones, numero_vacantes, roles_relacionados
-        });
         try {
+            const { id_vacante,id_reclutador, titulo, descripcion, beneficios, duracion, fecha_inicio, fecha_fin, monto_beca, horario, ubicacion, ciudad, entidad, codigo_postal, modalidad, fecha_limite, escolaridad, conocimientos, habilidades, observaciones, numero_vacantes, roles_relacionados } = req.body;
+            const vacanteData = normalizarObjetosUndefinedANull({
+                id_vacante,id_reclutador, titulo, descripcion, beneficios, duracion, fecha_inicio,
+                fecha_fin, monto_beca, horario, ubicacion, ciudad, entidad,
+                codigo_postal, modalidad, fecha_limite, escolaridad, conocimientos,
+                habilidades, observaciones, numero_vacantes, roles_relacionados
+            });
             if (!id_vacante || !id_reclutador || !titulo || !descripcion || !duracion || !monto_beca || !horario || !ubicacion || !ciudad || !entidad || !codigo_postal || !modalidad || !escolaridad || !conocimientos || !habilidades || !numero_vacantes) {
                 return res.status(400).json({ message: 'Faltan campos obligatorios' });
             }
@@ -47,8 +47,8 @@ export default class ReclutadorController {
     }
 
     static async obtenerVacantesPublicadas(req, res) {
-        const { id_reclutador } = req.query;
         try {
+            const { id_reclutador } = req.query;
             if (!id_reclutador) {
                 return res.status(400).json({ message: 'Falta el id_reclutador' });
             }
@@ -63,8 +63,8 @@ export default class ReclutadorController {
     }
 
     static async obtenerPostulacionesVacante(req, res) {
-        const { id_vacante } = req.query;
         try {
+            const { id_vacante } = req.query;
             if (!id_vacante) {
                 return res.status(400).json({ message: 'Falta el id_vacante' });
             }
@@ -79,8 +79,8 @@ export default class ReclutadorController {
     }
 
     static async obtenerPostulacionesEnRevisionPorIdAlumno(req, res) {
-        const { id_alumno, id_reclutador } = req.query;
         try {
+            const { id_alumno, id_reclutador } = req.query;
             if (!id_alumno || !id_reclutador) {
                 return res.status(400).json({ message: 'Faltan campos obligatorios' });
             }
@@ -96,8 +96,8 @@ export default class ReclutadorController {
     }
 
     static async reclutarAlumno(req, res) {
-        const { id_postulacion, id_vacante, estatus} = req.body;
         try {
+            const { id_postulacion, id_vacante, estatus} = req.body;
             if (!id_postulacion || !id_vacante || !estatus) {
                 return res.status(400).json({ message: 'Faltan campos obligatorios' });
             }
@@ -116,8 +116,8 @@ export default class ReclutadorController {
     }
 
     static async rechazarPostulacionAlumno(req, res) {
-        const { id_postulacion, estatus} = req.body;
         try {
+            const { id_postulacion, estatus} = req.body;
             if (!id_postulacion || !estatus) {
                 return res.status(400).json({ message: 'Faltan campos obligatorios' });
             }
@@ -136,8 +136,8 @@ export default class ReclutadorController {
     }
 
     static async obtenerAlumnosReclutados(req, res) {
-        const { id_reclutador } = req.query;
         try {
+            const { id_reclutador } = req.query;
             if (!id_reclutador) {
                 return res.status(400).json({ message: 'Falta el id_reclutador' });
             }
@@ -152,8 +152,8 @@ export default class ReclutadorController {
     }
 
     static async marcarPostulacionComoCompletada(req, res) {
-        const { id_postulacion, estatus } = req.body;
         try {
+            const { id_postulacion, estatus } = req.body;
             if (!id_postulacion || !estatus) {
                 return res.status(400).json({ message: 'Falta el id_postulacion' });
             }
@@ -168,8 +168,8 @@ export default class ReclutadorController {
     }
 
     static async cambiarEstadoVacante(req, res) {
-        const { id_vacante, estado } = req.body;
         try {
+            const { id_vacante, estado } = req.body;
             if (!id_vacante || !estado) {
                 return res.status(400).json({ message: 'Faltan campos obligatorios' });
             }
@@ -185,8 +185,8 @@ export default class ReclutadorController {
     }
 
     static async borrarVacante(req, res) {
-        const { id_vacante } = req.body;
         try {
+            const { id_vacante } = req.body;
             if (!id_vacante) {
                 return res.status(400).json({ message: 'Falta el id_vacante' });
             }
@@ -200,8 +200,8 @@ export default class ReclutadorController {
     }
 
     static async obtenerPerfilReclutador(req, res) {
-        const { id_reclutador } = req.query;
         try {
+            const { id_reclutador } = req.query;
             if (!id_reclutador) {
                 return res.status(400).json({ message: 'Falta el id_reclutador' });
             }
@@ -216,9 +216,8 @@ export default class ReclutadorController {
     }
 
     static async actualizarFotoPerfil(req, res) {
-        const { id_reclutador, url_foto_perfil } = req.body;
-        
         try {
+            const { id_reclutador, url_foto_perfil } = req.body;
             if (!id_reclutador || !url_foto_perfil) {
                 return res.status(400).json({ message: 'Faltan campos obligatorios' });
             }else if(!url_foto_perfil.match(/^https?:\/\/.+/)){

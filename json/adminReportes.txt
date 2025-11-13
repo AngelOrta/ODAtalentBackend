@@ -29,7 +29,7 @@
 
 //VER UNA PUBLICACION EN ESPECIFICO
 //GET REQ
-/experiencias_alumnos/ver_experiencia/{id_publicacion}
+/experiencias_alumnos/ver/{id_publicacion}
 //RES 200
 {
     "id_publicacion": 1,

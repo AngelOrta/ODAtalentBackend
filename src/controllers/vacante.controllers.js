@@ -4,8 +4,8 @@ import normalizarObjetosUndefinedANull from '../helpers/normalizarObjetos.helper
 export default class VacanteController {
     // Aquí irán los métodos relacionados con las vacantes
     static async obtenerDetallesVacante(req, res) {
-        const { id_vacante } = req.query;
         try {
+            const { id_vacante } = req.query;
             if (!id_vacante) {
                 return res.status(400).json({ message: 'Falta el id_vacante' });
             }
@@ -20,14 +20,14 @@ export default class VacanteController {
     }
 
     static async buscarVacantes(req, res) {
-        const { query, ciudad, entidad, modalidad, roltrabajo, ordenar_por } = req.query;
-        const busquedaData = normalizarObjetosUndefinedANull({ query, ciudad, entidad, modalidad, roltrabajo, ordenar_por });
-        let { page, limit } = req.query;
-        page = parseInt(page) || 1;
-        limit = parseInt(limit) || 10;
-        const offset = (page - 1) * limit;
         try {
-            if(!query){
+            const { id_alumno,query, ciudad, entidad, modalidad, roltrabajo, ordenar_por } = req.query;
+            const busquedaData = normalizarObjetosUndefinedANull({ id_alumno,query, ciudad, entidad, modalidad, roltrabajo, ordenar_por });
+            let { page, limit } = req.query;
+            page = parseInt(page) || 1;
+            limit = parseInt(limit) || 10;
+            const offset = (page - 1) * limit;
+            if(!query || !id_alumno){
                 return res.status(400).json({ message: 'Falta el query de búsqueda' });
             }
             const resultados = await Vacante.buscarVacantes(busquedaData, page, offset, limit);

@@ -5,8 +5,14 @@ export const router = Router();
 // POST /api/experiencias_alumnos/crear_experiencia
 router.post('/crear_experiencia', PublicacionController.crearPublicacion);
 
-// GET /api/experiencias_alumnos?id_alumno=1page=1&limit=10
+// GET /api/experiencias_alumnos?id_alumno=1page=1&limit=10&id_roltrabajo=2
 router.get('/ver', PublicacionController.obtenerExperienciasAlumnos);
+
+// GET /api/experiencias_alumnos/ver/:id_publicacion
+router.get('/ver/:id_publicacion', PublicacionController.verExperienciaPorId);
+
+// GET /api/experiencias_alumnos/ver_comentario/:id_comentario
+router.get('/ver_comentario/:id_comentario', PublicacionController.verComentariosDeExperienciaPorId);
 
 // DELETE /api/experiencias_alumnos/borrar/:id_publicacion
 router.delete('/borrar/:id_publicacion', PublicacionController.borrarExperiencia);

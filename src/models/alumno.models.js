@@ -595,4 +595,36 @@ export default class Alumno {
             return false;
         return true;
     }
+
+    static async obtenerHistorialBusquedas(id_alumno) {
+        try{
+            const [historialRows] = await pool.query(`SELECT * FROM Busqueda WHERE id_alumno = ? ORDER BY fecha DESC`, [id_alumno]);
+            return historialRows.map(row => {return {id_busqueda:row.id_busqueda,consulta:row.consulta}});
+        }catch(error){
+            console.error('Error al obtener el historial de búsqueda del alumno:', error.sqlMessage);
+            throw new Error('Error al obtener el historial de búsqueda del alumno');
+        }
+    }
+
+    static async limpiarHistorialBusquedas(id_alumno) {
+        try{
+            const [result] = await pool.query(`DELETE FROM Busqueda WHERE id_alumno = ?`, [id_alumno]);
+            return result.affectedRows >= 0;
+        }catch(error){
+            console.error('Error al limpiar el historial de búsqueda del alumno:', error.sqlMessage);
+            throw new Error('Error al limpiar el historial de búsqueda del alumno');
+        }
+    }
+
+    static async borrarBusquedaPorId(id_alumno, id_busqueda) {
+        try{
+            const [result] = await pool.query(`DELETE FROM Busqueda WHERE id_alumno = ? AND id_busqueda = ?`, [id_alumno, id_busqueda]);
+            if(result.info.includes('Rows matched: 0'))
+                return null;
+            return result.affectedRows > 0;
+        }catch(error){
+            console.error('Error al borrar la búsqueda del alumno por ID:', error.sqlMessage);
+            throw new Error('Error al borrar la búsqueda del alumno por ID');
+        }
+    }
 }

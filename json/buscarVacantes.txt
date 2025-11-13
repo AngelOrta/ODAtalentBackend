@@ -36,3 +36,43 @@
             }
         ]
 }
+
+//BORRAR HISTORIAL DE BUSQUEDAS DEL ALUMNO
+//DELETE REQ
+/alumnos/limpiar_historial
+//REQ BODY
+{
+    "id_alumno": 1
+}
+//RES 204
+{
+    "message": "Historial de búsquedas limpiado correctamente"
+}
+
+//OBTENER HISTORIAL DE BUSQUEDAS DEL ALUMNO
+//GET REQ
+/alumnos/historial_busquedas?id_alumno=1
+//RES 200
+[
+    {
+        "id_busqueda": 1,
+        "query": "Desarrollador Web",
+    },
+    {
+        "id_busqueda": 2,
+        "query": "Analista de Datos",
+    }
+]
+
+//BORRAR UNA BUSQUEDA ESPECIFICA DEL HISTORIAL DEL ALUMNO
+//DELETE REQ
+/alumnos/borrar_busqueda
+//REQ BODY
+{
+    "id_alumno": 1,
+    "id_busqueda": 2
+}
+//RES 204
+{
+    "message": "Búsqueda eliminada del historial correctamente"
+}

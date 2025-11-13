@@ -69,5 +69,88 @@ export default class Vacante {
         return finalJSON;
     }
 
-    
+    static async buscarVacantes(busquedaData, page, offset, limit) {
+        try{
+            let whereClauses = ['V.estado = "Activa"']; // Filtro base
+            let params = [];
+            
+            const baseQuery = `
+                FROM Vacante V
+                JOIN Reclutador R ON V.id_reclutador = R.id_reclutador
+                JOIN Empresa E ON R.id_empresa = E.id_empresa
+            `;
+            if (busquedaData.query) {
+                whereClauses.push('(V.titulo LIKE ? OR V.descripcion LIKE ?)');
+                params.push(`%${busquedaData.query}%`, `%${busquedaData.query}%`);
+            }//filtros
+            if (busquedaData.ciudad) {
+                whereClauses.push('V.ciudad = ?');
+                params.push(busquedaData.ciudad);
+            }
+            if (busquedaData.entidad) {
+                whereClauses.push('V.entidad = ?');
+                params.push(busquedaData.entidad);
+            }
+            if (busquedaData.modalidad) {
+                whereClauses.push('V.modalidad = ?');
+                params.push(busquedaData.modalidad);
+            }
+            if (busquedaData.roltrabajo) {
+                const roles = busquedaData.roltrabajo.split(','); // [ 'id1', 'id2' ]
+                // Usamos una subconsulta IN para no duplicar filas
+                whereClauses.push(
+                    `V.id_vacante IN (
+                        SELECT id_vacante FROM Vacante_RolTrabajo WHERE id_roltrabajo IN (?)
+                    )`
+                );
+                params.push(roles);
+            }
+            const whereSql = `WHERE ${whereClauses.join(' AND ')}`;
+            
+            const countSql = `SELECT COUNT(V.id_vacante) AS total_vacantes ${baseQuery} ${whereSql}`;
+            const [[totalResult]] = await pool.query(countSql, params);
+            const total_vacantes = totalResult.total_vacantes;
+            const total_paginas = Math.ceil(total_vacantes / limit);
+
+            let orderBySql = 'ORDER BY V.fecha_publicacion DESC'; // Default
+            if (busquedaData.ordenar_por === 'monto_beca_asc') {
+                orderBySql = 'ORDER BY V.monto_beca ASC';
+            } else if (busquedaData.ordenar_por === 'monto_beca_desc') {
+                orderBySql = 'ORDER BY V.monto_beca DESC';
+            }
+
+            const dataSql = `
+                SELECT V.id_vacante, V.titulo, E.nombre AS nombre_empresa, E.url_logo AS logo_empresa, V.fecha_publicacion, V.fecha_limite, V.numero_vacantes, V.ciudad, V.entidad, V.modalidad, V.estado
+                ${baseQuery}
+                ${whereSql}
+                ${orderBySql}
+                LIMIT ? OFFSET ?`;
+            const dataParams = [...params, limit, offset];
+            const [vacantes] = await pool.query(dataSql, dataParams);
+            //guardando historial
+            const [ultimaBusqueda] = await pool.query('SELECT * FROM Busqueda WHERE id_alumno = ? ORDER BY fecha DESC LIMIT 1', [busquedaData.id_alumno]);
+            if(ultimaBusqueda[0].consulta !== busquedaData.query){
+                const [resultHistorial] = await pool.query(
+                    `INSERT INTO Busqueda (id_alumno, consulta)
+                    VALUES (?, ?)`,
+                    [busquedaData.id_alumno, busquedaData.query || '']
+                );
+                if (resultHistorial.affectedRows === 0) {
+                    console.warn('No se pudo guardar el historial de búsqueda');
+                }
+            }
+            const busquedaJson = {
+                paginacion: {
+                    total_vacantes: total_vacantes,
+                    total_paginas: total_paginas,
+                    pagina_actual: page,
+                    tamano_pagina: limit
+                },
+                vacantes: vacantes
+            };
+            return busquedaJson;
+        }catch(error){
+            throw new Error('Error al buscar vacantes: ' + error.message);
+        }
+    }
 }

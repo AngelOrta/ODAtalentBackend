@@ -3,9 +3,9 @@ import normalizarObjetosUndefinedANull from "../helpers/normalizarObjetos.helper
 
 export default class PublicacionController {
     static async crearPublicacion(req, res) {
-        const {id_alumno, titulo, contenido , url_multimedia, roles_relacionados} =  req.body;
-        const publicacionData= normalizarObjetosUndefinedANull({id_alumno, titulo, contenido , url_multimedia, roles_relacionados});
         try {
+            const {id_alumno, titulo, contenido , url_multimedia, roles_relacionados} =  req.body;
+            const publicacionData= normalizarObjetosUndefinedANull({id_alumno, titulo, contenido , url_multimedia, roles_relacionados});
             if (!id_alumno || !titulo || !contenido || !roles_relacionados) {
                 return res.status(400).json({ message: 'Faltan datos obligatorios' });
             }
@@ -26,12 +26,16 @@ export default class PublicacionController {
     }
 
     static async obtenerExperienciasAlumnos(req, res) {
-        const id_alumno = req.query.id_alumno;
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-        const offset = (page - 1) * limit;
         try {
-            const experiencias = await Publicacion.obtenerExperienciasAlumnos(id_alumno,page, limit, offset );
+            const id_alumno = req.query.id_alumno;
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const offset = (page - 1) * limit;
+            const id_roltrabajo = req.query.id_roltrabajo ? parseInt(req.query.id_roltrabajo) : null;
+            if (!id_alumno) {
+                return res.status(400).json({ message: 'Falta el id_alumno' });
+            }
+            const experiencias = await Publicacion.obtenerExperienciasAlumnos(id_alumno,page, limit, offset, id_roltrabajo);
             res.status(200).json(experiencias);
         } catch (error) {
             console.error('Error al obtener las experiencias de los alumnos:', error);
@@ -39,9 +43,43 @@ export default class PublicacionController {
         }
     }
 
-    static async borrarExperiencia(req, res) {
-        const { id_publicacion } = req.params;
+    static async verExperienciaPorId(req, res) {
         try {
+            const { id_publicacion } = req.params;
+            if (!id_publicacion) {
+                return res.status(400).json({ message: 'Falta el id_publicacion' });
+            }
+            const experiencia = await Publicacion.verExperienciaPorId(id_publicacion);
+            if (!experiencia) {
+                return res.status(404).json({ message: 'Experiencia no encontrada' });
+            }
+            res.status(200).json(experiencia);
+        } catch (error) {
+            console.error('Error al obtener la experiencia por ID:', error);
+            res.status(500).json({ message: 'Error del servidor' });
+        }
+    }
+
+    static async  verComentariosDeExperienciaPorId (req, res) {
+        try {
+            const { id_comentario } = req.params;
+            if (!id_comentario) {
+                return res.status(400).json({ message: 'Falta el id_comentario' });
+            }
+            const comentario = await Publicacion.verComentariosDeExperienciaPorId(id_comentario);
+            if (!comentario) {
+                return res.status(404).json({ message: 'Comentario no encontrado' });
+            }
+            res.status(200).json(comentario);
+        } catch (error) {
+            console.error('Error al obtener el comentario por ID:', error);
+            res.status(500).json({ message: 'Error del servidor' });
+        }
+    }
+
+    static async borrarExperiencia(req, res) {
+        try {
+            const { id_publicacion } = req.params;
             const resultado = await Publicacion.borrarExperiencia(id_publicacion);
             if (resultado) {
                 res.status(200).json({ message: 'Experiencia eliminada correctamente' });
@@ -55,8 +93,8 @@ export default class PublicacionController {
     }
 
     static async reaccionarExperiencia(req, res) {
-        const { id_publicacion, id_alumno, tipo_reaccion, accion } = req.body;
         try {
+            const { id_publicacion, id_alumno, tipo_reaccion, accion } = req.body;
             if (!id_publicacion || !id_alumno || !tipo_reaccion) {
                 return res.status(400).json({ message: 'Faltan datos obligatorios' });
             }
@@ -75,9 +113,9 @@ export default class PublicacionController {
     }
 
     static async comentarExperiencia(req, res) {
-        let { id_publicacion, id_alumno, id_comentario_padre,comentario } = req.body;
-        if(!id_comentario_padre) id_comentario_padre = null;
         try {
+            let { id_publicacion, id_alumno, id_comentario_padre,comentario } = req.body;
+            if(!id_comentario_padre) id_comentario_padre = null;
             if (!id_publicacion || !id_alumno || !comentario) {
                 return res.status(400).json({ message: 'Faltan datos obligatorios' });
             }
@@ -93,8 +131,8 @@ export default class PublicacionController {
     }
 
     static async borrarComentarioExperiencia(req, res) {
-        const { id_comentario } = req.params;
         try {
+            const { id_comentario } = req.params;
             const resultado = await Publicacion.borrarComentarioExperiencia(id_comentario);
             if (!resultado) {
                 return res.status(404).json({ message: 'Comentario no encontrado' });
@@ -107,9 +145,9 @@ export default class PublicacionController {
     }
 
     static async obtenerComentariosExperiencia(req, res) {
-        const id_publicacion = req.query.id_publicacion;
-        const id_alumno = req.query.id_alumno;
         try {
+            const id_publicacion = req.query.id_publicacion;
+            const id_alumno = req.query.id_alumno;
             if (!id_publicacion || !id_alumno) {
                 return res.status(400).json({ message: 'Falta el id_publicacion o el id_alumno' });
             }
@@ -121,10 +159,10 @@ export default class PublicacionController {
         }
     }
 
-    static async obtenerRespuestasComentarioExperiencia(req, res) {
-        const id_comentario_padre = req.query.id_comentario_padre;
-        const id_alumno = req.query.id_alumno;
+    static async obtenerRespuestasComentarioExperiencia(req, res) { 
         try {
+            const id_comentario_padre = req.query.id_comentario_padre;
+            const id_alumno = req.query.id_alumno;
             if (!id_comentario_padre || !id_alumno) {
                 return res.status(400).json({ message: 'Falta el id_comentario_padre o el id_alumno' });
             }
@@ -137,8 +175,8 @@ export default class PublicacionController {
     }
 
     static async reaccionarComentarioExperiencia(req, res) {
-        const { id_comentario, id_alumno, tipo_reaccion, accion } = req.body;
         try {
+            const { id_comentario, id_alumno, tipo_reaccion, accion } = req.body;
             if (!id_comentario || !id_alumno || !tipo_reaccion || !accion) {
                 return res.status(400).json({ message: 'Faltan datos obligatorios' });
             }
@@ -157,11 +195,11 @@ export default class PublicacionController {
     }
 
     static async reportarContenido(req, res) {
-        const { id_alumno, id_reclutador, id_contenido, tipo_contenido,  razon, descripcion } = req.body;
-        const reporteData= normalizarObjetosUndefinedANull({id_alumno, id_reclutador, id_contenido, tipo_contenido,  razon, descripcion});
-        const tipos = new Set(['Vacante','Publicacion', 'Comentario']);
-        const razones = new Set(['Contenido inapropiado','Sin vacantes','Otro']);
         try {
+            const { id_alumno, id_reclutador, id_contenido, tipo_contenido,  razon, descripcion } = req.body;
+            const reporteData= normalizarObjetosUndefinedANull({id_alumno, id_reclutador, id_contenido, tipo_contenido,  razon, descripcion});
+            const tipos = new Set(['Vacante','Publicacion', 'Comentario']);
+            const razones = new Set(['Contenido inapropiado','Sin vacantes','Otro']);
             if ((!id_alumno && !id_reclutador) || !id_contenido || !tipo_contenido || !razon) {
                 return res.status(400).json({ message: 'Faltan datos obligatorios' });
             }

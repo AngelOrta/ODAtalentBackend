@@ -92,4 +92,13 @@ router.post('/postularse', AlumnoController.postularseAVacante);
 // DELETE /alumnos/cancelar_postulacion
 router.delete('/cancelar_postulacion', AlumnoController.cancelarPostulacion);
 
+// GET /alumnos/historial_busquedas?id_alumno=
+router.get('/historial_busquedas', AlumnoController.obtenerHistorialBusquedas);
+
+// DELETE /alumnos/limpiar_historial
+router.delete('/limpiar_historial', AlumnoController.limpiarHistorialBusquedas);
+
+// DELETE /alumnos/borrar_busqueda
+router.delete('/borrar_busqueda', AlumnoController.borrarBusquedaPorId);
+
 export default router;

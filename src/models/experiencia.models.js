@@ -43,21 +43,49 @@ export default class Publicacion{
         }
     }
 
-    static async obtenerExperienciasAlumnos(id_alumno,page, limit, offset ){
-        try{
+    static async obtenerExperienciasAlumnos(id_alumno,page, limit, offset, id_roltrabajo ){
+    try {
+            let joinClause = '';
+            let whereClause = '';
+            const countParams = [];
+            const mainParams = [];
+
+            if (id_roltrabajo) {
+                joinClause = ' JOIN Publicacion_RolTrabajo PRT ON P.id_publicacion = PRT.id_publicacion';
+                whereClause = ' WHERE PRT.id_roltrabajo = ?';
+                countParams.push(id_roltrabajo);
+                mainParams.push(id_roltrabajo);
+            }
+
+            // evitar conteos duplicados si hay JOINS
             const [totalRows] = await pool.query(
-                `SELECT COUNT(*) AS total_experiencias FROM Publicacion`
+                `SELECT COUNT(DISTINCT P.id_publicacion) AS total_experiencias 
+                FROM Publicacion P 
+                ${joinClause} 
+                ${whereClause}`,
+                countParams 
             );
+
             const total_experiencias = totalRows[0].total_experiencias;
             const total_paginas = Math.ceil(total_experiencias / limit);
-            const [experienciasRows] = await pool.query(`SELECT P.id_publicacion, P.id_alumno, U.nombre, U.url_foto_perfil, P.titulo, P.contenido, P.fecha_publicacion, P.reacciones, P.url_multimedia, COUNT(C.id_comentario) AS comentarios
-            FROM Publicacion P
-            JOIN AlumnoSolicitante A ON P.id_alumno = A.id_alumno
-            JOIN Usuario U ON A.id_usuario = U.id
-            LEFT JOIN Comentario C ON P.id_publicacion = C.id_publicacion
-            GROUP BY P.id_publicacion 
-            ORDER BY P.fecha_publicacion DESC 
-            LIMIT ? OFFSET ?`, [limit, offset]);
+
+            // Agregamos los parámetros de paginación a la consulta principal
+            mainParams.push(limit);
+            mainParams.push(offset);
+
+            const [experienciasRows] = await pool.query(
+                `SELECT P.id_publicacion, P.id_alumno, U.nombre, U.url_foto_perfil, P.titulo, P.contenido, P.fecha_publicacion, P.reacciones, P.url_multimedia, COUNT(C.id_comentario) AS comentarios
+                FROM Publicacion P
+                JOIN AlumnoSolicitante A ON P.id_alumno = A.id_alumno
+                JOIN Usuario U ON A.id_usuario = U.id
+                LEFT JOIN Comentario C ON P.id_publicacion = C.id_publicacion
+                ${joinClause}  
+                ${whereClause} 
+                GROUP BY P.id_publicacion 
+                ORDER BY P.fecha_publicacion DESC 
+                LIMIT ? OFFSET ?`,
+                mainParams 
+            );
 
             if (experienciasRows.length === 0) {
                 return {
@@ -110,6 +138,53 @@ export default class Publicacion{
             };
         }catch(error){
             console.error('Error en obtenerExperienciasAlumnos:', error);
+            throw error;
+        }
+    }
+
+    static async verExperienciaPorId(id_publicacion){
+        try{
+            const [experienciaRows] = await pool.query(`SELECT P.id_publicacion, P.id_alumno, U.nombre, U.url_foto_perfil, P.titulo, P.contenido, P.fecha_publicacion, P.reacciones, P.url_multimedia, (
+                                                                    SELECT COUNT(*) 
+                                                                    FROM Comentario C 
+                                                                    WHERE C.id_publicacion = P.id_publicacion
+                                                                ) AS comentarios
+            FROM Publicacion P
+            JOIN AlumnoSolicitante A ON P.id_alumno = A.id_alumno
+            JOIN Usuario U ON A.id_usuario = U.id
+            WHERE P.id_publicacion = ?`, [id_publicacion]);
+            if(experienciaRows.length === 0){
+                return null;
+            }
+            const [rolesRows] = await pool.query(`SELECT PR.id_publicacion, RT.id_roltrabajo,RT.nombre
+            FROM Publicacion_RolTrabajo PR
+            JOIN RolTrabajo RT ON PR.id_roltrabajo = RT.id_roltrabajo
+            WHERE PR.id_publicacion IN (?)`, [id_publicacion]);
+            const experiencia = experienciaRows[0];
+            experiencia.roles_relacionados = rolesRows.map(rol => {
+                const { id_publicacion, ...rolData } = rol;
+                return rolData;
+            });
+            return experiencia;
+        }catch(error){
+            console.error('Error en verExperienciaPorId:', error);
+            throw error;
+        }
+    }
+
+    static async  verComentariosDeExperienciaPorId(id_comentario){
+        try{
+            const [comentarioRows] = await pool.query(`SELECT C.id_comentario, C.id_alumno, U.nombre, U.url_foto_perfil, C.contenido AS comentario, C.fecha, C.reacciones
+            FROM Comentario C
+            JOIN AlumnoSolicitante A ON C.id_alumno = A.id_alumno
+            JOIN Usuario U ON A.id_usuario = U.id
+            WHERE C.id_comentario = ?`, [id_comentario]);
+            if(comentarioRows.length === 0){
+                return null;
+            }
+            return comentarioRows[0];
+        }catch(error){
+            console.error('Error en verComentariosDeExperienciaPorId:', error);
             throw error;
         }
     }

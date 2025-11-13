@@ -31,6 +31,7 @@
 //POST REQ BODY
 {
     "id_roltrabajo": 1,
+    "id_admin": 1,
     "titulo": "¿Qué hace un Desarrollador Web?",
     "contenido": "Un Desarrollador Web es responsable de diseñar, construir y mantener sitios web y aplicaciones web. Utilizan lenguajes de programación como HTML, CSS, JavaScript, y frameworks como React o Angular para crear interfaces de usuario atractivas y funcionales. Además, trabajan en la integración con bases de datos y servidores para asegurar que las aplicaciones funcionen correctamente."
 }

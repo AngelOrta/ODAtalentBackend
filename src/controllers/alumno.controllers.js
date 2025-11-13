@@ -3,8 +3,8 @@ import normalizarObjetosUndefinedANull from '../helpers/normalizarObjetos.helper
 
 export default class AlumnoController {
     static async obtenerPerfilAlumno(req, res) {
-        const {id_alumno} = req.query;
         try {
+            const {id_alumno} = req.query;
             if (!id_alumno) {
                 return res.status(400).json({ message: 'Falta el id del alumno' });
             }
@@ -20,8 +20,8 @@ export default class AlumnoController {
     }
 
     static async actualizarFotoPerfilAlumno(req, res) {
-        const {id_alumno, url_foto} = req.body;
         try {
+            const {id_alumno, url_foto} = req.body;
             if (!id_alumno || !url_foto) 
                 return res.status(400).json({ message: 'Falta el id del alumno o la URL de la foto' });
             if(!url_foto.match(/^https?:\/\/.*\.(?:png|jpg|jpeg|gif|svg)$/))
@@ -38,11 +38,11 @@ export default class AlumnoController {
     }
 
     static async actualizarHabilidadesPerfilAlumno(req, res) {
-        const arregloHabilidades = req.body;
-        const tiposValidos = new Set(['Técnicas', 'Blandas', 'Idioma']);
-        const todosTiposValidos = arregloHabilidades.every(habilidad => tiposValidos.has(habilidad.tipo));
-        let tipo;
         try {
+            const arregloHabilidades = req.body;
+            const tiposValidos = new Set(['Técnicas', 'Blandas', 'Idioma']);
+            const todosTiposValidos = arregloHabilidades.every(habilidad => tiposValidos.has(habilidad.tipo));
+            let tipo;
             if (!Array.isArray(arregloHabilidades)) {
                 return res.status(400).json({ message: 'El body debe contener el arreglo de habilidades' });
             }else if(arregloHabilidades.every(habilidad => typeof habilidad.id_habilidad !== 'number') || arregloHabilidades.every(habilidad => typeof habilidad.id_alumno !== 'number') || !todosTiposValidos) {
@@ -67,8 +67,8 @@ export default class AlumnoController {
     }
 
     static async actualizarDescripcionPerfilAlumno(req, res) {
-        const {id_alumno, descripcion} = req.body;
         try {
+            const {id_alumno, descripcion} = req.body;
             if (!id_alumno || !descripcion) 
                 return res.status(400).json({ message: 'Falta el id del alumno o la descripción' });
             const resultado = await Alumno.actualizarDescripcionPerfilAlumno(id_alumno, descripcion);
@@ -83,8 +83,8 @@ export default class AlumnoController {
     }
 
     static async subirCVAlumno(req, res) {
-        const {id_alumno, url_cv} = req.body;
         try {
+            const {id_alumno, url_cv} = req.body;
             if (!id_alumno || !url_cv) 
                 return res.status(400).json({ message: 'Falta el id del alumno o la URL del CV' });
             if(!url_cv.match(/^https?:\/\/.*\.(?:pdf|doc|docx)$/))
@@ -101,8 +101,8 @@ export default class AlumnoController {
     }
 
     static async actualizarSemestreAlumno(req, res) {
-        const {id_alumno, semestre_actual} = req.body;
         try {
+            const {id_alumno, semestre_actual} = req.body;
             if (!id_alumno || typeof semestre_actual !== 'string')
                 return res.status(400).json({ message: 'Falta el id del alumno o el semestre actual' });
             const resultado = await Alumno.actualizarSemestreAlumno(id_alumno, semestre_actual);
@@ -120,8 +120,8 @@ export default class AlumnoController {
     }
 
     static async actualizarCiudadEntidadAlumno(req, res) {
-        const {id_alumno, ciudad, entidad} = req.body;
         try {
+            const {id_alumno, ciudad, entidad} = req.body;
             if (!id_alumno || !ciudad || !entidad)
                 return res.status(400).json({ message: 'Falta el id del alumno, la ciudad o la entidad' });
             const resultado = await Alumno.actualizarCiudadEntidadAlumno(id_alumno, ciudad, entidad);
@@ -136,8 +136,8 @@ export default class AlumnoController {
     }
 
     static async actualizarTelefonoAlumno(req, res) {
-        const {id_alumno, telefono} = req.body;
         try {
+            const {id_alumno, telefono} = req.body;
             if (!id_alumno || !telefono)
                 return res.status(400).json({ message: 'Falta el id del alumno o el teléfono' });
             if(!telefono.match(/^\+?[0-9]{10}$/))
@@ -154,8 +154,8 @@ export default class AlumnoController {
     }
 
     static async actualizarFechaNacimientoAlumno(req, res) {
-        const {id_alumno, fecha_nacimiento} = req.body;
         try {
+            const {id_alumno, fecha_nacimiento} = req.body;
             if (!id_alumno || !fecha_nacimiento)
                 return res.status(400).json({ message: 'Falta el id del alumno o la fecha de nacimiento' });
             if(!fecha_nacimiento.match(/^\b(19\d\d|20\d\d)-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])\b$/))
@@ -173,12 +173,12 @@ export default class AlumnoController {
         }
     }
 
-    static async agregarEscolaridadAlumno(req, res) {
-        let {id_alumno, nivel, institucion, carrera, plantel, nota, fecha_inicio, fecha_fin } = req.body;
-        const nivelesValidos = new Set(['Bachillerato General','Tecnólogo','Bachillerato Tecnológico','Profesional Técnico','Técnico Superior Universitario', 'Licenciatura']);
-        const notasValidas = new Set(['Cursando','Titulado','Pasante', 'Egresado','Trunca']);
-        if(!carrera) carrera = null;
+    static async agregarEscolaridadAlumno(req, res) { 
         try {
+            let {id_alumno, nivel, institucion, carrera, plantel, nota, fecha_inicio, fecha_fin } = req.body;
+            const nivelesValidos = new Set(['Bachillerato General','Tecnólogo','Bachillerato Tecnológico','Profesional Técnico','Técnico Superior Universitario', 'Licenciatura']);
+            const notasValidas = new Set(['Cursando','Titulado','Pasante', 'Egresado','Trunca']);
+            if(!carrera) carrera = null;
             if (!id_alumno || !nivel || !institucion || !plantel || !nota || !fecha_inicio || !fecha_fin)
                 return res.status(400).json({ message: 'Faltan campos obligatorios para agregar la escolaridad' });
             if (!nivelesValidos.has(nivel) || !notasValidas.has(nota)) {
@@ -201,11 +201,11 @@ export default class AlumnoController {
     }
 
     static async actualizarEscolaridadAlumno(req, res) {
-        let {id_escolaridad, id_alumno, nivel, institucion, carrera, plantel, nota, fecha_inicio, fecha_fin } = req.body;
-        const nivelesValidos = new Set(['Bachillerato General','Tecnólogo','Bachillerato Tecnológico','Profesional Técnico','Técnico Superior Universitario', 'Licenciatura']);
-        const notasValidas = new Set(['Cursando','Titulado','Pasante', 'Egresado','Trunca']);
-        if(!carrera) carrera = null;
         try {
+            let {id_escolaridad, id_alumno, nivel, institucion, carrera, plantel, nota, fecha_inicio, fecha_fin } = req.body;
+            const nivelesValidos = new Set(['Bachillerato General','Tecnólogo','Bachillerato Tecnológico','Profesional Técnico','Técnico Superior Universitario', 'Licenciatura']);
+            const notasValidas = new Set(['Cursando','Titulado','Pasante', 'Egresado','Trunca']);
+            if(!carrera) carrera = null;
             if (!id_escolaridad || !nivel || !institucion || !plantel || !nota || !fecha_inicio || !fecha_fin)
                 return res.status(400).json({ message: 'Faltan campos obligatorios para actualizar la escolaridad' });
             if (!nivelesValidos.has(nivel) || !notasValidas.has(nota)) {
@@ -228,8 +228,8 @@ export default class AlumnoController {
     }
 
     static async eliminarEscolaridadAlumno(req, res) {
-        const {id_escolaridad, id_alumno} = req.body;
         try {
+            const {id_escolaridad, id_alumno} = req.body;
             if (!id_escolaridad || !id_alumno)
                 return res.status(400).json({ message: 'Falta el id de la escolaridad a eliminar o el id del alumno' });
             const resultado = await Alumno.eliminarEscolaridadAlumno(id_escolaridad, id_alumno);
@@ -244,9 +244,9 @@ export default class AlumnoController {
     }
     
     static async agregarUrlExternaAlumno(req, res) {
-        const {id_alumno, url_externa, tipo} = req.body;
-        const tiposValidos = new Set(['LinkedIn', 'GitHub', 'Blog', 'Portafolio', 'Otro']);
         try {
+            const {id_alumno, url_externa, tipo} = req.body;
+            const tiposValidos = new Set(['LinkedIn', 'GitHub', 'Blog', 'Portafolio', 'Otro']);
             if (!id_alumno || !url_externa || !tipo)
                 return res.status(400).json({ message: 'Faltan campos obligatorios para agregar la URL externa' });
             if (!tiposValidos.has(tipo)) {
@@ -267,9 +267,9 @@ export default class AlumnoController {
     }
 
     static async actualizarUrlExternaAlumno(req, res) {
-        const {id_url, id_alumno, url_externa, tipo} = req.body;
-        const tiposValidos = new Set(['LinkedIn', 'GitHub', 'Blog', 'Portafolio', 'Otro']);
         try {
+            const {id_url, id_alumno, url_externa, tipo} = req.body;
+            const tiposValidos = new Set(['LinkedIn', 'GitHub', 'Blog', 'Portafolio', 'Otro']);
             if (!id_url|| !id_alumno || !url_externa || !tipo)
                 return res.status(400).json({ message: 'Faltan campos obligatorios para actualizar la URL externa' });
             if (!tiposValidos.has(tipo)) {
@@ -290,8 +290,8 @@ export default class AlumnoController {
     }
 
     static async eliminarUrlExternaAlumno(req, res) {
-        const {id_url, id_alumno} = req.body;
         try {
+            const {id_url, id_alumno} = req.body;
             if (!id_url || !id_alumno)
                 return res.status(400).json({ message: 'Falta el id de la URL externa a eliminar o el id del alumno' });
             const resultado = await Alumno.eliminarUrlExternaAlumno(id_url, id_alumno);
@@ -306,8 +306,8 @@ export default class AlumnoController {
     }
 
     static async agregarCursoAlumno(req, res) {
-        const {id_alumno, nombre, institucion, fecha_inicio, fecha_fin} = req.body;
         try {
+            const {id_alumno, nombre, institucion, fecha_inicio, fecha_fin} = req.body;
             if (!id_alumno || !nombre || !institucion || !fecha_inicio || !fecha_fin)
                 return res.status(400).json({ message: 'Faltan campos obligatorios para agregar el curso' });
             const resultado = await Alumno.agregarCursoAlumno(id_alumno, nombre, institucion, fecha_inicio, fecha_fin);
@@ -324,8 +324,8 @@ export default class AlumnoController {
     }
     
     static async actualizarCursoAlumno(req, res) {
-        const {id_curso, id_alumno, nombre, institucion, fecha_inicio, fecha_fin} = req.body;
         try {
+            const {id_curso, id_alumno, nombre, institucion, fecha_inicio, fecha_fin} = req.body;
             if (!id_curso || !id_alumno || !nombre || !institucion || !fecha_inicio || !fecha_fin)
                 return res.status(400).json({ message: 'Faltan campos obligatorios para actualizar el curso' });
             const resultado = await Alumno.actualizarCursoAlumno(id_curso, id_alumno, nombre, institucion, fecha_inicio, fecha_fin);
@@ -342,8 +342,8 @@ export default class AlumnoController {
     }
 
     static async eliminarCursoAlumno(req, res) {
-        const {id_curso, id_alumno} = req.body;
         try {
+            const {id_curso, id_alumno} = req.body;
             if (!id_curso || !id_alumno)
                 return res.status(400).json({ message: 'Falta el id del curso a eliminar o el id del alumno' });
             const resultado = await Alumno.eliminarCursoAlumno(id_curso, id_alumno);
@@ -358,9 +358,9 @@ export default class AlumnoController {
     }
 
     static async agregarCertificadoAlumno(req, res) {
-        const {id_alumno, nombre, institucion, fecha_expedicion, fecha_caducidad, id_credencial, url_certificado, habilidades_desarrolladas} = req.body;
-        const certificadoData = normalizarObjetosUndefinedANull({id_alumno, nombre, institucion, fecha_expedicion, fecha_caducidad, id_credencial, url_certificado, habilidades_desarrolladas});
         try {
+            const {id_alumno, nombre, institucion, fecha_expedicion, fecha_caducidad, id_credencial, url_certificado, habilidades_desarrolladas} = req.body;
+            const certificadoData = normalizarObjetosUndefinedANull({id_alumno, nombre, institucion, fecha_expedicion, fecha_caducidad, id_credencial, url_certificado, habilidades_desarrolladas});
             if (!id_alumno || !nombre || !institucion || !fecha_expedicion)
                 return res.status(400).json({ message: 'Faltan campos obligatorios para agregar el certificado' });
             const resultado = await Alumno.agregarCertificadoAlumno(certificadoData);
@@ -382,9 +382,9 @@ export default class AlumnoController {
     }
 
     static async actualizarCertificadoAlumno(req, res) {
-        const {id_certificado, id_alumno, nombre, institucion, fecha_expedicion, fecha_caducidad, id_credencial, url_certificado, habilidades_desarrolladas} = req.body;
-        const certificadoData = normalizarObjetosUndefinedANull({id_certificado, id_alumno, nombre, institucion, fecha_expedicion, fecha_caducidad, id_credencial, url_certificado, habilidades_desarrolladas});
         try {
+            const {id_certificado, id_alumno, nombre, institucion, fecha_expedicion, fecha_caducidad, id_credencial, url_certificado, habilidades_desarrolladas} = req.body;
+            const certificadoData = normalizarObjetosUndefinedANull({id_certificado, id_alumno, nombre, institucion, fecha_expedicion, fecha_caducidad, id_credencial, url_certificado, habilidades_desarrolladas});
             if (!id_certificado || !id_alumno || !nombre || !institucion || !fecha_expedicion)
                 return res.status(400).json({ message: 'Faltan campos obligatorios para actualizar el certificado' });
             const resultado = await Alumno.actualizarCertificadoAlumno(certificadoData);
@@ -404,8 +404,8 @@ export default class AlumnoController {
     }
 
     static async eliminarCertificadoAlumno(req, res) {
-        const {id_certificado, id_alumno} = req.body;
         try {
+            const {id_certificado, id_alumno} = req.body;
             if (!id_certificado || !id_alumno)
                 return res.status(400).json({ message: 'Falta el id del certificado a eliminar o el id del alumno' });
             const resultado = await Alumno.eliminarCertificadoAlumno(id_certificado, id_alumno);
@@ -420,9 +420,9 @@ export default class AlumnoController {
     }
 
     static async agregarExperienciaLaboralAlumno(req, res) {
-        const {id_alumno, cargo, empresa,fecha_inicio, fecha_fin, descripcion, habilidades_desarrolladas } = req.body;
-        const experienciaData = normalizarObjetosUndefinedANull({id_alumno, cargo, empresa,fecha_inicio, fecha_fin, descripcion, habilidades_desarrolladas });
         try {
+            const {id_alumno, cargo, empresa,fecha_inicio, fecha_fin, descripcion, habilidades_desarrolladas } = req.body;
+            const experienciaData = normalizarObjetosUndefinedANull({id_alumno, cargo, empresa,fecha_inicio, fecha_fin, descripcion, habilidades_desarrolladas });
             if (!id_alumno || !cargo || !empresa || !fecha_inicio)
                 return res.status(400).json({ message: 'Faltan campos obligatorios para agregar la experiencia laboral' });
             const resultado = await Alumno.agregarExperienciaLaboralAlumno(experienciaData);
@@ -446,9 +446,9 @@ export default class AlumnoController {
     }
 
     static async actualizarExperienciaLaboralAlumno(req, res) {
-        const {id_experiencia, id_alumno, cargo, empresa,fecha_inicio, fecha_fin, descripcion, habilidades_desarrolladas } = req.body;
-        const experienciaData = normalizarObjetosUndefinedANull({id_experiencia, id_alumno, cargo, empresa,fecha_inicio, fecha_fin, descripcion, habilidades_desarrolladas });
         try {
+            const {id_experiencia, id_alumno, cargo, empresa,fecha_inicio, fecha_fin, descripcion, habilidades_desarrolladas } = req.body;
+            const experienciaData = normalizarObjetosUndefinedANull({id_experiencia, id_alumno, cargo, empresa,fecha_inicio, fecha_fin, descripcion, habilidades_desarrolladas });
             if (!id_experiencia || !id_alumno || !cargo || !empresa || !fecha_inicio)
                 return res.status(400).json({ message: 'Faltan campos obligatorios para actualizar la experiencia laboral' });
             const resultado = await Alumno.actualizarExperienciaLaboralAlumno(experienciaData);
@@ -472,8 +472,8 @@ export default class AlumnoController {
     }
 
     static async eliminarExperienciaLaboralAlumno(req, res) {
-        const {id_experiencia, id_alumno} = req.body;
         try {
+            const {id_experiencia, id_alumno} = req.body;
             if (!id_experiencia || !id_alumno)
                 return res.status(400).json({ message: 'Falta el id de la experiencia laboral a eliminar o el id del alumno' });
             const resultado = await Alumno.eliminarExperienciaLaboralAlumno(id_experiencia, id_alumno);
@@ -488,8 +488,8 @@ export default class AlumnoController {
     }
 
     static async eliminarCuentaAlumno(req, res) {
-        const {id_usuario, id_alumno} = req.body;
         try {
+            const {id_usuario, id_alumno} = req.body;
             if (!id_alumno || !id_usuario)
                 return res.status(400).json({ message: 'Falta el id del alumno' });
             const resultado = await Alumno.eliminarCuentaAlumno(id_usuario, id_alumno);
@@ -504,8 +504,8 @@ export default class AlumnoController {
     }
 
     static async obtenerPerfilAlumnoVistaReclutador(req, res) {
-        const {id_alumno} = req.query;
         try {
+            const {id_alumno} = req.query;
             if (!id_alumno) {
                 return res.status(400).json({ message: 'Falta el id del alumno' });
             }
@@ -522,8 +522,8 @@ export default class AlumnoController {
 
 
     static async obtenerPerfilPublicoAlumno(req, res) {
-        const {id_alumno} = req.query;
         try {
+            const {id_alumno} = req.query;
             if (!id_alumno) {
                 return res.status(400).json({ message: 'Falta el id del alumno' });
             }
@@ -539,8 +539,8 @@ export default class AlumnoController {
     }
 
     static async obtenerPostulacionesPorAlumno(req, res) {
-        const {id_alumno, estado} = req.query;
         try {
+            const {id_alumno, estado} = req.query;
             if (!id_alumno ||( estado!== 'Activa' && estado!=='Expirada' && estado!== undefined)) {
                 return res.status(400).json({ message: 'Falta el id del alumno o el estado no es correcto' });
             }
@@ -557,8 +557,8 @@ export default class AlumnoController {
     }
 
     static async postularseAVacante(req, res) {
-        const {id_alumno, id_vacante} = req.body;
         try{
+            const {id_alumno, id_vacante} = req.body;
             if (!id_alumno || !id_vacante) {
                 return res.status(400).json({ message: 'Falta el id del alumno o de la vacante' });
             }
@@ -580,8 +580,8 @@ export default class AlumnoController {
     }
 
     static async cancelarPostulacion(req, res) {
-        const {id_alumno, id_vacante} = req.body;
         try{
+            const {id_alumno, id_vacante} = req.body;
             if (!id_alumno || !id_vacante) {
                 return res.status(400).json({ message: 'Falta el id del alumno o de la vacante' });
             }
@@ -595,6 +595,57 @@ export default class AlumnoController {
         }catch(error){
             console.error('Error al cancelar la postulación:', error);
             res.status(500).json({ message: 'Error al cancelar la postulación' });
+        }
+    }
+
+    static async obtenerHistorialBusquedas(req, res) {
+        try {
+            const {id_alumno} = req.query;
+            if (!id_alumno) {
+                return res.status(400).json({ message: 'Falta el id del alumno' });
+            }
+            const historial = await Alumno.obtenerHistorialBusquedas(id_alumno);
+            if (!historial) {
+                return res.status(404).json({ message: 'Alumno no encontrado' });
+            }
+            res.status(200).json(historial);
+        } catch (error) {
+            console.error('Error al obtener el historial de búsquedas del alumno:', error);
+            res.status(500).json({ message: 'Error al obtener el historial de búsquedas del alumno' });
+        }
+    }
+
+    static async limpiarHistorialBusquedas(req, res) {
+        try {
+            const {id_alumno} = req.body;
+            if (!id_alumno) {
+                return res.status(400).json({ message: 'Falta el id del alumno' });
+            }
+            const resultado = await Alumno.limpiarHistorialBusquedas(id_alumno);
+            if (!resultado) {
+                return res.status(404).json({ message: 'Alumno no encontrado' });
+            }
+            res.status(204).json({ message: 'Historial de búsquedas limpiado correctamente' });
+        } catch (error) {
+            console.error('Error al limpiar el historial de búsquedas del alumno:', error);
+            res.status(500).json({ message: 'Error al limpiar el historial de búsquedas del alumno' });
+        }
+    }
+    
+    static async borrarBusquedaPorId(req, res) {
+        try {
+            const {id_alumno, id_busqueda} = req.body;
+            if (!id_alumno || !id_busqueda) {
+                return res.status(400).json({ message: 'Falta el id del alumno o el id de la búsqueda' });
+            }
+            const resultado = await Alumno.borrarBusquedaPorId(id_alumno, id_busqueda);
+            if (!resultado) {
+                return res.status(404).json({ message: 'Alumno o búsqueda no encontrados' });
+            }
+            res.status(204).json({ message: 'Búsqueda eliminada correctamente' });
+        } catch (error) {
+            console.error('Error al eliminar la búsqueda del alumno:', error.message);
+            res.status(500).json({ message: 'Error al eliminar la búsqueda del alumno' });
         }
     }
 }
