@@ -24,7 +24,7 @@ export default class AlumnoController {
             const {id_alumno, url_foto} = req.body;
             if (!id_alumno || !url_foto) 
                 return res.status(400).json({ message: 'Falta el id del alumno o la URL de la foto' });
-            if(!url_foto.match(/^https?:\/\/.*\.(?:png|jpg|jpeg|gif|svg)$/))
+            if(!url_foto.match(/^https?:\/\/.*$/))
                 return res.status(400).json({ message: 'La URL de la foto no es válida' });
             const resultado = await Alumno.actualizarFotoPerfilAlumno(id_alumno, url_foto);
             if (!resultado) {
@@ -84,12 +84,15 @@ export default class AlumnoController {
 
     static async subirCVAlumno(req, res) {
         try {
-            const {id_alumno, url_cv} = req.body;
-            if (!id_alumno || !url_cv) 
+            const uid_alumno = req.uid;
+            //console.log(req.uid);
+            //const {uid_alumno, url_cv} = req.body;
+            const {url_cv} = req.body;
+            if (!uid_alumno || !url_cv) 
                 return res.status(400).json({ message: 'Falta el id del alumno o la URL del CV' });
-            if(!url_cv.match(/^https?:\/\/.*\.(?:pdf|doc|docx)$/))
+            if(!url_cv.match(/^cv\/.*\.(?:pdf)$/))
                 return res.status(400).json({ message: 'La URL del CV no es válida' });
-            const resultado = await Alumno.subirCVAlumno(id_alumno, url_cv);
+            const resultado = await Alumno.subirCVAlumno(uid_alumno, url_cv);
             if (!resultado) {
                 return res.status(404).json({ message: 'Alumno no encontrado' });
             }

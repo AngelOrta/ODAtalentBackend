@@ -120,8 +120,8 @@ export default class Alumno {
         return result.affectedRows > 0;
     }
 
-    static async subirCVAlumno(id_alumno, url_cv) {
-        const [result] = await pool.query(`UPDATE AlumnoSolicitante SET url_cv = ? WHERE id_alumno = ?`, [url_cv, id_alumno]);
+    static async subirCVAlumno(uid_alumno, url_cv) {
+        const [result] = await pool.query(`UPDATE AlumnoSolicitante AS A JOIN Usuario AS U ON A.id_usuario = U.id SET A.url_cv = ? WHERE U.uid_firebase = ?`, [url_cv, uid_alumno]);
         if(result.info.includes('Rows matched: 0'))
             return null;
         return result.affectedRows > 0;

@@ -42,8 +42,8 @@ CREATE TABLE Escolaridad (
     carrera VARCHAR(200),
     plantel VARCHAR(160) NOT NULL,
     nota ENUM('Pasante', 'Titulado', 'Egresado', 'Cursando', 'Trunca') NOT NULL,
-    fecha_inicio DATE NOT NULL,
-    fecha_fin DATE NOT NULL,
+    fecha_inicio YEAR NOT NULL,
+    fecha_fin YEAR NOT NULL,
 
     FOREIGN KEY (id_alumno) REFERENCES AlumnoSolicitante(id_alumno) ON DELETE CASCADE
 );
