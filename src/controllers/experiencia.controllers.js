@@ -31,11 +31,24 @@ export default class PublicacionController {
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 10;
             const offset = (page - 1) * limit;
-            const id_roltrabajo = req.query.id_roltrabajo ? parseInt(req.query.id_roltrabajo) : null;
+            //const id_roltrabajo = req.query.id_roltrabajo ? parseInt(req.query.id_roltrabajo) : null;
+            let id_roles_trabajo = null;
+        
+            if (req.query.id_roltrabajo) {
+                // Convierte el string "1,2,3" en un array de números [1, 2, 3]
+                const idsArray = req.query.id_roltrabajo
+                    .split(',') 
+                    .map(id => parseInt(id.trim(), 10)) 
+                    .filter(id => !isNaN(id) && id > 0); // Filtra IDs inválidos
+
+                if (idsArray.length > 0) {
+                    id_roles_trabajo = idsArray;
+                }
+            }
             if (!id_alumno) {
                 return res.status(400).json({ message: 'Falta el id_alumno' });
             }
-            const experiencias = await Publicacion.obtenerExperienciasAlumnos(id_alumno,page, limit, offset, id_roltrabajo);
+            const experiencias = await Publicacion.obtenerExperienciasAlumnos(id_alumno,page, limit, offset, id_roles_trabajo);
             res.status(200).json(experiencias);
         } catch (error) {
             console.error('Error al obtener las experiencias de los alumnos:', error);

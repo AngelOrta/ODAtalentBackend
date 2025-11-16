@@ -222,6 +222,7 @@ CREATE TABLE Postulacion (
 
 CREATE TABLE RolTrabajo (
     id_roltrabajo INT AUTO_INCREMENT PRIMARY KEY,
+    area VARCHAR(50) NOT NULL,
     nombre VARCHAR(50) NOT NULL UNIQUE
 );
 
