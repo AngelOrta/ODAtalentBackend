@@ -1,14 +1,15 @@
 import {pool} from '../db/db.js';
 
 export default class RolTrabajo {
-  constructor(id_roltrabajo, nombre) {
+  constructor(id_roltrabajo, nombre, area) {
     this.id_roltrabajo = id_roltrabajo;
+    this.area = area;
     this.nombre = nombre;
   }
 
   static async obtenerTodos() {
     const [rows] = await pool.query('SELECT * FROM RolTrabajo');
-    return rows.map(row => new RolTrabajo(row.id_roltrabajo, row.nombre));
+    return rows.map(row => new RolTrabajo(row.id_roltrabajo, row.nombre, row.area));
   }
 
   static async crear(nombre) {

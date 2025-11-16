@@ -43,18 +43,18 @@ export default class Publicacion{
         }
     }
 
-    static async obtenerExperienciasAlumnos(id_alumno,page, limit, offset, id_roltrabajo ){
+    static async obtenerExperienciasAlumnos(id_alumno,page, limit, offset, id_roles_trabajo ){
     try {
             let joinClause = '';
             let whereClause = '';
             const countParams = [];
             const mainParams = [];
 
-            if (id_roltrabajo) {
+            if (id_roles_trabajo && id_roles_trabajo.length > 0) {
                 joinClause = ' JOIN Publicacion_RolTrabajo PRT ON P.id_publicacion = PRT.id_publicacion';
-                whereClause = ' WHERE PRT.id_roltrabajo = ?';
-                countParams.push(id_roltrabajo);
-                mainParams.push(id_roltrabajo);
+                whereClause = ' WHERE PRT.id_roltrabajo IN (?)'; 
+                countParams.push(id_roles_trabajo);
+                mainParams.push(id_roles_trabajo);
             }
 
             // evitar conteos duplicados si hay JOINS
@@ -298,7 +298,7 @@ export default class Publicacion{
             JOIN AlumnoSolicitante A ON C.id_alumno = A.id_alumno
             JOIN Usuario U ON A.id_usuario = U.id
             WHERE C.id_publicacion = ? AND C.id_comentario_padre IS NULL
-            ORDER BY C.fecha DESC`, [id_publicacion]);
+            ORDER BY C.fecha ASC`, [id_publicacion]);
             const [misReaccionesRows] = await pool.query(`SELECT id_comentario, tipo_reaccion
             FROM Comentario_Reacciones
             WHERE id_alumno = ?
@@ -333,7 +333,7 @@ export default class Publicacion{
             JOIN AlumnoSolicitante A ON C.id_alumno = A.id_alumno
             JOIN Usuario U ON A.id_usuario = U.id
             WHERE C.id_comentario_padre = ?
-            ORDER BY C.fecha DESC`, [id_comentario_padre]);
+            ORDER BY C.fecha ASC`, [id_comentario_padre]);
             const [misReaccionesRows] = await pool.query(`SELECT id_comentario, tipo_reaccion
             FROM Comentario_Reacciones
             WHERE id_alumno = ?
