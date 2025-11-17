@@ -562,6 +562,7 @@ export default class AlumnoController {
     static async postularseAVacante(req, res) {
         try{
             const {id_alumno, id_vacante} = req.body;
+            console.log(req.body);
             if (!id_alumno || !id_vacante) {
                 return res.status(400).json({ message: 'Falta el id del alumno o de la vacante' });
             }
@@ -603,11 +604,14 @@ export default class AlumnoController {
 
     static async obtenerHistorialBusquedas(req, res) {
         try {
-            const {id_alumno} = req.query;
+            let {id_alumno, limit} = req.query;
+            if(!limit || isNaN(parseInt(limit)) || parseInt(limit) <=0){
+                limit = null;
+            }
             if (!id_alumno) {
                 return res.status(400).json({ message: 'Falta el id del alumno' });
             }
-            const historial = await Alumno.obtenerHistorialBusquedas(id_alumno);
+            const historial = await Alumno.obtenerHistorialBusquedas(id_alumno, limit);
             if (!historial) {
                 return res.status(404).json({ message: 'Alumno no encontrado' });
             }

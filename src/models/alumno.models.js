@@ -560,6 +560,7 @@ export default class Alumno {
             return 'VacanteExpirada';
         }
         const resultadoPerfilCompleto = await this.verificarPerfilCompleto(id_alumno);
+        //console.log('Resultado de la verificación del perfil completo:', resultadoPerfilCompleto);
         if (!resultadoPerfilCompleto) {
             return 'PerfilIncompleto';
         }                          
@@ -571,6 +572,7 @@ export default class Alumno {
     static async verificarPerfilCompleto(id_alumno) {
         try{
             const [[resultadoPerfilCompleto], [resultadoHabilidades]] = await Promise.all([pool.query(`SELECT * FROM AlumnoSolicitante WHERE id_alumno = ?`, [id_alumno]), pool.query(`SELECT * FROM Alumno_Habilidad WHERE id_alumno = ?`, [id_alumno])]);
+            //console.log('Datos obtenidos para verificar el perfil completo:', {resultadoPerfilCompleto, resultadoHabilidades});
             if(!resultadoPerfilCompleto.length)
                 return false;
             if(resultadoHabilidades.length < 1||!resultadoPerfilCompleto[0].descripcion || !resultadoPerfilCompleto[0].ciudad || !resultadoPerfilCompleto[0].entidad || !resultadoPerfilCompleto[0].semestre_actual)
@@ -596,9 +598,15 @@ export default class Alumno {
         return true;
     }
 
-    static async obtenerHistorialBusquedas(id_alumno) {
+    static async obtenerHistorialBusquedas(id_alumno, limit) {
         try{
-            const [historialRows] = await pool.query(`SELECT * FROM Busqueda WHERE id_alumno = ? ORDER BY fecha DESC`, [id_alumno]);
+            let historialRows;
+            if(limit && !isNaN(parseInt(limit)) && parseInt(limit) >0){
+                [historialRows] = await pool.query(`SELECT * FROM Busqueda WHERE id_alumno = ? ORDER BY fecha DESC LIMIT ?`, [id_alumno, parseInt(limit)]);
+            }else{
+                [historialRows] = await pool.query(`SELECT * FROM Busqueda WHERE id_alumno = ? ORDER BY fecha DESC`, [id_alumno]);
+            }
+            
             return historialRows.map(row => {return {id_busqueda:row.id_busqueda,consulta:row.consulta}});
         }catch(error){
             console.error('Error al obtener el historial de búsqueda del alumno:', error.sqlMessage);
