@@ -48,7 +48,7 @@
 
 //VER DETALLES DE UNA VACANTE ESPECIFICA
 //GET REQ
-/vacantes/detalles?id_vacante=10
+/vacantes/detalles?id_vacante=10&id_alumno=5
 //RES 200
 {
     "id_vacante": 1,
@@ -104,7 +104,10 @@
                 "id_roltrabajo": 2,
                 "nombre": "Analista de Sistemas"
             }
-        ]
+        ],
+    "postulado": true //o false si no se ha postulado el alumno
+    "estatus_postulacion": null,
+    "perfil_completo": 0 //1 si el perfil del alumno esta completo, 0 si no lo esta
 }
 
 
