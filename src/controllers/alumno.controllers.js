@@ -562,7 +562,7 @@ export default class AlumnoController {
     static async postularseAVacante(req, res) {
         try{
             const {id_alumno, id_vacante} = req.body;
-            console.log(req.body);
+            //console.log(req.body);
             if (!id_alumno || !id_vacante) {
                 return res.status(400).json({ message: 'Falta el id del alumno o de la vacante' });
             }
