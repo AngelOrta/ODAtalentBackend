@@ -29,4 +29,28 @@ export default class EmpresaController {
             res.status(500).json({ error: 'Error al agregar empresa' });
         }
     }
+    
+    static async actualizarEmpresa(req, res) {
+        try{
+            const { id_empresa, nombre, descripcion, url_logo, sitio_web} = req.body;
+            const empresaActualizada = await Empresa.actualizarEmpresa(id_empresa, nombre, descripcion, url_logo, sitio_web);
+            if(!empresaActualizada) return res.status(404).json({ error: 'Empresa no encontrada o no se pudo actualizar' });
+            res.status(200).json({message: 'Empresa actualizada correctamente', empresa: empresaActualizada});
+        }catch(err){
+            console.log(err);
+            res.status(500).json({ error: 'Error al actualizar empresa' });
+        }
+    }
+
+    static async eliminarEmpresa(req, res) {
+        try{
+            const { id_empresa } = req.body;
+            const empresaEliminada = await Empresa.eliminarEmpresa(id_empresa);
+            if(!empresaEliminada) return res.status(404).json({ error: 'Empresa no encontrada o no se pudo eliminar' });
+            res.status(200).json({message: 'Empresa eliminada correctamente', empresa: empresaEliminada});
+        }catch(err){
+            console.log(err);
+            res.status(500).json({ error: 'Error al eliminar empresa' });
+        }
+    }
 }
