@@ -10,10 +10,21 @@ export default class Empresa {
     }
 
     static async agregarEmpresa(nombre, descripcion, urlLogo, sitio_web){
-        const [result] = await pool.query(
-            'INSERT INTO Empresa (nombre, descripcion, url_logo, sitio_web) VALUES (?, ?, ?,?)', [nombre, descripcion, urlLogo, sitio_web]);
-        if(!result.affectedRows) return null;
-        return new Empresa(result[0].id_empresa, result[0].nombre, result[0].descripcion, result[0].url_logo, result[0].sitio_web);
+        try{    if(!urlLogo) urlLogo = null;
+            const [result] = await pool.query(
+                'INSERT INTO Empresa (nombre, descripcion, url_logo, sitio_web) VALUES (?, ?, ?,?)', [nombre, descripcion, urlLogo, sitio_web]);
+            if(!result.affectedRows) return null;
+            //console.log(result.insertId);
+
+            return { id_empresa: result.insertId}
+        }
+        catch(err){
+            console.log(err.sqlMessage);
+            if(err.code === 'ER_DUP_ENTRY'){
+                throw new Error('La empresa ya existe');
+            }
+            throw err;
+        }
     }
 
     static async obtenerEmpresas(){
