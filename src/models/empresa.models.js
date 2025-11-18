@@ -33,4 +33,33 @@ export default class Empresa {
         return rows.map(row => new Empresa(row.id_empresa, row.nombre, row.descripcion, row.url_logo));
     }
 
+    static async actualizarEmpresa(id_empresa, nombre, descripcion, url_logo, sitio_web){
+        try{
+            const [result] = await pool.query(
+                'UPDATE Empresa SET nombre = ?, descripcion = ?, url_logo = ?, sitio_web = ? WHERE id_empresa = ?',
+                [nombre, descripcion, url_logo, sitio_web, id_empresa]
+            );
+            if(result.affectedRows === 0) return null;
+            return { id_empresa: id_empresa };
+        }
+        catch(err){
+            console.log(err);
+            throw err;
+        }
+    }
+
+    static async eliminarEmpresa(id_empresa){
+        try{
+            const [result] = await pool.query(
+                'DELETE FROM Empresa WHERE id_empresa = ?',
+                [id_empresa]
+            );
+            if(result.affectedRows === 0) return null;
+            return { id_empresa: id_empresa };
+        }
+        catch(err){
+            console.log(err);
+            throw err;
+        }
+    }
 }
