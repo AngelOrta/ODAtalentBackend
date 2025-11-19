@@ -488,7 +488,7 @@ export default class Alumno {
             }
             await connection.query(`UPDATE Certificado SET id_credencial = NULL, url_certificado = NULL WHERE id_alumno = ?`, [id_alumno]);
             await connection.query(`DELETE FROM Postulacion WHERE id_alumno = ?`, [id_alumno]);
-            await connection.query(`DELETE FROM Notificacion WHERE id_alumno = ?`, [id_alumno]);
+            //await connection.query(`DELETE FROM Notificacion WHERE id_alumno = ?`, [id_alumno]);
 
             await connection.commit();
             return true;
