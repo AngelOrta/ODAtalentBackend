@@ -30,11 +30,12 @@ export default class Empresa {
     static async obtenerEmpresas(){
         const [rows] = await pool.query('SELECT * FROM Empresa');
         if(!rows.length) return null;
-        return rows.map(row => new Empresa(row.id_empresa, row.nombre, row.descripcion, row.url_logo));
+        return rows.map(row => new Empresa(row.id_empresa, row.nombre, row.descripcion, row.url_logo, row.sitio_web));
     }
 
     static async actualizarEmpresa(id_empresa, nombre, descripcion, url_logo, sitio_web){
         try{
+            console.log(id_empresa, nombre, descripcion, url_logo, sitio_web);
             const [result] = await pool.query(
                 'UPDATE Empresa SET nombre = ?, descripcion = ?, url_logo = ?, sitio_web = ? WHERE id_empresa = ?',
                 [nombre, descripcion, url_logo, sitio_web, id_empresa]

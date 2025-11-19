@@ -433,6 +433,9 @@ export default class Publicacion{
             if(error.code === 'ER_NO_REFERENCED_ROW_2' || error.sqlMessage.includes('reporte_ibfk_1') || error.sqlMessage.includes('reporte_ibfk_2')){
                 return null;
             }
+            if(error.code === 'ER_DUP_ENTRY'){
+                return 'duplicado';
+            }
             throw error;
         }
     }

@@ -493,11 +493,14 @@ export default class AlumnoController {
     static async eliminarCuentaAlumno(req, res) {
         try {
             const {id_usuario, id_alumno} = req.body;
+            const {uid} = req.uid;
             if (!id_alumno || !id_usuario)
                 return res.status(400).json({ message: 'Falta el id del alumno' });
-            const resultado = await Alumno.eliminarCuentaAlumno(id_usuario, id_alumno);
+            const resultado = await Alumno.eliminarCuentaAlumno(id_usuario, id_alumno, uid);
             if (!resultado) {
                 return res.status(404).json({ message: 'Alumno no encontrado' });
+            }else if(resultado === 'no_encontrado'){
+                return res.status(404).json({ message: 'No se encontraron los recursos' });
             }
             res.status(204).json({ message: 'Cuenta del alumno eliminada correctamente' });
         } catch (error) {
