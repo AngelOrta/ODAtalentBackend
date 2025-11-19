@@ -1,4 +1,5 @@
 import {pool} from '../db/db.js';
+import { getStorage } from 'firebase-admin/storage';
 
 export default class Alumno {
     static async obtenerPerfilAlumno(id_alumno) {
@@ -470,12 +471,39 @@ export default class Alumno {
     }
     
     //TODO: eliminarCuentaAlumno
-    static async eliminarCuentaAlumno(id, id_alumno) {
+    static async eliminarCuentaAlumno(id, id_alumno, uid_firebase) {
         console.log(id, id_alumno);
         let connection;
         try{
             connection = await pool.getConnection();
             await connection.beginTransaction();
+
+            if (uid_firebase) {
+                const bucket = getStorage().bucket(); // Obtener el bucket por defecto
+
+                // Definir las rutas de las carpetas a eliminar
+                const carpetasAEliminar = [
+                    `cv/${uid_firebase}`,
+                    `foto_perfil/${uid_firebase}`
+                ];
+
+                console.log(`Eliminando archivos en Firebase Storage para UID: ${uid_firebase}`);
+                
+                // force: true para eliminar carpetas no vacías
+                await Promise.all(carpetasAEliminar.map(async (folderPath) => {
+                    try {
+                        // La función deleteFiles elimina todos los archivos dentro del prefijo
+                        await bucket.deleteFiles({ prefix: folderPath, force: true });
+                        console.log(`Carpeta eliminada: ${folderPath}`);
+                    } catch (error) {
+                        // Si la carpeta o los archivos no existen, ignoramos el error.
+                        // Si es un error de permiso o grave, lo registramos.
+                        if (error.code !== 404) {
+                            console.warn(`Error (no fatal) al intentar eliminar ${folderPath}:`, error.message);
+                        }
+                    }
+                }));
+            }
 
             await connection.query(`DELETE FROM URLExterna WHERE id_alumno = ?`, [id_alumno]);
             const [resAnonUser] = await connection.query(`UPDATE Usuario SET nombre = 'Usuario Anónimo', correo = CONCAT('anon_', id, '@deleted.com'), uid_firebase = NULL, url_foto_perfil = NULL WHERE id = ?`, [id]);
@@ -493,10 +521,12 @@ export default class Alumno {
             await connection.commit();
             return true;
         }catch(error){
-            console.log(error);
+            console.error('Error al eliminar la cuenta del alumno:', error.sqlMessage);
             if(connection)
                 await connection.rollback();
-            console.error('Error al eliminar la cuenta del alumno:', error.sqlMessage);
+            if (error.message === 'Publicación no encontrada') {
+                return 'no_encontrado';
+            }
             throw new Error('Error al eliminar la cuenta del alumno');
         }finally{
             if(connection)
