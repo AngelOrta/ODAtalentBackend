@@ -68,12 +68,11 @@ export default class ReporteController {
 
     static async resolverReporte(req, res) {
         try {
-            let { id_reporte, comentario_admin} = req.body;
-            if(!comentario_admin) comentario_admin = null;
+            let { id_reporte} = req.body;
             if (!id_reporte) {  
                 return res.status(400).json({ message: 'Faltan datos necesarios' });
             }
-            const resultado = await Reporte.resolverReporte(id_reporte, comentario_admin);
+            const resultado = await Reporte.resolverReporte(id_reporte);
             if (!resultado) {
                 return res.status(404).json({ message: 'No se encontró el reporte' });
             }

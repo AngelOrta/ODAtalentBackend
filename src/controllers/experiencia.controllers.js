@@ -223,6 +223,9 @@ export default class PublicacionController {
             if(!nuevoReporte){
                 return res.status(404).json({ message: 'El alumno o reclutador o contenido no existen' });
             }
+            // else if(nuevoReporte === 'duplicado'){
+            //     return  res.status(409).json({ message: 'El reporte ya existe' });
+            // }
             res.status(201).json({ message: 'Reporte enviado correctamente', id_reporte: nuevoReporte });
         } catch (error) {
             console.error('Error al reportar el contenido:', error);
