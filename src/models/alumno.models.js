@@ -1,5 +1,6 @@
 import {pool} from '../db/db.js';
 import { getStorage } from 'firebase-admin/storage';
+import { getAuth } from 'firebase-admin/auth';
 
 export default class Alumno {
     static async obtenerPerfilAlumno(id_alumno) {
@@ -503,6 +504,19 @@ export default class Alumno {
                         }
                     }
                 }));
+
+                // Intentar borrar la cuenta del usuario en Firebase Auth
+                try {
+                    await getAuth().deleteUser(uid_firebase);
+                    console.log(`Usuario de Firebase Auth eliminado: ${uid_firebase}`);
+                } catch (error) {
+                    // Ignorar si el usuario no existe; registrar otros errores sin interrumpir el flujo
+                    if (error && error.code === 'auth/user-not-found') {
+                        console.warn(`Usuario de Firebase Auth no encontrado para UID: ${uid_firebase}`);
+                    } else {
+                        console.warn('Error (no fatal) al eliminar el usuario de Firebase Auth:', error?.message || error);
+                    }
+                }
             }
 
             await connection.query(`DELETE FROM URLExterna WHERE id_alumno = ?`, [id_alumno]);
