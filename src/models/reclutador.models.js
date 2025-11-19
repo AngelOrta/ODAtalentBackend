@@ -64,17 +64,18 @@ export default class Reclutador {
       }
       const idNuevaVacante = respuestaVacante.insertId;
 
-      if(vacanteData.habilidades.length > 0){
-        const resultadoVacanteHabilidades = await connection.query(
-          `INSERT INTO Vacante_Habilidad (id_vacante, id_habilidad) VALUES ?`,
-          [vacanteData.habilidades.map(habilidad => [idNuevaVacante, habilidad.id_habilidad])]
-        );
-        if (!resultadoVacanteHabilidades[0].affectedRows) {
-          throw new Error('Error al asociar habilidades a la vacante');
+      if(vacanteData.habilidades){  if(vacanteData.habilidades.length > 0){
+          const resultadoVacanteHabilidades = await connection.query(
+            `INSERT INTO Vacante_Habilidad (id_vacante, id_habilidad) VALUES ?`,
+            [vacanteData.habilidades.map(habilidad => [idNuevaVacante, habilidad.id_habilidad])]
+          );
+          if (!resultadoVacanteHabilidades[0].affectedRows) {
+            throw new Error('Error al asociar habilidades a la vacante');
+          }
         }
       }
 
-      if(vacanteData.roles_relacionados.length > 0){
+      if(vacanteData.roles_relacionados){if(vacanteData.roles_relacionados.length > 0){
         const resultadoVacanteRoles = await connection.query(
           `INSERT INTO Vacante_RolTrabajo (id_vacante, id_roltrabajo) VALUES ?`,
           [vacanteData.roles_relacionados.map(rol => [idNuevaVacante, rol.id_roltrabajo])]
@@ -82,7 +83,7 @@ export default class Reclutador {
         if (!resultadoVacanteRoles[0].affectedRows) {
           throw new Error('Error al asociar roles a la vacante');
         }
-      }
+      }}
 
       await connection.commit();
       return idNuevaVacante;
@@ -180,7 +181,7 @@ export default class Reclutador {
 
   static async obtenerVacantesPublicadas(id_reclutador) {
     const [rows] = await pool.query(
-      `SELECT V.id_vacante, R.id_reclutador, V.titulo, V.fecha_publicacion, V.fecha_limite, V.numero_vacantes, V.ciudad, V.entidad, V.modalidad, V.estado, COUNT(P.id_postulacion) AS postulaciones
+      `SELECT V.id_vacante, R.id_reclutador, V.titulo, V.monto_beca, V.fecha_publicacion, V.fecha_limite, V.numero_vacantes, V.ciudad, V.entidad, V.modalidad, V.estado, COUNT(P.id_postulacion) AS postulaciones
        FROM Vacante V 
        JOIN Reclutador R ON V.id_reclutador = R.id_reclutador
        LEFT JOIN Postulacion P ON V.id_vacante = P.id_vacante
@@ -194,6 +195,7 @@ export default class Reclutador {
         id_vacante: row.id_vacante,
         id_reclutador: row.id_reclutador,
         titulo: row.titulo,
+        monto_beca: row.monto_beca,
         fecha_publicacion: row.fecha_publicacion,
         fecha_limite: row.fecha_limite,
         numero_vacantes: row.numero_vacantes,

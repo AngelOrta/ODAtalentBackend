@@ -11,7 +11,7 @@ export default class ReclutadorController {
                 codigo_postal, modalidad, fecha_limite, escolaridad, conocimientos,
                 habilidades, observaciones, numero_vacantes, roles_relacionados
             });
-            if (!id_reclutador || !titulo || !descripcion || !duracion || !monto_beca || !horario || !ubicacion || !ciudad || !entidad || !codigo_postal || !modalidad || !escolaridad || !conocimientos || !habilidades || !numero_vacantes) {
+            if (!id_reclutador || !titulo || !descripcion || !duracion || !monto_beca || !horario || !ubicacion || !ciudad || !entidad || !codigo_postal || !modalidad || !escolaridad || !habilidades || !numero_vacantes) {
                 return res.status(400).json({ message: 'Faltan campos obligatorios' });
             }
             const idNuevaVacante = await Reclutador.crearVacante(vacanteData);
@@ -33,7 +33,7 @@ export default class ReclutadorController {
                 codigo_postal, modalidad, fecha_limite, escolaridad, conocimientos,
                 habilidades, observaciones, numero_vacantes, roles_relacionados
             });
-            if (!id_vacante || !id_reclutador || !titulo || !descripcion || !duracion || !monto_beca || !horario || !ubicacion || !ciudad || !entidad || !codigo_postal || !modalidad || !escolaridad || !conocimientos || !habilidades || !numero_vacantes) {
+            if (!id_reclutador || !titulo || !descripcion || !duracion || !monto_beca || !horario || !ubicacion || !ciudad || !entidad || !codigo_postal || !modalidad || !escolaridad || !habilidades || !numero_vacantes) {
                 return res.status(400).json({ message: 'Faltan campos obligatorios' });
             }
             const resultado = await Reclutador.editarVacante(id_vacante, vacanteData);
