@@ -14,7 +14,7 @@ export default class EmpresaController {
 
     static async agregarEmpresa(req, res) {
         try{
-            if (!req.body.nombre || !req.body.descripcion || !req.body.sitio_web) {
+            if (!req.body.nombre || !req.body.descripcion ) {
                 return res.status(400).json({ error: 'Faltan datos obligatorios' });
             }
             const { nombre, descripcion, url_logo, sitio_web} = req.body;
