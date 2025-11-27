@@ -14,8 +14,14 @@ export default class EmpresaController {
 
     static async agregarEmpresa(req, res) {
         try{
-            if (!req.body.nombre || !req.body.descripcion || !req.body.sitio_web) {
+            if (!req.body.nombre || !req.body.descripcion ) {
                 return res.status(400).json({ error: 'Faltan datos obligatorios' });
+            }
+            if(req.body.sitio_web && !/^https?:\/\/.+\..+/.test(req.body.sitio_web)) {
+                return res.status(400).json({ error: 'El sitio web no es una URL válida' });
+            }
+            if(req.body.url_logo && !/^https?:\/\/.+\..+/.test(req.body.url_logo)) {
+                return res.status(400).json({ error: 'La URL del logo no es una URL válida' });
             }
             const { nombre, descripcion, url_logo, sitio_web} = req.body;
             const nuevaEmpresa = await Empresa.agregarEmpresa(nombre, descripcion, url_logo, sitio_web);

@@ -10,7 +10,7 @@ export default class Empresa {
     }
 
     static async agregarEmpresa(nombre, descripcion, urlLogo, sitio_web){
-        try{    if(!urlLogo) urlLogo = null;
+        try{    if(!urlLogo) urlLogo = null; if(!sitio_web) sitio_web = null;
             const [result] = await pool.query(
                 'INSERT INTO Empresa (nombre, descripcion, url_logo, sitio_web) VALUES (?, ?, ?,?)', [nombre, descripcion, urlLogo, sitio_web]);
             if(!result.affectedRows) return null;

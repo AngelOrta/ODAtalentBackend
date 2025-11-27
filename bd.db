@@ -192,7 +192,7 @@ CREATE TABLE Vacante (
     fecha_limite DATE,
     fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     escolaridad VARCHAR(50) NOT NULL, ##semestre minimo, ej. Minimo 6, 7 semestre
-    conocimientos VARCHAR(1000) NOT NULL, ##habilidades tecnicas
+    conocimientos VARCHAR(1000), ##habilidades tecnicas
     observaciones VARCHAR(400),
     numero_vacantes INT NOT NULL,
     estado ENUM('Activa', 'Expirada') DEFAULT 'Activa',
