@@ -30,6 +30,9 @@ export default class UsuariosController {
 
   static async encolarReclutador(req, res) {
     try {
+      if(isNaN(req.body.id_empresa)) {
+        return res.status(400).json({ error: 'El id_empresa debe ser un número válido' });
+      }
       const { nombre, email, genero, id_empresa} = req.body;
       await Usuario.encolarReclutador(nombre, email, genero, id_empresa);
       res.status(201).json({ message: 'Reclutador encolado' });
