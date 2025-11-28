@@ -27,7 +27,7 @@ initializeApp({
 
 const app = express();
 app.use(cors({
-  origin: '*', //o especifica: 'https://tu-app.com'
+  origin: 'https://odatalent.com', //o especifica: 'https://tu-app.com'
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
