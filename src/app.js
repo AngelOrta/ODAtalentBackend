@@ -23,6 +23,7 @@ dotenv.config();
 initializeApp({
   credential: applicationDefault(),
   projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
 });
 
 const app = express();
