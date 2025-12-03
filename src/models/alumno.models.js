@@ -471,53 +471,11 @@ export default class Alumno {
         }
     }
     
-    //TODO: eliminarCuentaAlumno
     static async eliminarCuentaAlumno(id, id_alumno, uid_firebase) {
-        console.log(id, id_alumno);
         let connection;
         try{
             connection = await pool.getConnection();
             await connection.beginTransaction();
-
-            if (uid_firebase) {
-                const bucket = getStorage().bucket(); // Obtener el bucket por defecto
-
-                // Definir las rutas de las carpetas a eliminar
-                const carpetasAEliminar = [
-                    `cv/${uid_firebase}`,
-                    `foto_perfil/${uid_firebase}`
-                ];
-
-                console.log(`Eliminando archivos en Firebase Storage para UID: ${uid_firebase}`);
-                
-                // force: true para eliminar carpetas no vacías
-                await Promise.all(carpetasAEliminar.map(async (folderPath) => {
-                    try {
-                        // La función deleteFiles elimina todos los archivos dentro del prefijo
-                        await bucket.deleteFiles({ prefix: folderPath, force: true });
-                        console.log(`Carpeta eliminada: ${folderPath}`);
-                    } catch (error) {
-                        // Si la carpeta o los archivos no existen, ignoramos el error.
-                        // Si es un error de permiso o grave, lo registramos.
-                        if (error.code !== 404) {
-                            console.warn(`Error (no fatal) al intentar eliminar ${folderPath}:`, error.message);
-                        }
-                    }
-                }));
-
-                // Intentar borrar la cuenta del usuario en Firebase Auth
-                try {
-                    await getAuth().deleteUser(uid_firebase);
-                    console.log(`Usuario de Firebase Auth eliminado: ${uid_firebase}`);
-                } catch (error) {
-                    // Ignorar si el usuario no existe; registrar otros errores sin interrumpir el flujo
-                    if (error && error.code === 'auth/user-not-found') {
-                        console.warn(`Usuario de Firebase Auth no encontrado para UID: ${uid_firebase}`);
-                    } else {
-                        console.warn('Error (no fatal) al eliminar el usuario de Firebase Auth:', error?.message || error);
-                    }
-                }
-            }
 
             await connection.query(`DELETE FROM URLExterna WHERE id_alumno = ?`, [id_alumno]);
             const [resAnonUser] = await connection.query(`UPDATE Usuario SET nombre = 'Usuario Anónimo', correo = CONCAT('anon_', id, '@deleted.com'), uid_firebase = NULL, url_foto_perfil = NULL WHERE id = ?`, [id]);
@@ -530,17 +488,28 @@ export default class Alumno {
             }
             await connection.query(`UPDATE Certificado SET id_credencial = NULL, url_certificado = NULL WHERE id_alumno = ?`, [id_alumno]);
             await connection.query(`DELETE FROM Postulacion WHERE id_alumno = ?`, [id_alumno]);
-            //await connection.query(`DELETE FROM Notificacion WHERE id_alumno = ?`, [id_alumno]);
+
+            const bucket = getStorage().bucket(); // Obtener el bucket por defecto
+
+            const carpetasAEliminar = [
+                `cv/${uid_firebase}`,
+                `foto_perfil/${uid_firebase}`
+            ];
+            
+            // force: true para eliminar carpetas no vacías
+            await Promise.all(carpetasAEliminar.map(async (folderPath) => {
+                // La función deleteFiles elimina todos los archivos dentro del prefijo
+                await bucket.deleteFiles({ prefix: folderPath, force: true });
+            }));
+
+            await getAuth().deleteUser(uid_firebase); // Eliminar usuario de Firebase Authentication
 
             await connection.commit();
             return true;
         }catch(error){
-            console.error('Error al eliminar la cuenta del alumno:', error.sqlMessage);
+            console.error('Error al eliminar la cuenta del alumno: ', error.sqlMessage || error.message);
             if(connection)
                 await connection.rollback();
-            if (error.message === 'Publicación no encontrada') {
-                return 'no_encontrado';
-            }
             throw new Error('Error al eliminar la cuenta del alumno');
         }finally{
             if(connection)
