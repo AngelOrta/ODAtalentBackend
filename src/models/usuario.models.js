@@ -65,6 +65,67 @@ export default class Usuario {
     }
   }
 
+  static async aCrearAlumno(nombre, email, rol, genero, uid_admin) {
+    let connection;
+
+    try {
+      connection = await pool.getConnection();
+      await connection.beginTransaction();
+
+      const [verifAdminRes] = await connection.query('SELECT * FROM Usuario WHERE uid_firebase = ? AND rol = ?', [uid_admin, 'admin']);
+      if (!verifAdminRes.length)
+        throw new Error('No tienes permisos para crear alumno');
+
+      const [respuestaUsuario] = await connection.query('INSERT INTO Usuario (nombre, correo, rol, genero) VALUES (?, ?, ?, ?)',
+        [nombre, email, rol, genero]);
+
+      if (!respuestaUsuario.affectedRows)
+        throw new Error('Error al registrar en Usuario');
+      
+      const idUser = respuestaUsuario.insertId;
+
+      const [respuestaAlumno] = await connection.query('INSERT INTO AlumnoSolicitante (id_usuario) VALUES (?)',
+        [idUser]);
+
+      if (!respuestaAlumno.affectedRows)
+        throw new Error('Error al registrar en AlumnoSolicitante');
+
+      const userRecord = await getAuth().createUser({
+            email: email,
+            emailVerified: true,
+            displayName: nombre,
+        });
+
+      if (!userRecord.uid)
+        throw new Error('Error al crear reclutador en Firebase');
+      
+      const [resultActualizarUid] = await connection.query(
+        'UPDATE Usuario SET uid_firebase = ? WHERE id = ?',
+        [userRecord.uid, idUser]);
+      if (!resultActualizarUid.affectedRows)
+        throw new Error('Error al actualizar uid del reclutador');
+
+      const actionLink = await getAuth().generatePasswordResetLink(email);
+      if (!actionLink)
+        throw new Error('Error al generar enlace de restablecimiento de contraseña');
+      const resultadoEnvioEmail = await enviarCorreoBienvenidaReclutador(email, actionLink);
+      if (!resultadoEnvioEmail.success)
+        throw new Error('Error al enviar correo de bienvenida a reclutador');
+
+      await connection.commit();
+      return true;
+    } catch (error) {
+      if (connection)
+        await connection.rollback();
+
+      console.log(error.message || error.sqlMessage);
+      throw error;
+    } finally {
+      if (connection)
+        connection.release();
+    }
+  }
+
   static async encolarReclutador(nombre, correo, genero, id_empresa) {
     let connection;
     try {
@@ -84,7 +145,7 @@ export default class Usuario {
         throw new Error('Error al registrar en Reclutador');
 
       await connection.commit();
-      return true;
+      return resultReclutador.insertId;
     } catch (error) {
       if (connection)
         await connection.rollback();
@@ -158,6 +219,19 @@ export default class Usuario {
     }finally{
       if (connection)
         connection.release();
+    }
+  }
+
+  static async crearReclutador(nombre, correo, genero, id_empresa, uid_firebase){
+    try{
+      const [verifAdminRes] = await pool.query('SELECT * FROM Usuario WHERE uid_firebase = ? AND rol = ?', [uid_firebase, 'admin']);
+      if(!verifAdminRes.length)
+        throw new Error('No tienes permisos para crear reclutador');
+      const id_reclutador = await this.encolarReclutador(nombre, correo, genero, id_empresa);
+      await this.aceptarReclutador(id_reclutador);
+    }catch(error){
+      console.log('Error al crear reclutador: '+error.message)
+      throw error;
     }
   }
 

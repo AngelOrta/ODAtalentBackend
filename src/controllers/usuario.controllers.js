@@ -16,8 +16,8 @@ export default class UsuariosController {
 
   static async registrar(req, res) {
     try {
-        const { nombre, email, rol, genero, idEmpresa} = req.body;
-        await Usuario.crearAlumno(nombre, email, rol, genero, req.uid, idEmpresa);
+        const { nombre, email, rol, genero} = req.body;
+        await Usuario.crearAlumno(nombre, email, rol, genero, req.uid);
         res.status(201).json({ message: 'Usuario registrado' });
     } catch (err) {
       console.log(err);
@@ -25,6 +25,27 @@ export default class UsuariosController {
         return res.status(400).json({ error: 'Error al registrar Usuario' });
       }
       res.status(500).json({ error: 'Error interno al registrar Usuario' });
+    }
+  }
+
+  static async crearAlumno(req, res) {
+    try {
+      const { nombre, email, genero } = req.body;
+      const uid_admin = req.uid;
+      if (!nombre || !email || !genero || !uid_admin){
+        return res.status(400).json({ error: 'Faltan datos para crear alumno' });
+      }
+      await Usuario.aCrearAlumno(nombre, email, genero, uid_admin);
+      res.status(201).json({ message: 'Alumno creado exitosamente' });
+    }
+    catch (error) {
+      if (error.message.includes('Error al registrar') || error.code === 'ER_DUP_ENTRY') {
+        return res.status(500).json({ message: 'Error en la base de datos al crear alumno' });
+      }else if (error.message.includes('No tienes permisos para crear alumno')) {
+        return res.status(403).json({ message: error.message });
+      }else if( error.message.includes('Error al crear'))
+        return res.status(500).json({ message: 'Error de firebase al crear alumno' });
+      res.status(500).json({ message: 'Error interno al crear alumno', error: error.message });
     }
   }
 
@@ -66,6 +87,22 @@ export default class UsuariosController {
       if(error.message.includes('Error'))
         return res.status(400).json({ error: 'Error al aceptar reclutador' });
       res.status(500).json({ error: 'Error interno al aceptar reclutador' });
+    }
+  }
+
+  static async crearReclutador(req,res){
+    try{
+      const {nombre, correo, genero, id_empresa } = req.body;
+      const uid_admin = req.uid;
+      if(!nombre || !correo || !genero || !id_empresa || !uid_admin)
+        return res.status(400).json({ error: 'Faltan datos para crear reclutador' });
+      if(isNaN(id_empresa)) 
+        return res.status(400).json({ error: 'El id_empresa debe ser un número válido' });
+      await Usuario.crearReclutador(nombre, correo, genero, id_empresa, uid_admin);
+      res.status(201).json({ message: 'Reclutador creado exitosamente' });
+    }catch(error){
+      if(error.message.includes('permisos'))
+        return res.status(403).json({ message: 'No tienes permisos para crear reclutador' });
     }
   }
 

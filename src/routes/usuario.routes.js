@@ -21,4 +21,11 @@ router.post('/rechazar_reclutador', UsuariosController.rechazarReclutador);
 // GET /api/usuarios/uid/:uid
 router.get('/uid/:uid',  UsuariosController.obtenerUsuarioPorUid);
 
+//POST /api/usuarios/crear_reclutador
+router.post('/crear_reclutador', UsuariosController.crearReclutador);
+
+//POST /api/usuarios/crear_alumno
+router.post('/crear_alumno', UsuariosController.crearAlumno);
+
+
 export default router;
