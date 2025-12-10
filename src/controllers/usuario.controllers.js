@@ -118,4 +118,56 @@ export default class UsuariosController {
       res.status(500).json({ error: 'Error interno al rechazar reclutador' });
     }
   }
+
+  static async verAlumnos(req, res) {
+    try {
+      let { page, limit } = req.query;
+      
+      if ((page && isNaN(page)) || (limit && isNaN(limit))) {
+        return res.status(400).json({ error: 'Parámetros de paginación inválidos' });
+      }
+
+      page = parseInt(page) || 1;
+      limit = parseInt(limit) || 10;
+      const offset = (page - 1) * limit;
+      const uid_admin = req.uid;
+
+      if (!uid_admin) {
+        return res.status(400).json({ error: 'Falta uid del administrador' });
+      }
+
+      const alumnos = await Usuario.verAlumnos(uid_admin, page, offset, limit);
+      if (!alumnos) return res.status(404).json({ message: 'No se encontraron alumnos' });
+      res.status(200).json(alumnos);
+    } catch (error) {
+      if (error.message.includes('permisos')) {
+        return res.status(403).json({ message: error.message });
+      }
+      res.status(500).json({ error: 'Error del servidor al obtener usuarios' });
+    }
+  }
+
+  static async verReclutadores(req, res) {
+    try {
+      let { page, limit } = req.query;  
+      if ((page && isNaN(page)) || (limit && isNaN(limit))) {
+        return res.status(400).json({ error: 'Parámetros de paginación inválidos' });
+      }
+      page = parseInt(page) || 1;
+      limit = parseInt(limit) || 10;
+      const offset = (page - 1) * limit;
+      const uid_admin = req.uid;
+      if (!uid_admin) {
+        return res.status(400).json({ error: 'Falta uid del administrador' });
+      }
+      const reclutadores = await Usuario.verReclutadores(uid_admin, page, offset, limit);
+      if (!reclutadores) return res.status(404).json({ message: 'No se encontraron reclutadores' });
+      res.status(200).json(reclutadores);
+    } catch (error) {
+      if (error.message.includes('permisos')) {
+        return res.status(403).json({ message: error.message });
+      }
+      res.status(500).json({ error: 'Error del servidor al obtener usuarios' });
+    }
+  }
 }

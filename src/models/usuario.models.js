@@ -242,4 +242,81 @@ export default class Usuario {
 
       return true;
   }
+
+  static async verAlumnos(uid_admin, page, offset, limit) {
+    try{
+      let total_paginas;
+      let total_alumnos;
+      let total_alumnos_inactivos=0;
+      let alumnos;
+      const [verifAdminRes] = await pool.query('SELECT * FROM Usuario WHERE uid_firebase = ? AND rol = ?', [uid_admin, 'admin']);
+      if (!verifAdminRes.length)
+        throw new Error('No tienes permisos para ver alumnos');
+ 
+      const [rows] = await pool.query('SELECT COUNT(*) AS total FROM AlumnoSolicitante AS A_S JOIN Usuario U ON A_S.id_usuario = U.id WHERE U.uid_firebase IS NOT NULL');
+      total_alumnos = rows[0].total;
+      if (total_alumnos === 0) return null;
+
+      const [rowsInactivos] = await pool.query('SELECT COUNT(*) AS total FROM AlumnoSolicitante AS A_S JOIN Usuario U ON A_S.id_usuario = U.id WHERE U.uid_firebase IS NULL');
+      total_alumnos_inactivos = rowsInactivos[0].total;
+
+      total_paginas = Math.ceil(total_alumnos / limit);
+      [alumnos] = await pool.query(
+        `SELECT U.id AS id_usuario, U.nombre, U.correo, U.genero, U.url_foto_perfil , A_S.id_alumno
+        FROM Usuario U
+        JOIN AlumnoSolicitante A_S ON U.id = A_S.id_usuario
+        WHERE U.uid_firebase IS NOT NULL
+        ORDER BY U.id
+        LIMIT ? OFFSET ?`, [limit, offset]);
+      
+      const alumnosJson = {
+        paginacion: {
+          total_alumnos: total_alumnos,
+          total_paginas: total_paginas,
+          pagina_actual: page,
+          tamano_pagina: limit,
+          total_alumnos_inactivos: total_alumnos_inactivos
+        },
+        alumnos: alumnos
+      };
+      return alumnosJson;
+    }catch(error){
+      console.log('Error al obtener alumnos: '+ (error.message|| error.sqlMessage));
+      throw error;
+    }
+  }
+
+  static async verReclutadores(uid_admin, page, offset, limit) {
+    try{
+      const [verifAdminRes] = await pool.query('SELECT * FROM Usuario WHERE uid_firebase = ? AND rol = ?', [uid_admin, 'admin']);
+      if (!verifAdminRes.length)
+        throw new Error('No tienes permisos para ver reclutadores');
+      const [rows] = await pool.query('SELECT COUNT(*) AS total FROM Reclutador');
+      const total_reclutadores = rows[0].total;
+      if (total_reclutadores === 0) return null;
+      const total_paginas = Math.ceil(total_reclutadores / limit);
+      const [reclutadores] = await pool.query(
+        `SELECT U.id AS id_usuario, R.id_reclutador, U.nombre, U.correo, U.genero, U.url_foto_perfil, E.id_empresa, E.nombre AS empresa
+          FROM Reclutador R
+          JOIN Usuario U ON R.id_usuario = U.id
+          JOIN Empresa E ON R.id_empresa = E.id_empresa
+          WHERE R.estado = 'Aprobado'
+          ORDER BY R.id_reclutador
+          LIMIT ? OFFSET ?`, [limit, offset]);
+      
+      const reclutadoresJson = {
+        paginacion: {
+          total_reclutadores: total_reclutadores,
+          total_paginas: total_paginas,
+          pagina_actual: page,
+          tamano_pagina: limit
+        },
+        reclutadores: reclutadores
+      };
+      return reclutadoresJson;
+    }catch(error){
+      console.log('Error al obtener reclutadores: '+ (error.message|| error.sqlMessage));
+      throw error;
+    }
+  }
 }

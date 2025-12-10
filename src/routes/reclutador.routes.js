@@ -21,6 +21,7 @@ router.put('/reclutar', ReclutadorController.reclutarAlumno);
 // PUT /api/reclutadores/rechazar_postulacion
 router.put('/rechazar_postulacion', ReclutadorController.rechazarPostulacionAlumno);
 
+//TODO: agregar estatus 'Completado' cuando el reclutador marque la postulacion como completada
 // GET /api/reclutadores/alumnos_reclutados?id_reclutador=
 router.get('/alumnos_reclutados', ReclutadorController.obtenerAlumnosReclutados);
 
