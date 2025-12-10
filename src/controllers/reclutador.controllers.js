@@ -137,11 +137,14 @@ export default class ReclutadorController {
 
     static async obtenerAlumnosReclutados(req, res) {
         try {
-            const { id_reclutador } = req.query;
+            const { id_reclutador, estado} = req.query;
             if (!id_reclutador) {
                 return res.status(400).json({ message: 'Falta el id_reclutador' });
             }
-            const alumnos = await Reclutador.obtenerAlumnosReclutados(id_reclutador);
+            if (!estado || (estado !== 'Reclutado' && estado !== 'Completado')) {
+                return res.status(400).json({ message: 'Estado inválido.' });
+            }
+            const alumnos = await Reclutador.obtenerAlumnosReclutados(id_reclutador, estado);
             if (!alumnos || alumnos.length === 0) {
                 return res.status(404).json({ message: 'No se encontraron alumnos reclutados' });
             }
