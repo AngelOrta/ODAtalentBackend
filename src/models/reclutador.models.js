@@ -327,16 +327,29 @@ export default class Reclutador {
     return resultado.affectedRows;
   }
 
-  static async obtenerAlumnosReclutados(id_reclutador) {
-    const [rowsReclutado] = await pool.query(
-      `SELECT U.id, A.id_alumno, P.id_postulacion, V.id_vacante, U.nombre, A.semestre_actual, U.url_foto_perfil, P.estatus, V.titulo AS nombre_vacante
-       FROM Postulacion P
-        JOIN AlumnoSolicitante A ON P.id_alumno = A.id_alumno
-        JOIN Usuario U ON A.id_usuario = U.id
-        JOIN Vacante V ON P.id_vacante = V.id_vacante
-        JOIN Reclutador R ON V.id_reclutador = R.id_reclutador
-        WHERE R.id_reclutador = ? AND P.estatus = 'Reclutado'`,[id_reclutador]);
-    if (!rowsReclutado.length) return null;
+  static async obtenerAlumnosReclutados(id_reclutador, estado) {
+    let rowsReclutado;
+    if (estado === 'Reclutado') {
+      [rowsReclutado] = await pool.query(
+        `SELECT U.id, A.id_alumno, P.id_postulacion, V.id_vacante, U.nombre, A.semestre_actual, U.url_foto_perfil, P.estatus, V.titulo AS nombre_vacante
+        FROM Postulacion P
+          JOIN AlumnoSolicitante A ON P.id_alumno = A.id_alumno
+          JOIN Usuario U ON A.id_usuario = U.id
+          JOIN Vacante V ON P.id_vacante = V.id_vacante
+          JOIN Reclutador R ON V.id_reclutador = R.id_reclutador
+          WHERE R.id_reclutador = ? AND P.estatus = 'Reclutado'`,[id_reclutador]);
+      if (!rowsReclutado.length) return null;
+    }else if (estado === 'Completado') {
+      [rowsReclutado] = await pool.query(
+        `SELECT U.id, A.id_alumno, P.id_postulacion, V.id_vacante, U.nombre, A.semestre_actual, U.url_foto_perfil, P.estatus, V.titulo AS nombre_vacante
+        FROM Postulacion P
+          JOIN AlumnoSolicitante A ON P.id_alumno = A.id_alumno
+          JOIN Usuario U ON A.id_usuario = U.id
+          JOIN Vacante V ON P.id_vacante = V.id_vacante
+          JOIN Reclutador R ON V.id_reclutador = R.id_reclutador
+          WHERE R.id_reclutador = ? AND P.estatus = 'Completado'`,[id_reclutador]);
+      if (!rowsReclutado.length) return null;
+    }
     const alumnosIDs = rowsReclutado.map(r => r.id_alumno);
     const [habilidadesAlumnosRows] = await pool.query(
       `SELECT AH.id_alumno, AH.id_habilidad, H.categoria, H.tipo, H.habilidad
