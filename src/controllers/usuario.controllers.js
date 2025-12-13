@@ -158,13 +158,34 @@ export default class UsuariosController {
       if (!alumno_eliminado) {
         return res.status(404).json({ message: 'Alumno no encontrado o ya eliminado' });
       }
-      res.status(200).json({ message: 'Cuenta del alumno eliminada correctamente' });
+      res.status(204).json({ message: 'Cuenta del alumno eliminada correctamente' });
     }
     catch (error) {
       if (error.message.includes('permisos')) {
         return res.status(403).json({ message: error.message });
       } 
       res.status(500).json({ message: 'Error interno al eliminar alumno', error: error.message });
+    }
+  }
+
+  static async eliminarReclutador(req, res) {
+    try {
+      const { id_usuario, uid_reclutador } = req.body;
+      const uid_admin = req.uid;
+      if (!id_usuario || !uid_admin || !uid_reclutador) {
+        return res.status(400).json({ error: 'Faltan datos para eliminar reclutador' });
+      }
+      const reclutador_eliminado = await Usuario.eliminarReclutador(uid_reclutador,id_usuario, uid_admin );
+      if (reclutador_eliminado === null) {
+        return res.status(404).json({ message: 'Reclutador no encontrado o ya eliminado' });
+      }
+      res.status(204).json({ message: 'Cuenta del reclutador eliminada correctamente' });
+    }
+    catch (error) {
+      if (error.message.includes('permisos')) {
+        return res.status(403).json({ message: error.message });
+      } 
+      res.status(500).json({ message: 'Error interno al eliminar reclutador', error: error.message });
     }
   }
 
@@ -189,6 +210,34 @@ export default class UsuariosController {
         return res.status(403).json({ message: error.message });
       }
       res.status(500).json({ error: 'Error del servidor al obtener usuarios' });
+    }
+  }
+
+  static async editarUsuario(req, res) {  
+    try {
+      const { id_usuario, nombre, correo, genero } = req.body;
+      let { id_empresa } = req.body;
+      const uid_admin = req.uid;
+      if (!id_usuario || !nombre || !correo || !genero || !uid_admin) {
+        return res.status(400).json({ error: 'Faltan datos para editar usuario' });
+      }
+      if(!id_empresa) id_empresa = null;
+      if(isNaN(id_empresa) || isNaN(id_usuario)) {
+        return res.status(400).json({ error: 'Los id deben ser un número válido' });
+      }
+      const actualizado = await Usuario.aEditarUsuario(id_usuario, uid_admin, nombre, correo, genero, id_empresa);
+      if (!actualizado) {
+        return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+      res.status(200).json({ message: 'Usuario editado exitosamente' });
+    }
+    catch (error) {
+      if (error.message.includes('permisos')) {
+        return res.status(403).json({ message: error.message });
+      } else if (error.message.includes('El correo ya está registrado en Firebase.')) {
+        return res.status(400).json({ message: error.message });
+      }
+      res.status(500).json({ message: 'Error interno al editar usuario'});
     }
   }
 }
