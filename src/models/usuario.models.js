@@ -1,8 +1,9 @@
 import {pool} from '../db/db.js';
+import { getStorage } from 'firebase-admin/storage';
 import { getAuth } from 'firebase-admin/auth';
 import {enviarCorreoBienvenidaReclutador} from '../services/mail.services.js';
 import Reclutador from './reclutador.models.js';
-
+import Alumno from './alumno.models.js';
 
 export default class Usuario {
   constructor(id, rol, id_rol) {
@@ -65,7 +66,7 @@ export default class Usuario {
     }
   }
 
-  static async aCrearAlumno(nombre, email, rol, genero, uid_admin) {
+  static async aCrearAlumno(nombre, email, genero, uid_admin, correo_provisional) {
     let connection;
 
     try {
@@ -77,7 +78,7 @@ export default class Usuario {
         throw new Error('No tienes permisos para crear alumno');
 
       const [respuestaUsuario] = await connection.query('INSERT INTO Usuario (nombre, correo, rol, genero) VALUES (?, ?, ?, ?)',
-        [nombre, email, rol, genero]);
+        [nombre, email, 'alumno', genero]);
 
       if (!respuestaUsuario.affectedRows)
         throw new Error('Error al registrar en Usuario');
@@ -97,20 +98,20 @@ export default class Usuario {
         });
 
       if (!userRecord.uid)
-        throw new Error('Error al crear reclutador en Firebase');
+        throw new Error('Error al crear alumno en Firebase');
       
       const [resultActualizarUid] = await connection.query(
         'UPDATE Usuario SET uid_firebase = ? WHERE id = ?',
         [userRecord.uid, idUser]);
       if (!resultActualizarUid.affectedRows)
-        throw new Error('Error al actualizar uid del reclutador');
+        throw new Error('Error al actualizar uid del alumno');
 
       const actionLink = await getAuth().generatePasswordResetLink(email);
       if (!actionLink)
         throw new Error('Error al generar enlace de restablecimiento de contraseña');
-      const resultadoEnvioEmail = await enviarCorreoBienvenidaReclutador(email, actionLink);
+      const resultadoEnvioEmail = await enviarCorreoBienvenidaReclutador(correo_provisional, actionLink);
       if (!resultadoEnvioEmail.success)
-        throw new Error('Error al enviar correo de bienvenida a reclutador');
+        throw new Error('Error al enviar correo de bienvenida a alumno');
 
       await connection.commit();
       return true;
@@ -243,6 +244,28 @@ export default class Usuario {
       return true;
   }
 
+  static async eliminarReclutador(uid_reclutador, id_usuario, uid_admin) {
+    try{
+      const [verifAdminRes] = await pool.query('SELECT * FROM Usuario WHERE uid_firebase = ? AND rol = ?', [uid_admin, 'admin']);
+      if (!verifAdminRes.length)
+        throw new Error('No tienes permisos para eliminar reclutador');
+
+      const [verifReclutadorRes] = await pool.query('SELECT * FROM Usuario WHERE id = ? AND uid_firebase = ?', [id_usuario, uid_reclutador]);
+      if (!verifReclutadorRes.length)
+        return null;
+      await this.rechazarReclutador(id_usuario);
+
+      const bucket = getStorage().bucket(); // Obtener el bucket por defecto
+      await bucket.deleteFiles({ prefix: `foto_perfil/${uid_reclutador}`, force: true });
+
+      await getAuth().deleteUser(uid_reclutador);
+      return true;
+    }catch(error){
+      console.log('Error al eliminar reclutador: '+error.message)
+      throw error;
+    }
+  }
+
   static async verAlumnos(uid_admin, page, offset, limit) {
     try{
       let total_paginas;
@@ -262,7 +285,7 @@ export default class Usuario {
 
       total_paginas = Math.ceil(total_alumnos / limit);
       [alumnos] = await pool.query(
-        `SELECT U.id AS id_usuario, U.nombre, U.correo, U.genero, U.url_foto_perfil , A_S.id_alumno
+        `SELECT U.id AS id_usuario, U.nombre, U.correo, U.genero, U.url_foto_perfil, U.uid_firebase, A_S.id_alumno
         FROM Usuario U
         JOIN AlumnoSolicitante A_S ON U.id = A_S.id_usuario
         WHERE U.uid_firebase IS NOT NULL
@@ -286,6 +309,18 @@ export default class Usuario {
     }
   }
 
+  static async eliminarAlumno(id_usuario, id_alumno, uid_admin, uid_alumno) {
+    try{
+      const [verifAdminRes] = await pool.query('SELECT * FROM Usuario WHERE uid_firebase = ? AND rol = ?', [uid_admin, 'admin']);
+      if (!verifAdminRes.length)
+        throw new Error('No tienes permisos para eliminar alumno');
+      return await Alumno.eliminarCuentaAlumno(id_usuario, id_alumno, uid_alumno);
+    }catch(error){
+      console.log('Error al eliminar alumno: '+ (error.sqlMessage || error.message));
+      throw error;
+    }
+  }
+
   static async verReclutadores(uid_admin, page, offset, limit) {
     try{
       const [verifAdminRes] = await pool.query('SELECT * FROM Usuario WHERE uid_firebase = ? AND rol = ?', [uid_admin, 'admin']);
@@ -296,7 +331,7 @@ export default class Usuario {
       if (total_reclutadores === 0) return null;
       const total_paginas = Math.ceil(total_reclutadores / limit);
       const [reclutadores] = await pool.query(
-        `SELECT U.id AS id_usuario, R.id_reclutador, U.nombre, U.correo, U.genero, U.url_foto_perfil, E.id_empresa, E.nombre AS empresa
+        `SELECT U.id AS id_usuario, R.id_reclutador, U.nombre, U.correo, U.genero, U.uid_firebase, U.url_foto_perfil, E.id_empresa, E.nombre AS empresa, E.url_logo
           FROM Reclutador R
           JOIN Usuario U ON R.id_usuario = U.id
           JOIN Empresa E ON R.id_empresa = E.id_empresa
@@ -319,4 +354,66 @@ export default class Usuario {
       throw error;
     }
   }
+
+  static async aEditarUsuario(id_usuario_a_editar, uid_admin, nombre, correo, genero, id_empresa = null) {
+    let connection;
+    try {
+        connection = await pool.getConnection();
+        await connection.beginTransaction();
+
+        const [verifAdminRes] = await connection.query('SELECT * FROM Usuario WHERE uid_firebase = ? AND rol = ?', [uid_admin, 'admin']);
+        if (!verifAdminRes.length)
+            throw new Error('No tienes permisos para editar usuario');
+
+        const [rows] = await connection.query('SELECT correo, genero, nombre, uid_firebase FROM Usuario WHERE id = ?', [id_usuario_a_editar]);
+        const usuarioActual = rows[0];
+
+        if (!usuarioActual.nombre) {
+            return null;
+        }
+
+        const queryUsuario = `UPDATE Usuario SET ? WHERE id = ?`;
+        await connection.query(queryUsuario, [
+            {
+                nombre: nombre,
+                correo: correo,
+                genero: genero
+            }, 
+            id_usuario_a_editar
+        ]);
+
+        if (usuarioActual.correo !== correo) {
+          await getAuth().updateUser(usuarioActual.uid_firebase, {
+              email: correo
+          });
+        }
+
+        if(usuarioActual.nombre !== nombre) {
+          await getAuth().updateUser(usuarioActual.uid_firebase, {
+              displayName: nombre
+          });
+        }
+
+        if (id_empresa !== null) {
+            const [resultReclutador] = await connection.query('UPDATE Reclutador R JOIN Usuario U ON R.id_usuario = U.id SET R.id_empresa = ? WHERE U.id = ?', [id_empresa, id_usuario_a_editar]);
+            if (!resultReclutador.affectedRows)
+                throw new Error('Error al actualizar empresa del reclutador');
+        }
+
+        await connection.commit();
+        return true;
+
+    } catch (error) {
+        if (connection) await connection.rollback();
+
+        console.error('Error al editar usuario: ' + (error.message || error.sqlMessage));
+        if (error.code === 'auth/email-already-exists') {
+            throw new Error('El correo ya está registrado en Firebase.');
+        }
+        
+        throw error;
+    } finally {
+        if (connection) connection.release();
+    }
+}
 }

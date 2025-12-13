@@ -30,8 +30,16 @@ router.post('/crear_alumno', UsuariosController.crearAlumno);
 //GET /api/usuarios/ver_alumnos?page=&limit=
 router.get('/ver_alumnos', UsuariosController.verAlumnos);
 
+//DELETE /api/usuarios/eliminar_alumno
+router.delete('/eliminar_alumno', UsuariosController.eliminarAlumno);
+
+//DELETE /api/usuarios/eliminar_reclutador
+router.delete('/eliminar_reclutador', UsuariosController.eliminarReclutador);
+
 //GET /api/usuarios/ver_reclutadores?page=&limit=
 router.get('/ver_reclutadores', UsuariosController.verReclutadores);
 
+//PUT /api/usuarios/editar_usuario
+router.put('/editar_usuario', UsuariosController.editarUsuario);
 
 export default router;
