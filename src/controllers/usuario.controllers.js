@@ -30,12 +30,12 @@ export default class UsuariosController {
 
   static async crearAlumno(req, res) {
     try {
-      const { nombre, email, genero } = req.body;
+      const { nombre, email, genero, correo_provisional } = req.body;
       const uid_admin = req.uid;
-      if (!nombre || !email || !genero || !uid_admin){
+      if (!nombre || !email || !genero || !uid_admin || !correo_provisional) {
         return res.status(400).json({ error: 'Faltan datos para crear alumno' });
       }
-      await Usuario.aCrearAlumno(nombre, email, genero, uid_admin);
+      await Usuario.aCrearAlumno(nombre, email, genero, uid_admin, correo_provisional);
       res.status(201).json({ message: 'Alumno creado exitosamente' });
     }
     catch (error) {
@@ -144,6 +144,27 @@ export default class UsuariosController {
         return res.status(403).json({ message: error.message });
       }
       res.status(500).json({ error: 'Error del servidor al obtener usuarios' });
+    }
+  }
+
+  static async eliminarAlumno(req, res) {
+    try {
+      const { id_usuario, id_alumno, uid_alumno } = req.body;
+      const uid_admin = req.uid;
+      if (!id_usuario || !id_alumno || !uid_admin || !uid_alumno) {
+        return res.status(400).json({ error: 'Faltan datos para eliminar alumno' });
+      }
+      const alumno_eliminado = await Usuario.eliminarAlumno(id_usuario, id_alumno, uid_admin, uid_alumno);
+      if (!alumno_eliminado) {
+        return res.status(404).json({ message: 'Alumno no encontrado o ya eliminado' });
+      }
+      res.status(200).json({ message: 'Cuenta del alumno eliminada correctamente' });
+    }
+    catch (error) {
+      if (error.message.includes('permisos')) {
+        return res.status(403).json({ message: error.message });
+      } 
+      res.status(500).json({ message: 'Error interno al eliminar alumno', error: error.message });
     }
   }
 

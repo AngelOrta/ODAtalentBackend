@@ -2,7 +2,7 @@ import {pool} from '../db/db.js';
 import { getAuth } from 'firebase-admin/auth';
 import {enviarCorreoBienvenidaReclutador} from '../services/mail.services.js';
 import Reclutador from './reclutador.models.js';
-
+import Alumno from './alumno.models.js';
 
 export default class Usuario {
   constructor(id, rol, id_rol) {
@@ -65,7 +65,7 @@ export default class Usuario {
     }
   }
 
-  static async aCrearAlumno(nombre, email, rol, genero, uid_admin) {
+  static async aCrearAlumno(nombre, email, genero, uid_admin, correo_provisional) {
     let connection;
 
     try {
@@ -77,7 +77,7 @@ export default class Usuario {
         throw new Error('No tienes permisos para crear alumno');
 
       const [respuestaUsuario] = await connection.query('INSERT INTO Usuario (nombre, correo, rol, genero) VALUES (?, ?, ?, ?)',
-        [nombre, email, rol, genero]);
+        [nombre, email, 'alumno', genero]);
 
       if (!respuestaUsuario.affectedRows)
         throw new Error('Error al registrar en Usuario');
@@ -97,20 +97,20 @@ export default class Usuario {
         });
 
       if (!userRecord.uid)
-        throw new Error('Error al crear reclutador en Firebase');
+        throw new Error('Error al crear alumno en Firebase');
       
       const [resultActualizarUid] = await connection.query(
         'UPDATE Usuario SET uid_firebase = ? WHERE id = ?',
         [userRecord.uid, idUser]);
       if (!resultActualizarUid.affectedRows)
-        throw new Error('Error al actualizar uid del reclutador');
+        throw new Error('Error al actualizar uid del alumno');
 
       const actionLink = await getAuth().generatePasswordResetLink(email);
       if (!actionLink)
         throw new Error('Error al generar enlace de restablecimiento de contraseña');
-      const resultadoEnvioEmail = await enviarCorreoBienvenidaReclutador(email, actionLink);
+      const resultadoEnvioEmail = await enviarCorreoBienvenidaReclutador(correo_provisional, actionLink);
       if (!resultadoEnvioEmail.success)
-        throw new Error('Error al enviar correo de bienvenida a reclutador');
+        throw new Error('Error al enviar correo de bienvenida a alumno');
 
       await connection.commit();
       return true;
@@ -262,7 +262,7 @@ export default class Usuario {
 
       total_paginas = Math.ceil(total_alumnos / limit);
       [alumnos] = await pool.query(
-        `SELECT U.id AS id_usuario, U.nombre, U.correo, U.genero, U.url_foto_perfil , A_S.id_alumno
+        `SELECT U.id AS id_usuario, U.nombre, U.correo, U.genero, U.url_foto_perfil, U.uid_firebase, A_S.id_alumno
         FROM Usuario U
         JOIN AlumnoSolicitante A_S ON U.id = A_S.id_usuario
         WHERE U.uid_firebase IS NOT NULL
@@ -282,6 +282,18 @@ export default class Usuario {
       return alumnosJson;
     }catch(error){
       console.log('Error al obtener alumnos: '+ (error.message|| error.sqlMessage));
+      throw error;
+    }
+  }
+
+  static async eliminarAlumno(id_usuario, id_alumno, uid_admin, uid_alumno) {
+    try{
+      const [verifAdminRes] = await pool.query('SELECT * FROM Usuario WHERE uid_firebase = ? AND rol = ?', [uid_admin, 'admin']);
+      if (!verifAdminRes.length)
+        throw new Error('No tienes permisos para eliminar alumno');
+      return await Alumno.eliminarCuentaAlumno(id_usuario, id_alumno, uid_alumno);
+    }catch(error){
+      console.log('Error al eliminar alumno: '+ (error.sqlMessage || error.message));
       throw error;
     }
   }
