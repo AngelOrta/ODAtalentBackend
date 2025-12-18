@@ -39,7 +39,9 @@ export default class UsuariosController {
       res.status(201).json({ message: 'Alumno creado exitosamente' });
     }
     catch (error) {
-      if (error.message.includes('Error al registrar') || error.code === 'ER_DUP_ENTRY') {
+      if( error.code === 'ER_DUP_ENTRY'){
+         return res.status(409).json({ message: 'El correo ya está registrado' });
+      }else if (error.message.includes('Error al registrar') ) {
         return res.status(500).json({ message: 'Error en la base de datos al crear alumno' });
       }else if (error.message.includes('No tienes permisos para crear alumno')) {
         return res.status(403).json({ message: error.message });

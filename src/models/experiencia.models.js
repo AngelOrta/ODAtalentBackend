@@ -89,7 +89,7 @@ export default class Publicacion{
 
             if (experienciasRows.length === 0) {
                 return {
-                    paginacion: { total_experiencias, total_paginas, pagina_actual: page, tamano_pagina: limit },
+                    paginacion: { total_experiencias, total_paginas, pagina_actual: page, tamano_pagina: 0 },
                     experiencias: []
                 };
             }
@@ -132,7 +132,7 @@ export default class Publicacion{
                     total_experiencias: total_experiencias,
                     total_paginas: total_paginas,
                     pagina_actual: page,
-                    tamano_pagina: limit
+                    tamano_pagina: experienciasFinal.length
                 },
                 experiencias: experienciasFinal
             };

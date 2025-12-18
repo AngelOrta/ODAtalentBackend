@@ -27,7 +27,7 @@ export default class Reporte {
                     total_reportes: total_reportes,
                     total_paginas: total_paginas,
                     pagina_actual: page,
-                    tamano_pagina: limit
+                    tamano_pagina: reportesRows.length
                 },
                 reportes: reportesRows
             };
