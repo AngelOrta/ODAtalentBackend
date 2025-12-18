@@ -93,14 +93,21 @@ export default class PublicacionController {
     static async borrarExperiencia(req, res) {
         try {
             const { id_publicacion } = req.params;
-            const resultado = await Publicacion.borrarExperiencia(id_publicacion);
+            const uid_alumno = req.uid;
+            if (!id_publicacion || isNaN(id_publicacion)) {
+                return res.status(400).json({ message: 'Falta el id_publicacion' });
+            }
+            if (!uid_alumno) {
+                return res.status(400).json({ message: 'Falta el uid_alumno' });
+            }
+            const resultado = await Publicacion.borrarExperiencia(id_publicacion, uid_alumno);
             if (resultado) {
-                res.status(200).json({ message: 'Experiencia eliminada correctamente' });
+                res.status(204).json({ message: 'Experiencia eliminada correctamente' });
             } else {
-                res.status(404).json({ message: 'Experiencia no encontrada' });
+                res.status(404).json({ message: 'Experiencia no encontrada o el alumno no es el autor de la experiencia' });
             }
         } catch (error) {
-            console.error('Error al borrar la experiencia:', error);
+            console.error('Error al borrar la experiencia:', error.message || error.sqlMessage);
             res.status(500).json({ message: 'Error del servidor' });
         }
     }
@@ -145,14 +152,23 @@ export default class PublicacionController {
 
     static async borrarComentarioExperiencia(req, res) {
         try {
-            const { id_comentario } = req.params;
-            const resultado = await Publicacion.borrarComentarioExperiencia(id_comentario);
+            let { id_comentario, id_reporte} = req.body;
+            const uid_alumno = req.uid;
+            if (!id_comentario || isNaN(id_comentario)) {
+                return res.status(400).json({ message: 'Falta el id_comentario' });
+            }
+            if (!uid_alumno) {
+                return res.status(400).json({ message: 'Falta el uid_alumno' });
+            }
+            if(!id_reporte || isNaN(id_reporte)){
+                id_reporte = null;
+            }
+            const resultado = await Publicacion.borrarComentarioExperiencia(id_comentario, uid_alumno, id_reporte);
             if (!resultado) {
-                return res.status(404).json({ message: 'Comentario no encontrado' });
+                return res.status(404).json({ message: 'Comentario no encontrado o el alumno no es el autor del comentario' });
             } 
-            res.status(200).json({ message: 'Comentario eliminado correctamente' });
+            res.status(204).json({ message: 'Comentario eliminado correctamente' });
         } catch (error) {
-            console.error('Error al borrar el comentario de la experiencia:', error);
             res.status(500).json({ message: 'Error del servidor' });
         }
     }

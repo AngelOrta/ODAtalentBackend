@@ -26,8 +26,8 @@ router.post('/reaccionar/comentario', PublicacionController.reaccionarComentario
 // POST /api/experiencias_alumnos/comentar
 router.post('/comentar', PublicacionController.comentarExperiencia);
 
-// DELETE /api/experiencias_alumnos/comentarios/borrar/:id_comentario
-router.delete('/comentarios/borrar/:id_comentario', PublicacionController.borrarComentarioExperiencia);
+// DELETE /api/experiencias_alumnos/comentarios/borrar
+router.delete('/comentarios/borrar', PublicacionController.borrarComentarioExperiencia);
 
 // GET /api/experiencias_alumnos/comentarios?id_alumno=1&id_publicacion=1
 router.get('/comentarios', PublicacionController.obtenerComentariosExperiencia);

@@ -189,7 +189,15 @@ export default class Publicacion{
         }
     }
 
-    static async borrarExperiencia(id_publicacion){
+    static async borrarExperiencia(id_publicacion, uid_alumno){
+        const [verifyRows] = await pool.query(`SELECT P.id_publicacion
+        FROM Publicacion P
+        JOIN AlumnoSolicitante A ON P.id_alumno = A.id_alumno
+        JOIN Usuario U ON A.id_usuario = U.id
+        WHERE P.id_publicacion = ? AND U.uid_firebase = ?`, [id_publicacion, uid_alumno]);
+        if(verifyRows.length === 0){
+            return null;
+        }
         const borrarRows = await pool.query(
             `DELETE FROM Publicacion WHERE id_publicacion = ?`,
             [id_publicacion]
@@ -278,12 +286,55 @@ export default class Publicacion{
         }   
     }
 
-    static async borrarComentarioExperiencia(id_comentario){
-        const borrarRows = await pool.query(
-            `DELETE FROM Comentario WHERE id_comentario = ?`,
-            [id_comentario]
-        );
-        return borrarRows[0].affectedRows > 0;
+    static async borrarComentarioExperiencia(id_comentario, uid_alumno, id_reporte){
+        let connection;
+        try{
+            connection = await pool.getConnection();
+            await connection.beginTransaction();
+
+            const [verifyRows] = await connection.query(`SELECT C.id_comentario
+            FROM Comentario C
+            JOIN AlumnoSolicitante A ON C.id_alumno = A.id_alumno
+            JOIN Usuario U ON A.id_usuario = U.id
+            WHERE C.id_comentario = ? AND U.uid_firebase = ?`, [id_comentario, uid_alumno]);
+            const [verifyAdminRows] = await connection.query(`SELECT id FROM Usuario WHERE uid_firebase = ? AND rol = ?`, [uid_alumno, 'admin']);
+            if(verifyRows.length === 0 && verifyAdminRows.length === 0){
+                return null;
+            }
+            const [borrarRows] = await connection.query(
+                `DELETE FROM Comentario WHERE id_comentario = ?`,
+                [id_comentario]
+            );
+            if(!borrarRows.affectedRows){
+                throw new Error('Comentario no encontrado');
+            }
+
+            if(verifyAdminRows.length){
+                const [updateResult] = await connection.query('UPDATE Reporte SET estado = ? WHERE id_reporte = ?', ['Resuelto', id_reporte]);
+                if (updateResult.affectedRows === 0) {
+                    throw new Error('No se encontró el reporte para actualizar');
+                }
+            }
+
+            await connection.commit();
+            return borrarRows.affectedRows > 0;
+        }catch(error){
+            console.error('Error en borrarComentarioExperiencia:', error.message || error.sqlMessage);
+            if(connection){
+                await connection.rollback();
+            }
+            if(error.message === 'Comentario no encontrado' || error.message === 'No se encontró el reporte para actualizar'){
+                return 'no_encontrado';
+            }
+            if(error.code === 'ER_NO_REFERENCED_ROW_2' || error.sqlMessage.includes('comentario_ibfk_1') || error.sqlMessage.includes('comentario_ibfk_2') || error.sqlMessage.includes('comentario_ibfk_3')){
+                return 'no_encontrado';
+            }
+            throw error;
+        }finally{
+            if(connection){
+                connection.release();
+            }
+        }
     }
 
     static async obtenerComentariosExperiencia(id_publicacion, id_alumno){
