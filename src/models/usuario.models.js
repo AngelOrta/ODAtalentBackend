@@ -297,7 +297,7 @@ export default class Usuario {
           total_alumnos: total_alumnos,
           total_paginas: total_paginas,
           pagina_actual: page,
-          tamano_pagina: limit,
+          tamano_pagina: alumnos.length,
           total_alumnos_inactivos: total_alumnos_inactivos
         },
         alumnos: alumnos
@@ -344,7 +344,7 @@ export default class Usuario {
           total_reclutadores: total_reclutadores,
           total_paginas: total_paginas,
           pagina_actual: page,
-          tamano_pagina: limit
+          tamano_pagina: reclutadores.length
         },
         reclutadores: reclutadores
       };

@@ -164,7 +164,7 @@ export default class Vacante {
                     total_vacantes: total_vacantes,
                     total_paginas: total_paginas,
                     pagina_actual: page,
-                    tamano_pagina: limit
+                    tamano_pagina: vacantes.length
                 },
                 vacantes: vacantes
             };
