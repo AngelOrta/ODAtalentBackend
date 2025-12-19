@@ -98,9 +98,13 @@ export default class Vacante {
         return finalJSON;
     }
 
-    static async buscarVacantes(busquedaData, page, offset, limit) {
+    static async buscarVacantes(busquedaData, page, offset, limit,uid_admin) {
         try{
             let whereClauses = ['V.estado = "Activa"']; // Filtro base
+            const [verifAdmin] = await pool.query('SELECT id FROM Usuario WHERE uid_firebase = ? AND rol = ?', [uid_admin, 'admin']);
+            if(verifAdmin.length){
+                whereClauses =[]; //si es admin puede ver tambien las Expiradas
+            }
             let params = [];
             
             const baseQuery = `
@@ -134,7 +138,9 @@ export default class Vacante {
                 );
                 params.push(busquedaData.rol_trabajo);
             }
-            const whereSql = `WHERE ${whereClauses.join(' AND ')}`;
+            let whereSql = '';
+            if (whereClauses.length !==0) {whereSql = `WHERE ${whereClauses.join(' AND ')}`;}
+            
             
             const countSql = `SELECT COUNT(V.id_vacante) AS total_vacantes ${baseQuery} ${whereSql}`;
             const [[totalResult]] = await pool.query(countSql, params);
@@ -183,7 +189,7 @@ export default class Vacante {
                         }
                     }
                 
-            }else if(busquedaData.query != null && busquedaData.query != ''){
+            }else if(busquedaData.query != null && busquedaData.query != '' && verifAdmin.length ===0){
                 const [resultHistorial] = await pool.query(
                     `INSERT INTO Busqueda (id_alumno, consulta)
                     VALUES (?, ?)`,

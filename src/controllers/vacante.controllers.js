@@ -32,6 +32,7 @@ export default class VacanteController {
             const { id_alumno,query, ciudad, entidad, modalidad, rol_trabajo, ordenar_por } = req.query;
             let busquedaData = normalizarObjetosUndefinedANull({ id_alumno,query, ciudad, entidad, modalidad, rol_trabajo, ordenar_por });
             let { page, limit } = req.query;
+            const uid_admin = req.uid;
             page = parseInt(page) || 1;
             limit = parseInt(limit) || 10;
             const offset = (page - 1) * limit;
@@ -60,7 +61,7 @@ export default class VacanteController {
                 .filter(r => r !== '');
                 busquedaData.rol_trabajo = rolesArray.length > 0 ? rolesArray : null;
             }
-            const resultados = await Vacante.buscarVacantes(busquedaData, page, offset, limit);
+            const resultados = await Vacante.buscarVacantes(busquedaData, page, offset, limit, uid_admin);
             res.status(200).json(resultados);
         } catch (error) {
             console.error(error.message);

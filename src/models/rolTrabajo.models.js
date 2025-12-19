@@ -27,10 +27,14 @@ export default class RolTrabajo {
     return result.affectedRows > 0;
   }
 
-  static async publicarArticulo(id_roltrabajo,id_admin, titulo, contenido) {
+  static async publicarArticulo(id_roltrabajo,uid_admin, titulo, contenido) {
     try{
+      const [verifAdmin] = await pool.query('SELECT id FROM Usuario WHERE uid_firebase = ? AND rol = ?', [uid_admin, 'admin']);
+      if(verifAdmin.length ===0){
+        return null; // No es admin
+      }
       const [result] = await pool.query(
-      'INSERT INTO Articulo (id_roltrabajo, id_admin, titulo, contenido) VALUES (?, ?, ?, ?)',[id_roltrabajo,id_admin, titulo, contenido]);
+      'INSERT INTO Articulo (id_roltrabajo, id_admin, titulo, contenido) VALUES (?, ?, ?, ?)',[id_roltrabajo,verifAdmin[0].id, titulo, contenido]);
       return result.insertId;
     }catch(error){
       console.error(error.sqlMessage);

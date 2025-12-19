@@ -60,11 +60,12 @@ export default class RolTrabajoController {
 
     static async publicarArticulo(req, res) {
         try {
-            const { id_roltrabajo, id_admin, titulo, contenido } = req.body;
-            if (!id_roltrabajo || !titulo || !contenido || !id_admin) {
+            const { id_roltrabajo, titulo, contenido } = req.body;
+            if (!id_roltrabajo || !titulo || !contenido ) {
                 return res.status(400).json({ message: 'Faltan datos obligatorios' });
             }
-            const nuevoArticulo = await RolTrabajo.publicarArticulo(id_roltrabajo,id_admin, titulo, contenido);
+            const uid_admin = req.uid;
+            const nuevoArticulo = await RolTrabajo.publicarArticulo(id_roltrabajo, uid_admin,titulo, contenido);
             if (!nuevoArticulo) {
                 return res.status(404).json({ message: 'Rol de trabajo o admin no existen' });
             }
