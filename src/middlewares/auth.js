@@ -6,7 +6,7 @@ export default async function authMiddleware(req, res, next) {
 
   if (!match){
     console.error('No se proporcionó token de autorización');
-    return res.status(401);
+    return res.status(401).end();
   }
 
   const idToken = match[1];
@@ -17,6 +17,6 @@ export default async function authMiddleware(req, res, next) {
     next();
   } catch (err) {
     console.error('Token no válido:', err);
-    res.status(401);
+    res.status(401).end();
   }
 }
