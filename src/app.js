@@ -41,8 +41,8 @@ app.use(
     ['/verificarqr', '/usuarios/encolar_reclutador', '/empresas/obtener_empresas', '/empresas/agregar_empresa'], // rutas que no llevan auth
     authMiddleware
   ),
-  auxiliarRoutes
 );  //protege todo lo que cuelga de /api
+app.use('/api', auxiliarRoutes);
 app.use('/api/usuarios', userRoutes); 
 app.use('/api/empresas', empresasRoutes);
 app.use('/api/reclutadores', reclutadoresRoutes);
